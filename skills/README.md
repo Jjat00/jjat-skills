@@ -2,7 +2,7 @@
 
 Four improved LangSmith skills for Claude Code, replacing the three official skills (`langsmith-trace`, `langsmith-dataset`, `langsmith-evaluator`) and adding a new production skill.
 
-Based on the [official LangSmith skills](https://github.com/langchain-ai/langsmith-skills) — these skills include **all content from the official versions** plus significant additions from the [Reliable AI Agents course](https://github.com/langchain-ai/lca-reliable-agents) and documentation.
+Based on the [official LangSmith skills](https://github.com/langchain-ai/langsmith-skills) — these skills include **all content from the official versions** plus significant additions from the LangChain Academy course [Foundation: Building Reliable Agents](https://academy.langchain.com/courses/building-reliable-agents), its [repository](https://github.com/langchain-ai/lca-reliable-agents), and documentation.
 
 ## Skills
 
@@ -81,6 +81,7 @@ No official equivalent exists. This skill covers the production phase of the age
 
 All skills are based on:
 - Official skills: [langchain-ai/langsmith-skills](https://github.com/langchain-ai/langsmith-skills) (base content)
+- LangChain Academy course: [Foundation: Building Reliable Agents](https://academy.langchain.com/courses/building-reliable-agents)
 - [lca-reliable-agents](https://github.com/langchain-ai/lca-reliable-agents) repository (Python examples)
 - [Course documentation](https://langchain-ai-lca-reliable-agents.mintlify.app/introduction) (23 pages)
 - "Agentes IA Confiables" course PDF (27 pages)

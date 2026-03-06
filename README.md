@@ -2,7 +2,7 @@
 
 Skills mejoradas de LangSmith para [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
 
-Basadas en las [skills oficiales de LangSmith](https://github.com/langchain-ai/langsmith-skills), con contenido ampliado a partir del curso [Reliable AI Agents](https://github.com/langchain-ai/lca-reliable-agents), su [documentacion](https://langchain-ai-lca-reliable-agents.mintlify.app/introduction) y el material del PDF "Agentes IA Confiables".
+Basadas en las [skills oficiales de LangSmith](https://github.com/langchain-ai/langsmith-skills), con contenido ampliado a partir del curso oficial de LangChain Academy [Foundation: Building Reliable Agents](https://academy.langchain.com/courses/building-reliable-agents), su [repositorio](https://github.com/langchain-ai/lca-reliable-agents), [documentacion](https://langchain-ai-lca-reliable-agents.mintlify.app/introduction) y material complementario.
 
 Cada skill es un **superset estricto** de su contraparte oficial — todo el contenido original esta incluido, mas las mejoras adicionales.
 
@@ -58,5 +58,6 @@ claude skill list
 ## Creditos
 
 - Skills oficiales de LangSmith: [langchain-ai/langsmith-skills](https://github.com/langchain-ai/langsmith-skills)
+- Curso oficial de LangChain Academy: [Foundation: Building Reliable Agents](https://academy.langchain.com/courses/building-reliable-agents)
 - Repositorio del curso: [langchain-ai/lca-reliable-agents](https://github.com/langchain-ai/lca-reliable-agents)
 - Documentacion del curso: [langchain-ai-lca-reliable-agents.mintlify.app](https://langchain-ai-lca-reliable-agents.mintlify.app/introduction)
