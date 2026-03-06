@@ -4,14 +4,16 @@ Skills mejoradas de LangSmith para [Claude Code](https://docs.anthropic.com/en/d
 
 Basadas en las [skills oficiales de LangSmith](https://github.com/langchain-ai/langsmith-skills), con contenido ampliado a partir del curso [Reliable AI Agents](https://github.com/langchain-ai/lca-reliable-agents), su [documentacion](https://langchain-ai-lca-reliable-agents.mintlify.app/introduction) y el material del PDF "Agentes IA Confiables".
 
+Cada skill es un **superset estricto** de su contraparte oficial — todo el contenido original esta incluido, mas las mejoras adicionales.
+
 ## Skills disponibles
 
-| Skill | Descripcion | Basada en |
-|---|---|---|
-| `jjat-langsmith-tracing` | Tracing, observabilidad, debugging, CLI | `langsmith-trace` |
-| `jjat-langsmith-datasets` | Datasets, PRD-driven building, tipos | `langsmith-dataset` |
-| `jjat-langsmith-evaluators` | Evaluadores, LLM judges, pairwise, experiments | `langsmith-evaluator` |
-| `jjat-langsmith-production` | Online evals, monitoreo, deploy | *(nueva)* |
+| Skill | Descripcion | Basada en | Lineas |
+|---|---|---|---|
+| `jjat-langsmith-tracing` | Tracing, observabilidad, debugging, TypeScript, CLI | `langsmith-trace` | ~530 |
+| `jjat-langsmith-datasets` | Datasets, PRD-driven building, TypeScript, tipos | `langsmith-dataset` | ~400 |
+| `jjat-langsmith-evaluators` | Evaluadores, LLM judges, pairwise, TypeScript, experiments | `langsmith-evaluator` | ~690 |
+| `jjat-langsmith-production` | Online evals, monitoreo, deploy | *(nueva)* | ~340 |
 
 Para ver en detalle que mejoras tiene cada skill sobre las oficiales, consulta [skills/README.md](skills/README.md).
 
@@ -49,8 +51,9 @@ claude skill list
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) instalado
 - Cuenta de [LangSmith](https://smith.langchain.com/) con API key
-- Python 3.10+
-- `pip install langsmith openai anthropic`
+- Python 3.10+ y/o Node.js 18+
+- `pip install langsmith openai anthropic python-dotenv`
+- `npm install langsmith openai` (para TypeScript)
 
 ## Creditos
 

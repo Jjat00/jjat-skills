@@ -2,52 +2,66 @@
 
 Four improved LangSmith skills for Claude Code, replacing the three official skills (`langsmith-trace`, `langsmith-dataset`, `langsmith-evaluator`) and adding a new production skill.
 
+Based on the [official LangSmith skills](https://github.com/langchain-ai/langsmith-skills) — these skills include **all content from the official versions** plus significant additions from the [Reliable AI Agents course](https://github.com/langchain-ai/lca-reliable-agents) and documentation.
+
 ## Skills
 
 | Skill | Replaces | Lines |
 |---|---|---|
-| `jjat-langsmith-tracing` | `langsmith-trace` | ~450 |
-| `jjat-langsmith-datasets` | `langsmith-dataset` | ~360 |
-| `jjat-langsmith-evaluators` | `langsmith-evaluator` | ~560 |
-| `jjat-langsmith-production` | *(new)* | ~340 |
+| `jjat-langsmith-tracing` | `langsmith-trace` (265 lines) | ~530 |
+| `jjat-langsmith-datasets` | `langsmith-dataset` (295 lines) | ~400 |
+| `jjat-langsmith-evaluators` | `langsmith-evaluator` (363 lines) | ~690 |
+| `jjat-langsmith-production` | *(new — no official equivalent)* | ~340 |
 
 ## Why these are better than the official skills
 
+Each skill is a **strict superset** of its official counterpart — all original content is preserved, plus the additions listed below.
+
 ### jjat-langsmith-tracing vs langsmith-trace
 
-The official skill only covers OpenAI with `wrap_openai`. This skill adds:
+The official skill only covers OpenAI with `wrap_openai` and Python. This skill adds:
 
 - **3 providers**: `wrap_openai`, `wrap_anthropic`, `wrap_gemini` with examples for each
-- **All 6 run types**: `llm`, `chain`, `tool`, `retriever`, `embedding`, `agent` — the official skill doesn't document run types at all
-- **Thread/conversation tracking**: `session_id`/`thread_id` for grouping traces into conversations, plus a stateful conversation pattern with thread store
+- **TypeScript support**: `wrapOpenAI()` + `traceable()` examples
+- **All 6 run types**: `llm`, `chain`, `tool`, `retriever`, `embedding`, `agent` — with guidance on when to use each
+- **Thread/conversation tracking**: `session_id`/`thread_id` for grouping traces, plus a stateful conversation pattern with thread store
 - **3 debugging workflows**: Tracing UI inspection, Playground & Polly for rapid iteration, CLI & coding agents for programmatic analysis
-- **7 framework integrations**: LangChain/LangGraph, Claude Agent SDK, OpenAI Agent SDK, Vercel AI SDK, Claude Code, OpenTelemetry — the official skill mentions none
-- **Trace visualization**: Explains what parent/child relationships look like in the UI
+- **7 framework integrations**: LangChain/LangGraph, Claude Agent SDK, OpenAI Agent SDK, Vercel AI SDK, Claude Code, OpenTelemetry
+- **Complete CLI tree**: All subcommands including dataset, example, evaluator, experiment (official only lists trace/run)
+- **Trace visualization**: ASCII tree showing what parent/child relationships look like
+- **Export tips**: `/tmp` for temporary exports, JSONL stitching
 - **Troubleshooting section**: Common issues and fixes
 
 ### jjat-langsmith-datasets vs langsmith-dataset
 
-The official skill covers basic dataset creation. This skill adds:
+The official skill covers basic dataset creation in Python and TypeScript. This skill adds:
 
-- **PRD-driven dataset building**: A structured process — write requirements first, derive coverage categories, then build examples that cover each category
-- **Coverage categories table**: Maps requirements to test cases systematically instead of ad-hoc example creation
-- **4 dataset types with guidance**: `final_response`, `trajectory`, `single_step`, `RAG` — explains when to use each and what the schema looks like
-- **3 creation methods**: UI upload, SDK programmatic creation, and creating from production traces — the official skill only covers SDK
-- **Dataset structure explanation**: Clarifies the `inputs`/`outputs`/`metadata` schema that trips people up
-- **Best practices**: Minimum dataset sizes, when to version, how to maintain datasets over time
+- **PRD-driven dataset building**: Structured process — write requirements, derive coverage categories, build examples
+- **Coverage categories table**: Maps requirements to test cases systematically
+- **4 dataset types with guidance**: `final_response`, `trajectory`, `single_step`, `RAG` — with `trace_id` field for traceability
+- **3 creation methods**: UI upload (with CSV format), SDK programmatic creation, and creating from production traces
+- **TypeScript SDK examples**: `createDataset()` + `createExamples()`
+- **Dataset structure explanation**: Clarifies the `inputs`/`outputs`/`metadata` schema
+- **Interactive vs non-interactive `--yes` guidance**: When to use and when not to
+- **Best practices**: Minimum dataset sizes, versioning, maintenance over time
+- **Extra troubleshooting**: Example count mismatch, field name mismatches
 
 ### jjat-langsmith-evaluators vs langsmith-evaluator
 
 The official skill covers basic evaluator creation and running. This skill adds:
 
+- **Complete setup section**: Environment variables, dependencies (Python + TypeScript), CLI install
 - **3 evaluator types comparison table**: Code-based vs LLM-as-judge vs Pairwise — when to use each
-- **Evaluation levels**: Step/unit, final response, and trajectory evaluation — the official skill doesn't distinguish these
-- **4 evaluator signatures**: `(run, example)`, `(inputs, outputs, reference_outputs)`, `(inputs, outputs)`, `(run)` — with examples for each
-- **3 rules for LLM judges**: Narrow scope, binary classification, align with humans — based on the course material
+- **Evaluation levels**: Step/unit, final response, and trajectory evaluation
+- **4 evaluator signatures**: `(run, example)`, `(inputs, outputs, reference_outputs)`, `(inputs, outputs)`, `(run)` — with examples
+- **Local vs uploaded differences table**: Column naming, `key` field behavior, environment constraints
+- **3 rules for LLM judges**: Narrow scope, binary classification, align with humans
+- **Async LLM judge pattern**: `async def` + `AsyncOpenAI` for concurrent evaluation
 - **Pairwise evaluation**: 3-step process with `randomize_order` for unbiased comparison
-- **Safe evaluator pattern**: Try/except wrapper that returns 0.0 instead of crashing the experiment
-- **Test isolation**: `LANGSMITH_TEST_TRACKING=false` for CI environments
-- **Combining evaluators**: Running multiple evaluators in a single experiment
+- **Trajectory capture**: `stream_mode="debug"` + `subgraphs=True` for LangGraph
+- **TypeScript evaluators**: Code-based + LLM-as-judge + `evaluate()` examples
+- **Safe evaluator pattern**: Try/except wrapper that returns 0.0 instead of crashing
+- **Resource links**: LangSmith docs, Custom Code Evaluators, OpenEvals repo
 
 ### jjat-langsmith-production (new)
 
@@ -66,6 +80,7 @@ No official equivalent exists. This skill covers the production phase of the age
 ## Source material
 
 All skills are based on:
+- Official skills: [langchain-ai/langsmith-skills](https://github.com/langchain-ai/langsmith-skills) (base content)
 - [lca-reliable-agents](https://github.com/langchain-ai/lca-reliable-agents) repository (Python examples)
 - [Course documentation](https://langchain-ai-lca-reliable-agents.mintlify.app/introduction) (23 pages)
 - "Agentes IA Confiables" course PDF (27 pages)
@@ -73,10 +88,4 @@ All skills are based on:
 
 ## Installation
 
-```bash
-# Install all 4 skills
-claude skill install --path /path/to/jjat-skills/skills/jjat-langsmith-tracing
-claude skill install --path /path/to/jjat-skills/skills/jjat-langsmith-datasets
-claude skill install --path /path/to/jjat-skills/skills/jjat-langsmith-evaluators
-claude skill install --path /path/to/jjat-skills/skills/jjat-langsmith-production
-```
+See the [root README](../README.md) for installation instructions.
