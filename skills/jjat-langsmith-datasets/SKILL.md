@@ -25,10 +25,17 @@ The Four-Step Eval Flow: (1) Decide what to measure, (2) **Create a dataset**, (
 # Required
 LANGSMITH_API_KEY=your_api_key_here
 LANGSMITH_PROJECT=your-project-name
+
+# Optional
+LANGSMITH_WORKSPACE_ID=your_workspace_id  # For org-scoped API keys
 ```
 
 ```bash
 pip install langsmith python-dotenv
+```
+
+```bash
+npm install langsmith  # TypeScript/Node.js
 ```
 
 **CLI:**
@@ -204,6 +211,23 @@ client.create_examples(
 )
 ```
 
+**TypeScript:**
+```typescript
+import Client from "langsmith";
+
+const client = new Client();
+
+const dataset = await client.createDataset("officeflow-dataset", {
+  description: "Customer support evaluation dataset",
+});
+
+await client.createExamples({
+  inputs: [{ question: "Do you have printer paper?" }],
+  outputs: [{ reference_answer: "Should check inventory", expected_tool: "query_database" }],
+  datasetId: dataset.id,
+});
+```
+
 ### Method 3: From Production Traces
 
 The most powerful approach — build datasets from real user interactions:
@@ -228,7 +252,8 @@ for jsonl_file in Path("./traces").glob("*.jsonl"):
     if root and root.get("inputs") and root.get("outputs"):
         examples.append({
             "inputs": root["inputs"],
-            "outputs": root["outputs"]
+            "outputs": root["outputs"],
+            "trace_id": root.get("trace_id", root.get("id"))
         })
 
 # Upload as a dataset
@@ -252,26 +277,28 @@ Different evaluation goals need different dataset structures:
 ### Final Response (most common)
 Test the agent's complete answer. Simplest to set up.
 ```json
-{"inputs": {"question": "Do you have copy paper?"}, "outputs": {"reference_answer": "Should check inventory and report availability"}}
+{"inputs": {"question": "Do you have copy paper?"}, "outputs": {"reference_answer": "Should check inventory and report availability"}, "trace_id": "optional-source-trace-id"}
 ```
 
 ### Trajectory
 Test the path the agent takes — which tools it calls and in what order.
 ```json
-{"inputs": {"question": "Do you have copy paper?"}, "outputs": {"expected_trajectory": ["query_database", "query_database"]}}
+{"inputs": {"question": "Do you have copy paper?"}, "outputs": {"expected_trajectory": ["query_database", "query_database"]}, "trace_id": "optional-source-trace-id"}
 ```
 
 ### Single Step
 Test a specific node in isolation (one LLM call, one tool).
 ```json
-{"inputs": {"messages": [{"role": "user", "content": "..."}]}, "outputs": {"content": "expected output"}, "metadata": {"node_name": "query_database"}}
+{"inputs": {"messages": [{"role": "user", "content": "..."}]}, "outputs": {"content": "expected output"}, "metadata": {"node_name": "query_database"}, "trace_id": "optional-source-trace-id"}
 ```
 
 ### RAG
 Test retrieval quality — what was retrieved, what was cited.
 ```json
-{"inputs": {"question": "What's the return policy?"}, "outputs": {"answer": "60-day window...", "retrieved_chunks": ["..."], "cited_chunks": ["..."]}}
+{"inputs": {"question": "What's the return policy?"}, "outputs": {"answer": "60-day window...", "retrieved_chunks": ["..."], "cited_chunks": ["..."]}, "trace_id": "optional-source-trace-id"}
 ```
+
+The `trace_id` field is optional — it links a dataset example back to the source production trace for traceability.
 </dataset_types>
 
 <cli_reference>
@@ -315,7 +342,10 @@ langsmith experiment list --dataset "My Dataset"
 langsmith experiment get "eval-v1"
 ```
 
-**Safety:** The CLI prompts for confirmation before destructive operations. Never use `--yes` unless the user explicitly requests it.
+**Safety:** The CLI prompts for confirmation before destructive operations.
+- If running with user input: ALWAYS wait for user confirmation
+- If running non-interactively (scripts/CI): use `--yes` to skip prompts
+- Never use `--yes` in interactive sessions unless the user explicitly requests it
 </cli_reference>
 
 <best_practices>
@@ -353,6 +383,11 @@ langsmith experiment get "eval-v1"
 **Export has no data:**
 - Ensure traces were exported with `--full` flag to include inputs/outputs
 - Verify traces have both `inputs` and `outputs` populated
+
+**Example count mismatch:**
+- Use `langsmith dataset get "Name"` to check the remote example count
+- Compare with your local file: `cat dataset.json | python -c "import json,sys; print(len(json.load(sys.stdin)))"`
+- Re-upload if counts differ
 
 **Field name mismatches in evals:**
 - Your run function output keys must match what your evaluators expect

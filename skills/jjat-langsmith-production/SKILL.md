@@ -29,6 +29,7 @@ LANGSMITH_PROJECT=your-production-project
 
 # Optional
 LANGSMITH_ENDPOINT=https://eu.api.smith.langchain.com  # EU users
+LANGSMITH_WORKSPACE_ID=your_workspace_id               # For org-scoped API keys
 ```
 
 ```bash

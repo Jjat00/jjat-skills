@@ -29,6 +29,7 @@ LANGSMITH_PROJECT=your-project-name
 
 # Optional
 LANGSMITH_ENDPOINT=https://eu.api.smith.langchain.com   # EU users only
+LANGSMITH_WORKSPACE_ID=your_workspace_id                # For org-scoped API keys
 ```
 
 Load them in your application:
@@ -41,6 +42,10 @@ load_dotenv()
 **Dependencies:**
 ```bash
 pip install langsmith openai python-dotenv
+```
+
+```bash
+npm install langsmith openai  # TypeScript/Node.js
 ```
 
 **CLI (for querying traces):**
@@ -69,6 +74,45 @@ For LangChain/LangGraph, that's all you need — every LLM call, tool invocation
 For everything else, or if you're building without a framework, use manual tracing below.
 </framework_integrations>
 
+<typescript_tracing>
+
+## TypeScript Tracing
+
+TypeScript uses the same concepts (wrap client + traceable), with slightly different syntax:
+
+```typescript
+import { wrapOpenAI } from "langsmith/wrappers";
+import { traceable } from "langsmith/traceable";
+import OpenAI from "openai";
+
+const client = wrapOpenAI(new OpenAI());
+
+const queryDatabase = traceable(
+  async (query: string): Promise<string> => {
+    // ... your logic ...
+    return results;
+  },
+  { name: "query_database", run_type: "tool" }
+);
+
+const chat = traceable(
+  async (question: string) => {
+    const response = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: question }],
+    });
+    return { output: response.choices[0].message.content };
+  },
+  { name: "my-agent", metadata: { thread_id: "abc" } }
+);
+```
+
+Key differences from Python:
+- `traceable()` wraps functions (no decorator syntax)
+- `wrapOpenAI()` instead of `wrap_openai()`
+- Return format `{ key: "metric_name", score, comment }` for evaluators
+</typescript_tracing>
+
 <manual_tracing>
 
 ## Manual Tracing: Three Steps
@@ -94,6 +138,14 @@ client = wrap_anthropic(Anthropic())
 from google import genai
 from langsmith.wrappers import wrap_gemini
 client = wrap_gemini(genai.Client())
+```
+
+**TypeScript:**
+```typescript
+import { wrapOpenAI } from "langsmith/wrappers";
+import OpenAI from "openai";
+
+const client = wrapOpenAI(new OpenAI());
 ```
 
 ### Step 2: Decorate Key Functions with @traceable
@@ -340,6 +392,28 @@ langsmith
 │   ├── get     - Get single run
 │   └── export  - Export runs to single JSONL file
 │
+├── dataset
+│   ├── list    - List datasets
+│   ├── get     - Get dataset details
+│   ├── create  - Create empty dataset
+│   ├── delete  - Delete a dataset
+│   ├── export  - Export dataset to file
+│   └── upload  - Upload JSON/CSV as dataset
+│
+├── example
+│   ├── list    - List examples in a dataset
+│   ├── create  - Add example to dataset
+│   └── delete  - Remove example
+│
+├── evaluator
+│   ├── list    - List uploaded evaluators
+│   ├── upload  - Upload evaluator function
+│   └── delete  - Remove evaluator
+│
+├── experiment
+│   ├── list    - List experiments for a dataset
+│   └── get     - Get experiment results
+│
 ├── thread
 │   ├── list    - List conversation threads
 │   └── get     - Get thread details
@@ -409,6 +483,12 @@ JSONL files with one run per line:
 ```
 
 Use `--full` to include inputs/outputs (required for dataset generation).
+
+### Export Tips
+
+- Use `/tmp` for temporary exports to avoid cluttering the workspace
+- Stitch multiple export files: `cat ./traces/*.jsonl > all.jsonl`
+- Use `trace export --full` for bulk data needed for dataset generation
 </cli_reference>
 
 <best_practices>

@@ -7,6 +7,34 @@ description: "INVOKE THIS SKILL when writing evaluators for LangSmith, running e
 
 Evaluators are automated tests that score your agent's outputs. They're how you know whether a prompt change helped or hurt, whether your agent uses tools correctly, and whether it's ready for production. This skill covers all three evaluator types, how to run them, and the patterns that make them reliable.
 
+<setup>
+
+## Setup
+
+```bash
+# Required
+LANGSMITH_API_KEY=your_api_key_here
+LANGSMITH_PROJECT=your-project-name
+OPENAI_API_KEY=your_openai_key    # For LLM-as-judge evaluators
+
+# Optional
+LANGSMITH_WORKSPACE_ID=your_workspace_id  # For org-scoped API keys
+```
+
+```bash
+pip install langsmith openai python-dotenv
+```
+
+```bash
+npm install langsmith openai  # TypeScript/Node.js
+```
+
+**CLI:**
+```bash
+curl -sSL https://raw.githubusercontent.com/langchain-ai/langsmith-cli/main/scripts/install.sh | sh
+```
+</setup>
+
 ## Where evaluators fit in the lifecycle
 
 ```
@@ -88,6 +116,15 @@ return {"score": 0.8, "comment": "Mostly correct", "metadata": {"length": 42}}
 ```python
 return [1, 0]  # A wins
 ```
+
+### Local vs Uploaded Evaluator Differences
+
+| Behavior | Local (`evaluate()`) | Uploaded (CLI) |
+|---|---|---|
+| Input type | `RunTree` (attribute access: `run.outputs`) | `dict` (subscript: `run["outputs"]`) |
+| Column name | Uses function name or `key` field | Uses `--name` from upload command |
+| `key` field | Optional (overrides column name) | Don't include (use `--name` instead) |
+| Packages | Full Python environment | Sandboxed, limited packages |
 
 ### One Metric Per Evaluator
 
@@ -284,6 +321,28 @@ def evaluate_correctness(run, example) -> dict:
     return {"score": 1 if correct else 0, "comment": "Correct" if correct else "Incorrect"}
 ```
 
+### Async LLM Judges (Recommended)
+
+LLM judge evaluators benefit from async — they run concurrently during `aevaluate()`:
+
+```python
+from openai import AsyncOpenAI
+
+async_client = AsyncOpenAI()
+
+async def check_stock_leakage_async(inputs: dict, outputs: dict) -> dict:
+    response = await async_client.chat.completions.create(
+        model="gpt-4o-mini",
+        temperature=0,
+        messages=[
+            {"role": "system", "content": "You check if responses leak exact stock quantities. Answer only 'yes' or 'no'."},
+            {"role": "user", "content": f"Question: {inputs['question']}\nResponse: {outputs['answer']}\n\nDoes this reveal specific stock numbers?"}
+        ]
+    )
+    leaked = response.choices[0].message.content.strip().lower() == "yes"
+    return {"score": 0 if leaked else 1, "comment": "Leaked" if leaked else "No leakage"}
+```
+
 ### Example: Multi-Criteria (use separate evaluators)
 
 Instead of one judge evaluating 4 criteria, create 4 focused judges:
@@ -466,6 +525,25 @@ The returned object gives you:
 - `experiment_url` — link to view results in LangSmith UI
 - Individual results with inputs, outputs, and scores
 
+### Capturing Trajectories (LangGraph)
+
+For LangGraph agents, capture the full trajectory using `stream_mode="debug"`:
+
+```python
+async def run_agent_with_trajectory(inputs: dict) -> dict:
+    events = []
+    async for event in graph.astream(
+        {"messages": [{"role": "user", "content": inputs["question"]}]},
+        stream_mode="debug",
+        subgraphs=True,
+    ):
+        events.append(event)
+    # Extract tool calls, intermediate steps from events
+    return {"answer": final_answer, "trajectory": extracted_steps}
+```
+
+For non-LangChain agents, capture trajectories via callbacks, hooks, or parsing your agent's execution logs into the expected format.
+
 ### Pytest Integration
 
 LangSmith integrates with pytest for CI/CD:
@@ -510,6 +588,51 @@ langsmith evaluator delete "Schema Check"
 
 **Safety:** The CLI prompts before destructive operations. Never use `--yes` unless the user explicitly requests it.
 </uploading_evaluators>
+
+<typescript_evaluators>
+
+## TypeScript Evaluators
+
+TypeScript evaluators follow the same patterns with slightly different syntax:
+
+```typescript
+import { evaluate } from "langsmith/evaluation";
+import OpenAI from "openai";
+
+const client = new OpenAI();
+
+// Code-based evaluator
+function mentionsOfficeflow({ outputs }: { outputs: Record<string, any> }) {
+  return { key: "mentions_officeflow", score: outputs.response?.toLowerCase().includes("officeflow") ? 1 : 0 };
+}
+
+// LLM-as-Judge evaluator
+async function checkLeakage({ inputs, outputs }: { inputs: Record<string, any>; outputs: Record<string, any> }) {
+  const response = await client.chat.completions.create({
+    model: "gpt-4o-mini",
+    temperature: 0,
+    messages: [
+      { role: "system", content: "Check if the response leaks stock numbers. Answer yes or no." },
+      { role: "user", content: `Question: ${inputs.question}\nResponse: ${outputs.answer}` },
+    ],
+  });
+  const leaked = response.choices[0].message.content?.trim().toLowerCase() === "yes";
+  return { key: "stock_leakage", score: leaked ? 0 : 1 };
+}
+
+// Run experiment
+await evaluate(myAgentFunction, {
+  data: "my-dataset",
+  evaluators: [mentionsOfficeflow, checkLeakage],
+  experimentPrefix: "agent-v5",
+});
+```
+
+Key differences from Python:
+- Return `{ key: "name", score, comment }` (must include `key` when running locally)
+- Omit `key` when uploading evaluators via CLI (use `--name` instead)
+- Evaluators receive destructured `{ inputs, outputs, run, example }`
+</typescript_evaluators>
 
 <best_practices>
 
@@ -556,4 +679,10 @@ langsmith evaluator delete "Schema Check"
 - Both experiments must use the same dataset
 - Always use `randomize_order=True` to prevent position bias
 - Experiment names come from `results.experiment_name`, not the prefix
+
+## Resources
+
+- [LangSmith Evaluation Concepts](https://docs.smith.langchain.com/evaluation/concepts)
+- [Custom Code Evaluators](https://docs.smith.langchain.com/evaluation/how_to_guides/custom_evaluator)
+- [OpenEvals — readymade evaluators](https://github.com/langchain-ai/openevals)
 </troubleshooting>
