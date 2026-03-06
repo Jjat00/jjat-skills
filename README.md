@@ -24,31 +24,31 @@ Para ver en detalle que mejoras tiene cada skill sobre las oficiales, consulta [
 Instala todas las skills directamente desde GitHub sin clonar el repositorio:
 
 ```bash
-npx skills add tu-usuario/jjat-skills -g
+npx skills add Jjat00/jjat-skills -g
 ```
 
 O instala skills individuales:
 
 ```bash
-npx skills add tu-usuario/jjat-skills/skills/jjat-langsmith-tracing -g
-npx skills add tu-usuario/jjat-skills/skills/jjat-langsmith-datasets -g
-npx skills add tu-usuario/jjat-skills/skills/jjat-langsmith-evaluators -g
-npx skills add tu-usuario/jjat-skills/skills/jjat-langsmith-production -g
+npx skills add Jjat00/jjat-skills/skills/jjat-langsmith-tracing -g
+npx skills add Jjat00/jjat-skills/skills/jjat-langsmith-datasets -g
+npx skills add Jjat00/jjat-skills/skills/jjat-langsmith-evaluators -g
+npx skills add Jjat00/jjat-skills/skills/jjat-langsmith-production -g
 ```
 
 ### Con Claude Code CLI
 
 ```bash
 # Directamente desde GitHub
-claude skill install --url https://github.com/tu-usuario/jjat-skills/tree/main/skills/jjat-langsmith-tracing
-claude skill install --url https://github.com/tu-usuario/jjat-skills/tree/main/skills/jjat-langsmith-datasets
-claude skill install --url https://github.com/tu-usuario/jjat-skills/tree/main/skills/jjat-langsmith-evaluators
-claude skill install --url https://github.com/tu-usuario/jjat-skills/tree/main/skills/jjat-langsmith-production
+claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/jjat-langsmith-tracing
+claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/jjat-langsmith-datasets
+claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/jjat-langsmith-evaluators
+claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/jjat-langsmith-production
 ```
 
 ```bash
 # O desde el repositorio clonado
-git clone https://github.com/tu-usuario/jjat-skills.git
+git clone https://github.com/Jjat00/jjat-skills.git
 cd jjat-skills
 
 claude skill install --path ./skills/jjat-langsmith-tracing
