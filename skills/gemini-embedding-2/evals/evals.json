@@ -1,0 +1,23 @@
+{
+  "skill_name": "gemini-embedding-2",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Necesito crear un sistema de búsqueda semántica para los artículos de mi blog usando Gemini embeddings y Qdrant. Los artículos están en español y quiero poder buscar por significado, no solo por palabras clave. Tengo unos 500 artículos en texto plano. Dame el código completo en Python.",
+      "expected_output": "Código Python completo que: inicializa clientes Gemini y Qdrant, crea una colección con dimensiones correctas, indexa documentos con task_type RETRIEVAL_DOCUMENT, y busca con task_type RETRIEVAL_QUERY. Usa .env para la API key.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Tengo un catálogo de productos con imágenes JPG y descripciones en texto. Quiero que los usuarios puedan buscar describiendo lo que buscan y que encuentre los productos más relevantes, combinando similitud con la descripción y con la imagen. Usa gemini-embedding-2-preview y ChromaDB. Python.",
+      "expected_output": "Código Python que: genera embeddings multimodales (texto + imagen por separado o agregados), los indexa en ChromaDB, e implementa búsqueda cross-modal. Debe usar el modelo gemini-embedding-2-preview y task types correctos.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Necesito indexar PDFs de reportes financieros y grabaciones de audio de reuniones en Qdrant para poder hacer preguntas sobre ellos después. No quiero usar Whisper para transcribir el audio, quiero embeddings nativos. Dame el código en Python con un pipeline RAG básico que use gemini-2.5-flash para generar respuestas.",
+      "expected_output": "Código Python que: embebe PDFs y audio directamente con gemini-embedding-2-preview (sin STT intermedio), los indexa en Qdrant con metadata de tipo, implementa búsqueda con RETRIEVAL_QUERY, y genera respuestas con gemini-2.5-flash usando el contexto recuperado.",
+      "files": []
+    }
+  ]
+}

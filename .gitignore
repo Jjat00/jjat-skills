@@ -9,3 +9,6 @@ Agentes_IA_Confiables.pdf
 *.pyzwz
 *.pyzwzw
 skills-lock.json
+
+# Skill evaluation workspaces
+*-workspace/
