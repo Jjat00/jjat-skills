@@ -202,7 +202,10 @@ def down(m):
     return cv2.resize(m, (W, H), interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
 
 # ---------------- card sprite ----------------
-FONT_B = os.path.join(KIT, 'Poppins-Bold.ttf'); FONT_M = os.path.join(KIT, 'Poppins-Medium.ttf')
+# fuentes: font_title / font_body en params.json (nombre del .ttf en el KIT); por defecto Poppins
+FONT_B = os.path.join(KIT, P.get('font_title', 'Poppins-Bold.ttf')); FONT_M = os.path.join(KIT, P.get('font_body', 'Poppins-Medium.ttf'))
+for _f in (FONT_B, FONT_M):
+    if not os.path.exists(_f): sys.exit(f'Falta la fuente {_f}: cópiala de assets/fonts/ al KIT')
 
 def make_card(title, subtitle, scale):
     S = 2

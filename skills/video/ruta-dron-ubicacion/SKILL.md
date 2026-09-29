@@ -38,7 +38,7 @@ Detalle técnico y porqués: nota de Obsidian [[Ruta animada pegada al suelo en 
 | `dk_finish.py` | une los tramos renderizados y verifica los frames |
 
 - **Plantilla de diseño:** `assets/params_template.json`, con comentarios.
-- **Fuentes:** `assets/fonts/` (Poppins Bold y Medium, licencia OFL). Se copian al KIT del render.
+- **Fuentes:** `assets/fonts/`, 16 familias OFL (Poppins, Montserrat, Inter, Bebas Neue, Playfair Display, Oswald, Barlow Condensed…). Se eligen con `font_title` y `font_body` en `params.json`; `assets/fonts/README.md` trae las combinaciones por estilo (inmobiliaria premium, lujo, cinematográfico, técnico…). Se copian al KIT las que se usen.
 - **Ejemplos de parámetros:** `references/ejemplos/`.
 
 ### Dónde corre
@@ -177,7 +177,7 @@ Anota sus 4 esquinas en metros en `scene.npz` como `plaza` (orden NO, NE, SE, SO
 
 Arma un KIT con estos archivos:
 - el renderizador (`render_route.py` o `render_ruta_lote.py`);
-- las fuentes de `assets/fonts/`;
+- las dos fuentes elegidas de `assets/fonts/` (`font_title` y `font_body`; por defecto Poppins Bold y Medium). Elige el estilo según el tipo de propiedad con la tabla de `assets/fonts/README.md`;
 - `cams.npz` y `scene.npz`;
 - `params.json`, desde `assets/params_template.json` o un ejemplo de `references/ejemplos/`;
 - el video, como `video.mp4`.

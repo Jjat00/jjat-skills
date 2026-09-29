@@ -13,7 +13,8 @@
   "title/subtitle/handle": "textos de la tarjeta y del cierre",
   "color/color_light": "azul principal y claro de la ruta (hex)",
   "card_bg/sub_color/icon_top/icon_bottom": "colores RGB de la tarjeta",
-  "endcard_sec": "segundos del cierre"
+  "endcard_sec": "segundos del cierre",
+  "font_title/font_body": "nombre del .ttf de assets/fonts/ para títulos y para textos (ver assets/fonts/README.md con combinaciones por estilo); por defecto Poppins-Bold/Poppins-Medium"
  },
  "source": "video.mp4",
  "cams": "cams.npz",
@@ -57,6 +58,8 @@
  "title": "NOMBRE DEL LUGAR",
  "subtitle": "Subtítulo o tipo de propiedad",
  "handle": "@cuenta",
+ "font_title": "Poppins-Bold.ttf",
+ "font_body": "Poppins-Medium.ttf",
  "card_bg": [
   9,
   20,
