@@ -129,11 +129,13 @@ def dur_of(p):
 
 
 def add_voice(seg, voice):
-    """Mezcla la narración sobre el segmento (el sonido del clip baja para que no compita con la voz)."""
+    """Mezcla la narración sobre el segmento. El sonido del clip se agacha mientras habla la voz (sidechain)."""
     tmp = seg.with_name(seg.stem + "_v.mp4")
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(seg), "-i", str(voice), "-filter_complex",
-                    "[0:a]volume=0.45[c];[1:a]adelay=150|150,aresample=48000,aformat=channel_layouts=stereo,volume=1.15[v];"
-                    "[c][v]amix=inputs=2:normalize=0:duration=first[a]",
+                    # Ducking: mientras suena la voz, el clip baja ~20 dB (sidechain) y vuelve al terminar la frase.
+                    "[1:a]adelay=150|150,aresample=48000,aformat=channel_layouts=stereo,volume=1.15,asplit=2[v][sc];"
+                    "[0:a]volume=0.6[c];[c][sc]sidechaincompress=threshold=0.012:ratio=20:attack=15:release=400[cd];"
+                    "[cd][v]amix=inputs=2:normalize=0:duration=first[a]",
                     "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-ar", "48000", str(tmp)], check=True)
     tmp.replace(seg)
 

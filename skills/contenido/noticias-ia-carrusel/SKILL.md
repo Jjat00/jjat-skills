@@ -76,17 +76,13 @@ Siempre se entrega también un reel vertical (1080×1920) con las mismas lámina
    - Sin narración: unos 45 s (3,5 s por noticia). Jaime pone un audio en tendencia desde la app.
    - Con narración: la voz cuenta cada noticia y cada lámina dura lo que dura su frase (unos 55-60 s).
 2. **Voz** (solo si hay narración). Ofrece estas y deja «Other» para cualquier otra:
-   - **Gonzalo, colombiano** (`es-CO-GonzaloNeural`, edge-tts, **gratis**). Es la opción por defecto.
+   - **Andrés, «Social Media Host»** (`u36BhA6zuwclwVyAT1Bi`, `public_owner_id` `bfededef119bd9abb2b18fbf17d86d58267c725eac0d59db6fe86938f99736fd`). Es de la biblioteca de ElevenLabs, acento mexicano, **de pago** (~0,10 USD por reel a precio de lista y ~0,02 con el descuento de v4 hasta el 12-10). **Es la opción por defecto: la eligió Jaime el 29-09.**
+   - **Jennifer, colombiana** (`Y11rBAl8on4Ba9ZpY3DY`, ElevenLabs, **de pago**).
+   - **Locutor latino** (`gWS10amJmGDgPWjYrvU7`, ElevenLabs, **de pago**).
    - **Salomé, colombiana** (`es-CO-SalomeNeural`, edge-tts, **gratis**).
-   - **Locutor latino de ElevenLabs** (`gWS10amJmGDgPWjYrvU7`, voz comercial, **de pago**).
-   - **Jennifer, colombiana, de ElevenLabs** (`Y11rBAl8on4Ba9ZpY3DY`, **de pago**).
+   - No ofrezcas a Gonzalo (`es-CO-GonzaloNeural`): a Jaime no le gustó.
 
-   Otras voces de la cuenta, con `list_voices` de HF Studio:
-   - Joel (`2mAzYQbilw9TukGpFoQV`, voz grave mexicana);
-   - Carlos Corella (`LnGOA2SxH2fX1e1iNzEp`);
-   - Alejandro (`qXvyMc4erc4RzqXLpiiR`).
-
-   En edge-tts también hay `es-MX-JorgeNeural` y `es-MX-DaliaNeural`.
+   Para escuchar antes de elegir: página «Voces» de HF Studio (`http://localhost:3000/voices`).
 
 **Narración:** campo `"narracion"` en cada lámina del plan.
 - **Largo:** 8-15 palabras por lámina.
@@ -104,7 +100,9 @@ Escribe `reel/voz/NN.mp3` e imprime la duración de cada frase. Si el total pasa
 1. Por cada lámina, llama a `text_to_speech` de HF Studio, primero sin `quote_id`, y suma el costo.
 2. Díselo a Jaime y espera su OK (regla de costo visible).
 3. Genera con los `quote_id`.
-4. Descarga cada MP3 a `reel/voz/NN.mp3`.
+4. Copia cada MP3 a `reel/voz/NN.mp3`. HF Studio los guarda en `~/projects/hf-studio/data/files/outputs/<id>/0-audio.mp3`.
+5. Si el total pasa de 60 s, recorta los silencios de cada frase y acelera un 8 % sin cambiar el tono: `silenceremove` al inicio y al final, y `atempo=1.08`. Guarda los originales en `reel/voz_<voz>_original/`.
+6. Etiquetas por frase: `[upbeat]` en las noticias, `[serious]` en las polémicas, `[excited]` en los hitos, y una más larga en la portada (`[energetic social media host, upbeat]`).
 
 **Configuración de ElevenLabs (a 2026-09):**
 - **Modelo:** `model_id="eleven_v4"`. Salió el 28-09-2026, es el más natural y tiene el mejor acento latino. Hasta el 12-10 tiene 72 % de descuento.
