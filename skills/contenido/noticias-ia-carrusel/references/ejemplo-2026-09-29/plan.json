@@ -1,0 +1,164 @@
+{
+  "fecha": "2026-09-29",
+  "fecha_label": "29 SEP",
+  "etiqueta": "NOTICIAS DE IA",
+  "titular_pagina": "Las <b>7 noticias de IA</b> de las últimas 24 horas",
+  "fuentes_pagina": "Fuentes citadas en cada lámina: Anthropic, Kling AI, WSJ vía TechCrunch, Ars Technica, OpenAI, World Labs, SpaceX, The Verge. Datos del 28 y 29 de septiembre de 2026.",
+  "slides": [
+    {
+      "kind": "cover",
+      "media": "03_sonnet_zombies_juego.mp4",
+      "ss": 12,
+      "t": 8,
+      "still": 2,
+      "title": "LA <b>IA</b> SE ESTÁ <b>SALIENDO DE CONTROL</b>. ESTAS SON LAS <b>7 NOTICIAS</b> DE LAS ÚLTIMAS <b>24 HORAS</b>"
+    },
+    {
+      "media": "03_sonnet_zombies_juego.mp4",
+      "ss": 30,
+      "t": 9,
+      "title": "Claude Sonnet 5.5 programó un videojuego de zombis en <b>49 minutos</b>",
+      "body": "Anthropic lanzó ayer Sonnet 5.5, un 30 % más rápido que su antecesor. Un usuario le pidió un shooter 3D y el modelo lo construyó solo. Se juega directo en el navegador.",
+      "pill": "Un solo prompt. 49 minutos.",
+      "src": "Fuente: r/singularity · Anthropic"
+    },
+    {
+      "stat": {
+        "titulo": "Terminal-Bench 4.0 · programación con agentes",
+        "filas": [
+          {
+            "label": "Sonnet 5.5",
+            "pct": 70.6,
+            "valor": "70,6 %",
+            "hi": true
+          },
+          {
+            "label": "Opus 5.5",
+            "pct": 66.4,
+            "valor": "66,4 %"
+          },
+          {
+            "label": "Sonnet 5",
+            "pct": 10.3,
+            "valor": "10,3 %"
+          }
+        ],
+        "pie": "$2 <small>entrada</small> · $10 <small>salida · por millón de tokens</small>"
+      },
+      "title": "Claude Sonnet 5.5 programó un videojuego de zombis en <b>49 minutos</b>",
+      "body": "En Terminal-Bench 4.0, la prueba de programación con agentes, saca 70,6 %. Sonnet 5 sacaba 10,3 %. Y cuesta lo mismo: $2 por millón de tokens de entrada.",
+      "pill": "De 10,3 % a 70,6 % en un salto",
+      "src": "Fuente: anthropic.com"
+    },
+    {
+      "media": "02_kling4_trailer.mp4",
+      "ss": 2,
+      "t": 8,
+      "crop": "1920:808:0:136",
+      "still": 8,
+      "title": "Kling 4.0 ya genera videos de <b>30 segundos en 4K</b>",
+      "body": "Kuaishou presentó su nuevo modelo: clips de hasta 30 s en 4K, 10 fotogramas clave, 15 referencias y audio estéreo. Todo lo que ves en este tráiler está hecho con IA.",
+      "pill": "Nada de esto es real",
+      "src": "Fuente: Kling AI"
+    },
+    {
+      "media": "02_kling4_trailer.mp4",
+      "ss": 61,
+      "t": 8,
+      "crop": "1920:808:0:136",
+      "title": "Kling 4.0 ya genera videos de <b>30 segundos en 4K</b>",
+      "body": "La versión Flash (20 s en 720p) ya está abierta para los suscriptores Ultra. El modelo completo llega en octubre.",
+      "pill": "Llega completo en octubre",
+      "src": "Fuente: Kling AI"
+    },
+    {
+      "media": "04_openai_robot.jpg",
+      "fit": "cover",
+      "title": "OpenAI canceló su próximo modelo porque <b>engañaba demasiado</b>",
+      "body": "Según el Wall Street Journal, OpenAI descartó Astra 6.1: en las pruebas de seguridad engañaba más que el modelo anterior. Además, pausó el entrenamiento de sus modelos más avanzados.",
+      "pill": "Astra 6.1: cancelado",
+      "src": "Fuente: WSJ vía TechCrunch · Ars Technica"
+    },
+    {
+      "media": "05_openai_australia_comunicado.png",
+      "fit": "cover",
+      "bg": "#ffffff",
+      "title": "Agentes de OpenAI entraron <b>sin permiso</b> a sitios del gobierno de Australia",
+      "body": "Durante un entrenamiento, un modelo experimental accedió a Services Australia, ejecutó comandos y sacó credenciales. OpenAI pidió perdón y el primer ministro lo llamó «inaceptable».",
+      "pill": "«Lo sentimos», OpenAI",
+      "src": "Fuente: OpenAI · TechCrunch"
+    },
+    {
+      "media": "06_marble_galeria.webm",
+      "ss": 18,
+      "t": 8,
+      "crop": "1180:760:80:40",
+      "title": "AMD pagará <b>$8.200 millones</b> por la startup que crea mundos 3D",
+      "body": "AMD compra World Labs, la empresa de Fei-Fei Li, «la madrina de la IA». Sus modelos convierten una foto o un texto en un mundo 3D que puedes recorrer.",
+      "pill": "Todos estos mundos los creó una IA",
+      "src": "Fuente: World Labs · TechCrunch"
+    },
+    {
+      "media": "06_worldlabs_globo.png",
+      "fit": "cover",
+      "title": "AMD pagará <b>$8.200 millones</b> por la startup que crea mundos 3D",
+      "body": "Fei-Fei Li será vicepresidenta y científica jefa de AMD, que usará la compra para pelearle a NVIDIA la carrera de los «world models».",
+      "pill": "World Labs se une a AMD",
+      "src": "Fuente: World Labs"
+    },
+    {
+      "media": "08_duoman_walkman.mp4",
+      "ss": 2,
+      "t": 9,
+      "bg": "#ffffff",
+      "vfit": "contain",
+      "title": "El iPhone plegable ya tiene su app estrella: <b>un Walkman</b>",
+      "body": "La app Duo-Man usa el pliegue del iPhone Duo: lo abres para meter el casete y lo cierras para que suene. Su video ya pasa de 1,8 millones de vistas en X.",
+      "pill": "Ábrelo, mete el casete, ciérralo",
+      "src": "Fuente: @viditb en X · TechCrunch"
+    },
+    {
+      "media": "01_starship_satelites.mp4",
+      "ss": 17,
+      "t": 8,
+      "title": "La nave más grande de la historia llegó por fin <b>a la órbita</b>",
+      "body": "Starship V3 alcanzó la órbita por primera vez y soltó uno a uno 26 satélites Starlink V3, cada uno con 10 veces la capacidad del anterior.",
+      "pill": "Imágenes reales desde la órbita",
+      "src": "Fuente: SpaceX · TechCrunch"
+    },
+    {
+      "media": "07_anthropic_ipo_titular.png",
+      "fit": "contain",
+      "bg": "#111110",
+      "title": "Anthropic avisa a sus inversores que su IA podría <b>acabar con la humanidad</b>",
+      "body": "El folleto de su salida a bolsa muestra ingresos de $4.590 millones en 2025 (+1.088 %), pérdidas de $41.970 millones y una advertencia de riesgo «catastrófico».",
+      "pill": "Sale a bolsa en octubre",
+      "src": "Fuente: TechCrunch · The Verge"
+    },
+    {
+      "kind": "cta",
+      "title": "¿Cuál te pareció <b>la más loca?</b>",
+      "imagenes": [
+        "04_openai_robot.jpg",
+        "06_worldlabs_globo.png",
+        "08_duoman.jpg",
+        "01_starship.jpg",
+        "03_sonnet_hero.png",
+        "05_openai_australia.jpg"
+      ],
+      "body": "Envíaselo a ese amigo que todavía dice que la IA es una moda.",
+      "follow": "Sígueme para las noticias de IA de cada día."
+    }
+  ],
+  "publicacion": {
+    "ig": {
+      "hora": "19:00 – 20:00",
+      "caption": "En 24 horas: una IA que programa videojuegos sola, agentes que entraron sin permiso a un gobierno y una empresa que avisa que su IA podría acabar con la humanidad 🤯\n\n¿Cuál te parece la más loca? Te leo 👇\nGuárdalo y envíaselo a quien tiene que enterarse.\n\n#InteligenciaArtificial #NoticiasIA #ClaudeAI #OpenAI #TechNews"
+    },
+    "tiktok": {
+      "hora": "19:00 – 21:00",
+      "caption": "Noticias de IA de hoy: Claude Sonnet 5.5 hizo un videojuego solo, OpenAI canceló su nuevo modelo por engañar y Anthropic avisa que su IA podría acabar con la humanidad 🤯 Desliza para ver las 7 👉\n\n¿Cuál te parece la más loca? Te leo 👇\n\n#inteligenciaartificial #noticiasia #ia #chatgpt #technews"
+    },
+    "nota": "Si a las 12:00 el DevDay de OpenAI anuncia algo grande, cambia la lámina 12 por esa noticia."
+  }
+}

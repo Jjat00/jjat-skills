@@ -12,3 +12,6 @@ skills-lock.json
 
 # Skill evaluation workspaces
 *-workspace/
+# Temporales de render
+.render_tmp/
+__pycache__/

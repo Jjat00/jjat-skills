@@ -2,7 +2,26 @@
 
 Skills para [Claude Code](https://docs.anthropic.com/en/docs/claude-code): LangSmith mejoradas + Gemini Embedding 2.
 
+## Estructura
+
+Las skills se ordenan por carpetas de categoría. Cada skill es una carpeta con su `SKILL.md`:
+
+```
+skills/
+  contenido/     # publicaciones para redes: carruseles, posts
+  ia-agentes/    # agentes, LLMs, evaluación, embeddings
+  video/         # edición y producción de video
+```
+
+Una skill nueva va en la carpeta de su categoría; si no encaja en ninguna, se crea una categoría nueva (nombre corto, en minúscula). Luego se enlaza en Claude Code con `./install.sh` y se añade a la tabla de su categoría abajo.
+
 ## Skills disponibles
+
+### Contenido
+
+| Skill | Descripcion |
+|---|---|
+| `noticias-ia-carrusel` | Investiga las noticias de IA y software del dia (ultimas 24-36 h, fecha verificada), descarga o captura el video o la imagen de cada una y renderiza el carrusel para Instagram (4:5, video + imagen) y TikTok (9:16, solo imagenes) con caption, hashtags, hora y una pagina de descarga. Playwright + ffmpeg. |
 
 ### Gemini Embedding 2
 
@@ -23,9 +42,18 @@ Basada en la [documentacion oficial de Google](https://ai.google.dev/gemini-api/
 
 Basadas en las [skills oficiales de LangSmith](https://github.com/langchain-ai/langsmith-skills), con contenido ampliado del curso [Foundation: Building Reliable Agents](https://academy.langchain.com/courses/building-reliable-agents). Cada skill es un **superset estricto** de su contraparte oficial.
 
-Para ver en detalle las mejoras sobre las oficiales, consulta [skills/README.md](skills/README.md).
+Para ver en detalle las mejoras sobre las oficiales, consulta [skills/ia-agentes/README.md](skills/ia-agentes/README.md).
 
 ## Instalacion
+
+### Local (enlaces a este repo)
+
+Enlaza todas las skills del repo en `~/.claude/skills` (los cambios en el repo se ven al instante):
+
+```bash
+./install.sh            # enlaza todas
+./install.sh --dry-run  # muestra que haria
+```
 
 ### Con npx (recomendado)
 
@@ -39,26 +67,26 @@ O instala skills individuales:
 
 ```bash
 # Gemini Embedding 2
-npx skills add Jjat00/jjat-skills/skills/gemini-embedding-2 -g
+npx skills add Jjat00/jjat-skills/skills/ia-agentes/gemini-embedding-2 -g
 
 # LangSmith
-npx skills add Jjat00/jjat-skills/skills/jjat-langsmith-tracing -g
-npx skills add Jjat00/jjat-skills/skills/jjat-langsmith-datasets -g
-npx skills add Jjat00/jjat-skills/skills/jjat-langsmith-evaluators -g
-npx skills add Jjat00/jjat-skills/skills/jjat-langsmith-production -g
+npx skills add Jjat00/jjat-skills/skills/ia-agentes/jjat-langsmith-tracing -g
+npx skills add Jjat00/jjat-skills/skills/ia-agentes/jjat-langsmith-datasets -g
+npx skills add Jjat00/jjat-skills/skills/ia-agentes/jjat-langsmith-evaluators -g
+npx skills add Jjat00/jjat-skills/skills/ia-agentes/jjat-langsmith-production -g
 ```
 
 ### Con Claude Code CLI
 
 ```bash
 # Gemini Embedding 2
-claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/gemini-embedding-2
+claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/ia-agentes/gemini-embedding-2
 
 # LangSmith
-claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/jjat-langsmith-tracing
-claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/jjat-langsmith-datasets
-claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/jjat-langsmith-evaluators
-claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/jjat-langsmith-production
+claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/ia-agentes/jjat-langsmith-tracing
+claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/ia-agentes/jjat-langsmith-datasets
+claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/ia-agentes/jjat-langsmith-evaluators
+claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skills/ia-agentes/jjat-langsmith-production
 ```
 
 ```bash
@@ -66,11 +94,11 @@ claude skill install --url https://github.com/Jjat00/jjat-skills/tree/main/skill
 git clone https://github.com/Jjat00/jjat-skills.git
 cd jjat-skills
 
-claude skill install --path ./skills/gemini-embedding-2
-claude skill install --path ./skills/jjat-langsmith-tracing
-claude skill install --path ./skills/jjat-langsmith-datasets
-claude skill install --path ./skills/jjat-langsmith-evaluators
-claude skill install --path ./skills/jjat-langsmith-production
+claude skill install --path ./skills/ia-agentes/gemini-embedding-2
+claude skill install --path ./skills/ia-agentes/jjat-langsmith-tracing
+claude skill install --path ./skills/ia-agentes/jjat-langsmith-datasets
+claude skill install --path ./skills/ia-agentes/jjat-langsmith-evaluators
+claude skill install --path ./skills/ia-agentes/jjat-langsmith-production
 ```
 
 ### Verificar instalacion

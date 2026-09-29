@@ -1,0 +1,173 @@
+<title>__TITLE__</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: encabezado + datos de publicación, pestañas por red y rejilla de láminas en el orden del carrusel. Paleta de jaimeaza.tech, tema oscuro único. */
+:root{
+  --bg:#0a0a0a; --surface:#111110; --surface-2:#161615; --line:#232323;
+  --fg:#ededed; --muted:#a1a09a; --dim:#666666; --cyan:#68ddfd; --violet:#9e8cfc;
+  --grad:linear-gradient(90deg,var(--cyan),var(--violet));
+  --display:"Anton","Impact","Arial Narrow",sans-serif;
+  --body:"Poppins",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:40px 20px 80px;display:flex;flex-direction:column;gap:32px}
+header{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.eyebrow i{width:9px;height:9px;border-radius:50%;background:var(--grad)}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(40px,7vw,76px);line-height:1;text-transform:uppercase;margin:0;text-wrap:balance}
+h1 b{font-weight:400;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--muted);max-width:62ch;margin:0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border-radius:4px;padding:10px 16px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--muted)}
+button:hover{border-color:#3a3a38;color:var(--fg)}
+button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.tab[aria-selected="true"]{background:var(--surface-2);color:var(--fg);border-color:#3a3a38;box-shadow:inset 0 -2px 0 var(--cyan)}
+.btn{background:var(--fg);color:var(--bg);border-color:var(--fg);font-weight:700}
+.btn:hover{background:#fff;color:var(--bg)}
+.plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.box.wide{grid-column:span 2}
+@media (max-width:640px){.box.wide{grid-column:auto}}
+.box h2{font-size:12px;font-family:var(--mono);font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:0}
+.caption{white-space:pre-wrap;margin:0}
+.big{font-family:var(--display);font-size:34px;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;width:fit-content}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.grid.tt{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.slide{display:flex;flex-direction:column;gap:10px;min-width:0}
+.frame{position:relative;aspect-ratio:4/5;max-width:100%;border-radius:4px;overflow:hidden;background:var(--surface);border:1px solid var(--line)}
+.grid.tt .frame{aspect-ratio:9/16}
+.frame video,.frame img{width:100%;height:100%;object-fit:cover;display:block}
+.no{position:absolute;top:8px;left:8px;font-family:var(--mono);font-size:12px;background:rgba(10,10,10,.8);border:1px solid var(--line);padding:2px 8px;border-radius:3px}
+.kind{position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;padding:2px 8px;border-radius:3px;background:rgba(10,10,10,.8);border:1px solid var(--line);color:var(--cyan)}
+.kind.img{color:var(--violet)}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.meta span{font-size:13px;color:var(--muted);min-width:0}
+.status{font-size:13px;color:var(--muted);min-height:1.3em;margin:0}
+.note{font-size:13px;color:var(--dim);margin:0}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow"><i></i><span id="date"></span> · <span id="count"></span> láminas · <span id="fmt"></span></div>
+    <h1 id="headline"></h1>
+    <p class="lead" id="lead"></p>
+    <div class="tabs" role="tablist" aria-label="Red social">
+      <button class="tab" role="tab" id="tab-ig" aria-selected="true" type="button">Instagram · videos e imágenes</button>
+      <button class="tab" role="tab" id="tab-tt" aria-selected="false" type="button">TikTok · solo imágenes</button>
+    </div>
+  </header>
+
+  <section class="plan" aria-label="Datos para publicar">
+    <div class="box">
+      <h2>Publicar</h2>
+      <div class="big" id="hour"></div>
+      <p class="note" id="when"></p>
+      <p class="note" id="extra"></p>
+    </div>
+    <div class="box wide">
+      <h2>Caption</h2>
+      <p class="caption" id="cap"></p>
+      <div><button id="copy" type="button">Copiar caption</button> <span class="status" id="copyst" role="status"></span></div>
+    </div>
+  </section>
+
+  <p class="status" id="dlst" role="status"></p>
+  <section class="grid" id="grid" aria-label="Láminas del carrusel"></section>
+  <p class="note" id="sources"></p>
+</div>
+
+<script>
+const DATA = __DATA__;
+const $ = id => document.getElementById(id);
+const grid = $("grid"), dlst = $("dlst");
+let downloads = null, current = "ig";
+
+const P = {
+  ig: { dir: "slides", fmt: "Instagram · 1080×1350 (4:5)",
+    lead: "El carrusel listo para Instagram. Descarga cada lámina y súbelas en este orden: los números son la posición en el carrusel. Los videos van con su audio original.",
+    when: "Instagram admite hasta 20 elementos por carrusel, mezclando video e imagen." },
+  tt: { dir: "tiktok", fmt: "TikTok · 1080×1920 (9:16)",
+    lead: "La versión para el modo foto de TikTok: imágenes verticales. Donde había un video va su mejor fotograma, y la franja de abajo queda libre para el caption y los botones. Súbelas en este orden y añade un sonido en tendencia desde la app.",
+    when: "Publica como «Foto» en TikTok y elige un sonido en tendencia; el texto de las láminas se lee sin audio." },
+};
+
+$("date").textContent = DATA.fecha_texto;
+$("count").textContent = DATA.slides.length;
+$("headline").innerHTML = DATA.titular_html;
+$("extra").textContent = DATA.nota || "";
+$("sources").textContent = DATA.fuentes || "";
+
+function render() {
+  const cfg = P[current], pub = DATA.publicacion[current === "ig" ? "ig" : "tiktok"];
+  grid.innerHTML = "";
+  grid.classList.toggle("tt", current === "tt");
+  $("fmt").textContent = cfg.fmt; $("lead").textContent = cfg.lead; $("when").textContent = cfg.when;
+  $("hour").textContent = pub.hora; $("cap").textContent = pub.caption; $("copyst").textContent = "";
+  DATA.slides.forEach(sl => {
+    const file = current === "tt" ? sl.file.replace(/\.mp4$/, ".png") : sl.file;
+    const isVid = file.endsWith(".mp4");
+    const el = document.createElement("article");
+    el.className = "slide";
+    el.innerHTML = `<div class="frame">${isVid
+        ? `<video src="${cfg.dir}/${file}" muted loop playsinline autoplay preload="metadata"></video>`
+        : `<img src="${cfg.dir}/${file}" alt="" loading="lazy">`}
+        <span class="no">${file.slice(0, 2)}</span><span class="kind ${isVid ? "" : "img"}">${isVid ? "VIDEO " + sl.dur : "IMAGEN"}</span></div>
+      <div class="meta"><span></span><button class="btn" type="button">Descargar</button></div>`;
+    el.querySelector(".meta span").textContent = sl.label;
+    el.querySelector("img")?.setAttribute("alt", sl.label);
+    const btn = el.querySelector("button");
+    btn.hidden = !downloads;
+    btn.setAttribute("aria-label", "Descargar lámina " + file.slice(0, 2));
+    btn.addEventListener("click", () => save(cfg.dir, file, btn));
+    grid.appendChild(el);
+  });
+}
+
+async function save(dir, file, btn) {
+  if (!downloads) return;
+  btn.disabled = true; const label = btn.textContent; btn.textContent = "Preparando…";
+  try {
+    const res = await fetch(dir + "/" + file);
+    if (!res.ok) throw { message: "No se pudo leer el archivo (" + res.status + ")." };
+    await downloads.save({ filename: DATA.prefijo + (dir === "tiktok" ? "tiktok_" : "ig_") + file, data: await res.blob() });
+    dlst.textContent = "Lámina " + file.slice(0, 2) + " guardada.";
+    btn.textContent = "Guardada ✓";
+  } catch (e) {
+    btn.textContent = label;
+    dlst.textContent = e && e.code === "declined" ? "Descarga cancelada." : "No se pudo descargar la lámina " + file.slice(0, 2) + ". " + (e && e.message ? e.message : "");
+  } finally { btn.disabled = false; }
+}
+
+for (const [id, key] of [["tab-ig", "ig"], ["tab-tt", "tt"]]) {
+  $(id).addEventListener("click", () => {
+    current = key;
+    $("tab-ig").setAttribute("aria-selected", key === "ig");
+    $("tab-tt").setAttribute("aria-selected", key === "tt");
+    try { localStorage.setItem("red", key); } catch {}
+    render();
+  });
+}
+try { if (localStorage.getItem("red") === "tt") current = "tt"; } catch {}
+$("tab-ig").setAttribute("aria-selected", current === "ig");
+$("tab-tt").setAttribute("aria-selected", current === "tt");
+render();
+
+(async () => {
+  try { downloads = await window.claude?.use?.("downloads"); } catch { downloads = null; }
+  if (downloads) document.querySelectorAll(".meta button").forEach(b => b.hidden = false);
+  else dlst.textContent = "Las descargas no están disponibles en esta vista. Abre la página en claude.ai para descargar.";
+})();
+
+$("copy").addEventListener("click", async () => {
+  const st = $("copyst");
+  try { await navigator.clipboard.writeText($("cap").textContent); st.textContent = "Copiado."; }
+  catch {
+    const r = document.createRange(); r.selectNodeContents($("cap"));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    st.textContent = "Texto seleccionado: cópialo con Ctrl+C.";
+  }
+});
+</script>
