@@ -1,0 +1,162 @@
+{
+ "source": "video.mp4",
+ "cams": "cams.npz",
+ "scene": "scene.npz",
+ "src_start": 0.0,
+ "src_end": 48.0,
+ "draw_keys": [
+  [
+   0.6,
+   0
+  ],
+  [
+   3.9,
+   186
+  ],
+  [
+   11.6,
+   594
+  ],
+  [
+   14.2,
+   693
+  ]
+ ],
+ "color": "#12CDBE",
+ "color_light": "#86F5EA",
+ "band_w": 8.0,
+ "edge_w": 0.8,
+ "band_alpha": 0.5,
+ "edge_alpha": 1.0,
+ "chev_spacing": 16,
+ "chev_len": 4.5,
+ "chev_thick": 1.8,
+ "chev_alpha": 0.92,
+ "chev_speed": 14,
+ "hot_len": 40,
+ "sample_m": 1.0,
+ "dot_r": 2.6,
+ "ring_r": 11,
+ "beam_h": 26,
+ "start_marker_src": 0.15,
+ "start_marker_off_src": 6.0,
+ "bloom_small": 0.6,
+ "bloom_large": 0.9,
+ "sharpen": 0.6,
+ "vignette": 0.35,
+ "grade": {
+  "contrast": 1.08,
+  "brightness": 0.0,
+  "saturation": 1.12,
+  "gamma": 1.03,
+  "cool_shadows": 0.025,
+  "warm_highlights": 0.02
+ },
+ "title": "POLIDEPORTIVO",
+ "subtitle": "",
+ "handle": "",
+ "card_bg": [
+  8,
+  30,
+  36
+ ],
+ "card_outline": [
+  110,
+  240,
+  225,
+  120
+ ],
+ "sub_color": [
+  150,
+  245,
+  232
+ ],
+ "icon_top": [
+  120,
+  248,
+  236
+ ],
+ "icon_bottom": [
+  8,
+  165,
+  155
+ ],
+ "endcard_sec": 0,
+ "fade_route_at_end": false,
+ "beam_dir": [
+  1.0,
+  0.0
+ ],
+ "speed_keys": [
+  [
+   0.0,
+   1.0
+  ],
+  [
+   3.6,
+   1.0
+  ],
+  [
+   6.5,
+   2.4
+  ],
+  [
+   14.0,
+   2.4
+  ],
+  [
+   16.5,
+   4.2
+  ],
+  [
+   28.5,
+   4.2
+  ],
+  [
+   31.5,
+   1.0
+  ],
+  [
+   48.0,
+   1.0
+  ]
+ ],
+ "ref_text": "COLEGIO LLORENTE",
+ "ref_on": 11.2,
+ "ref_dot_r": 1.8,
+ "ref_ring_r": 7,
+ "ref_leader": 46,
+ "ref_size": 20,
+ "plaza_trace": [
+  29.8,
+  31.6
+ ],
+ "plaza_fill": [
+  30.8,
+  32.0
+ ],
+ "plaza_fill_alpha": 0.28,
+ "plaza_line_w": 0.9,
+ "corner_r": 1.1,
+ "dim_off": 5.0,
+ "dim_ext0": 1.2,
+ "dim_w": 0.45,
+ "dim_h_on": 32.0,
+ "dim_v_on": 32.5,
+ "dim_h_text": "69 m",
+ "dim_v_text": "52 m",
+ "area_on": 35.2,
+ "area_text": "0,0035 km²",
+ "area_small_text": "≈ 3.500 m²",
+ "area_size": 42,
+ "area_small_size": 23,
+ "area_dy": 6,
+ "card_on": 33.6,
+ "card_gap": 14,
+ "area_small_color": [
+  225,
+  250,
+  246
+ ],
+ "area_fit_px": 520
+}

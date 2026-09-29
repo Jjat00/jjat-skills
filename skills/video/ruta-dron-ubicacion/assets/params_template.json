@@ -1,0 +1,112 @@
+{
+ "_notas": {
+  "src_start/src_end": "segundos del video original que entran al video final",
+  "speed_keys": "[segundo_original, velocidad] con transiciones suaves; 2.0 = doble velocidad. Terminar en 1.0 al llegar al destino",
+  "draw_src": "[inicio, fin] en segundos del video original en que la ruta se dibuja de punta a punta",
+  "start_marker_src / start_marker_off_src": "cuándo aparece y se va el punto de partida",
+  "band_w / edge_w": "ancho de la franja y de sus bordes en METROS (8 m sirve para calles de pueblo; avenidas anchas 10-12)",
+  "chev_*": "flechas: separación, largo y grosor en metros; chev_speed en m/s",
+  "hot_len": "largo en metros de la cabeza brillante mientras se dibuja",
+  "dot_r / ring_r": "radio del punto y de las ondas en metros",
+  "beam_h": "alto del haz del pin, en múltiplos de 1 m del suelo a esa distancia (26 funcionó)",
+  "beam_dir": "dirección en el plano para medir la escala del haz; dejar [1,0]",
+  "title/subtitle/handle": "textos de la tarjeta y del cierre",
+  "color/color_light": "azul principal y claro de la ruta (hex)",
+  "card_bg/sub_color/icon_top/icon_bottom": "colores RGB de la tarjeta",
+  "endcard_sec": "segundos del cierre"
+ },
+ "source": "video.mp4",
+ "cams": "cams.npz",
+ "scene": "scene.npz",
+ "src_start": 8.5,
+ "src_end": 69.0,
+ "draw_src": [
+  9.6,
+  20.5
+ ],
+ "color": "#1F8FFF",
+ "color_light": "#8CCBFF",
+ "band_w": 8.0,
+ "edge_w": 0.8,
+ "band_alpha": 0.5,
+ "edge_alpha": 1.0,
+ "chev_spacing": 16,
+ "chev_len": 4.5,
+ "chev_thick": 1.8,
+ "chev_alpha": 0.92,
+ "chev_speed": 14,
+ "hot_len": 40,
+ "sample_m": 1.0,
+ "dot_r": 2.6,
+ "ring_r": 11,
+ "beam_h": 26,
+ "start_marker_src": 9.0,
+ "start_marker_off_src": 14.0,
+ "bloom_small": 0.6,
+ "bloom_large": 0.9,
+ "sharpen": 0.6,
+ "vignette": 0.35,
+ "grade": {
+  "contrast": 1.08,
+  "brightness": 0.0,
+  "saturation": 1.12,
+  "gamma": 1.03,
+  "cool_shadows": 0.025,
+  "warm_highlights": 0.02
+ },
+ "title": "NOMBRE DEL LUGAR",
+ "subtitle": "Subtítulo o tipo de propiedad",
+ "handle": "@cuenta",
+ "card_bg": [
+  9,
+  20,
+  38
+ ],
+ "sub_color": [
+  150,
+  210,
+  255
+ ],
+ "icon_top": [
+  110,
+  200,
+  255
+ ],
+ "icon_bottom": [
+  25,
+  110,
+  245
+ ],
+ "endcard_sec": 3.0,
+ "fade_route_at_end": false,
+ "beam_dir": [
+  1.0,
+  0.0
+ ],
+ "speed_keys": [
+  [
+   8.5,
+   2.0
+  ],
+  [
+   21.0,
+   2.0
+  ],
+  [
+   24.0,
+   2.6
+  ],
+  [
+   54.0,
+   2.6
+  ],
+  [
+   62.0,
+   1.0
+  ],
+  [
+   69.0,
+   1.0
+  ]
+ ]
+}

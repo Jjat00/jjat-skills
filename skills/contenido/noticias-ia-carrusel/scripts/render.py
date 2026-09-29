@@ -20,7 +20,12 @@ MODES = {
     "ig": dict(h=1350, pad="56px 52px 60px", hero=800, h2bottom=70, h2size=88, tagtop=52, cta_pad=120),
     # TikTok tapa la franja de abajo (caption) y el borde derecho (botones): se dejan libres.
     "tiktok": dict(h=1920, pad="150px 130px 290px 52px", hero=1180, h2bottom=380, h2size=92, tagtop=150, cta_pad=170),
+    # Reel: mismas zonas seguras que TikTok, sin párrafo (no da tiempo a leerlo) y titular más grande.
+    "reel": dict(h=1920, pad="150px 130px 290px 52px", hero=1180, h2bottom=380, h2size=92, tagtop=150, cta_pad=170),
 }
+REEL_CSS = ".txt p{display:none}.txt h1{font-size:62px;margin-bottom:34px}.pill{font-size:34px}"
+REEL_T = {"cover": 3.0, "cta": 3.0, "news": 3.5}   # segundos por lámina en el reel
+WHOOSH = pathlib.Path("/mnt/d/sonidos/transiciones/whoosh-corto.mp3")  # biblioteca de sonidos de Jaime
 
 PLEXUS_JS = """
 (() => {
@@ -94,6 +99,60 @@ def page_html(plan, i, s, hole, uri):
       <div class="src">{H.escape(s.get('src', ''))}</div></div>"""
 
 
+def image_segment(png, t, out):
+    """Lámina fija -> video con zoom lento (1.00 -> 1.04) y audio en silencio."""
+    n = int(round(t * 30))
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-loop", "1", "-t", str(t), "-i", str(png),
+                    "-f", "lavfi", "-t", str(t), "-i", "anullsrc=r=48000:cl=stereo",
+                    "-filter_complex", f"[0:v]scale=2160:3840,zoompan=z='1+0.04*on/{n}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={n}:s=1080x1920:fps=30,format=yuv420p[v]",
+                    "-map", "[v]", "-map", "1:a", "-c:v", "libx264", "-crf", "20", "-preset", "medium", "-c:a", "aac", "-b:a", "128k", "-ar", "48000",
+                    "-t", str(t), str(out)], check=True)
+
+
+def normalize_segment(src, out, clip_vol=0.35):
+    """Video de lámina -> 30 fps, audio estéreo 48 kHz (en silencio si no trae) y volumen del clip bajo."""
+    has_audio = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "a", "-show_entries", "stream=index", "-of", "csv=p=0", str(src)],
+                               capture_output=True, text=True).stdout.strip() != ""
+    cmd = ["ffmpeg", "-v", "error", "-y", "-i", str(src)]
+    if has_audio:
+        cmd += ["-filter_complex", f"[0:a]volume={clip_vol},aresample=48000,aformat=channel_layouts=stereo[a]", "-map", "0:v", "-map", "[a]"]
+    else:
+        d = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(src)], capture_output=True, text=True).stdout.strip()
+        cmd += ["-f", "lavfi", "-t", d, "-i", "anullsrc=r=48000:cl=stereo", "-map", "0:v", "-map", "1:a"]
+    cmd += ["-r", "30", "-c:v", "libx264", "-crf", "20", "-preset", "medium", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k", "-shortest", str(out)]
+    subprocess.run(cmd, check=True)
+
+
+def build_reel(seg_dir, out_mp4, musica=None):
+    """Une los segmentos, pone un whoosh en cada corte y, si hay, una pista de música de fondo."""
+    segs = sorted(seg_dir.glob("[0-9][0-9].mp4"))
+    lst = seg_dir / "lista.txt"
+    lst.write_text("".join(f"file '{p.as_posix()}'\n" for p in segs), encoding="utf-8")
+    joined = seg_dir / "unido.mp4"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", str(joined)], check=True)
+    durs = [float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(p)],
+                                 capture_output=True, text=True).stdout) for p in segs]
+    total = sum(durs)
+    cuts, acc = [], 0.0
+    for d in durs[:-1]:
+        acc += d; cuts.append(acc)
+    inputs = ["-i", str(joined)]
+    fc, mix = [], ["[0:a]"]
+    k = 1
+    if WHOOSH.exists():
+        for c in cuts:
+            inputs += ["-i", str(WHOOSH)]
+            ms = max(0, int((c - 0.18) * 1000))
+            fc.append(f"[{k}:a]volume=0.55,adelay={ms}|{ms}[w{k}]"); mix.append(f"[w{k}]"); k += 1
+    if musica and pathlib.Path(musica).exists():
+        inputs += ["-i", str(musica)]
+        fc.append(f"[{k}:a]volume=0.25,atrim=0:{total},afade=t=out:st={total - 1.5}:d=1.5[m]"); mix.append("[m]"); k += 1
+    fc.append(f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,alimiter=limit=0.9[a]")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", ";".join(fc), "-map", "0:v", "-map", "[a]",
+                    "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", "-t", str(total), str(out_mp4)], check=True)
+    return total
+
+
 def ffmpeg_still(src, t, crop, out):
     vf = (f"crop={crop}," if crop else "") + "scale=iw:ih"
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(t), "-i", str(src), "-frames:v", "1", "-vf", vf, str(out)], check=True)
@@ -125,18 +184,20 @@ async def main():
     ap.add_argument("plan")
     ap.add_argument("--mode", choices=MODES, default="ig")
     ap.add_argument("--only", type=int, nargs="*")
+    ap.add_argument("--musica", help="solo reel: pista de música de fondo (opcional)")
     a = ap.parse_args()
     plan_path = pathlib.Path(a.plan).resolve()
     base = plan_path.parent
     plan = json.loads(plan_path.read_text(encoding="utf-8"))
     medios = base / "medios"
-    out = base / ("carrusel" if a.mode == "ig" else "carrusel_tiktok")
+    out = base / {"ig": "carrusel", "tiktok": "carrusel_tiktok", "reel": "reel/segmentos"}[a.mode]
     tmp = base / ".render_tmp"
-    out.mkdir(exist_ok=True); tmp.mkdir(exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True); tmp.mkdir(exist_ok=True)
     m = MODES[a.mode]
     W, Hh = 1080, m["h"]
     vars_css = (f":root{{--h:{Hh}px;--hero:{m['hero']}px;--h2bottom:{m['h2bottom']}px;--h2size:{m['h2size']}px;--tagtop:{m['tagtop']}px}}"
-                f".page{{padding:{m['pad']}}}.page.cover{{padding:0}}.page.cta{{padding-top:{m['cta_pad']}px}}")
+                f".page{{padding:{m['pad']}}}.page.cover{{padding:0}}.page.cta{{padding-top:{m['cta_pad']}px}}"
+                + (REEL_CSS if a.mode == "reel" else ""))
 
     def uri(name):
         p = pathlib.Path(name)
@@ -150,7 +211,9 @@ async def main():
                 continue
             name = f"{i + 1:02d}"
             vid = is_video(s.get("media", ""))
-            if a.mode == "tiktok" and s.get("tt_media"):
+            if a.mode == "reel":
+                s = dict(s, t=s.get("reel_t", REEL_T[s.get("kind", "news")]), ss=s.get("reel_ss", s.get("ss", 0)))
+            if a.mode in ("tiktok", "reel") and s.get("tt_media"):
                 # imagen propia para TikTok (p. ej. paneles apilados en vertical)
                 s = dict(s, media=s["tt_media"], fit=s.get("tt_fit", "contain"), pill=s.get("tt_pill", s.get("pill", "")))
                 vid = False
@@ -169,15 +232,28 @@ async def main():
             await pg.evaluate(PLEXUS_JS.replace('%SEED%', str(97 + i * 131)))  # tras cargar fuentes: el layout ya es el final
             if not vid:
                 await pg.screenshot(path=str(out / f"{name}.png"))
-                print("png", name)
+                if a.mode == "reel":
+                    image_segment(out / f"{name}.png", s["t"], out / f"{name}.mp4")
+                    (out / f"{name}.png").unlink()
+                    print("reel", name, "imagen con zoom")
+                else:
+                    print("png", name)
                 continue
             r = await pg.evaluate("(()=>{const r=document.querySelector('.media').getBoundingClientRect();return [r.x,r.y,r.width,r.height]})()")
             rect = [round(v) for v in r]
             ov = tmp / f"ov{name}.png"
             await pg.screenshot(path=str(ov), omit_background=True)
-            audio = ffmpeg_compose(s, medios / s["media"], ov, rect, W, Hh, out / f"{name}.mp4")
+            dst = out / f"{name}.mp4"
+            raw = tmp / f"raw{name}.mp4" if a.mode == "reel" else dst
+            audio = ffmpeg_compose(s, medios / s["media"], ov, rect, W, Hh, raw)
+            if a.mode == "reel":
+                normalize_segment(raw, dst)
             print("mp4", name, "con audio" if audio else "sin audio")
         await b.close()
+    if a.mode == "reel" and not a.only:
+        final = base / "reel" / f"reel_{plan['fecha']}.mp4"
+        total = build_reel(out, final, a.musica)
+        print(f"reel {final} ({total:.1f} s)")
 
 
 asyncio.run(main())
