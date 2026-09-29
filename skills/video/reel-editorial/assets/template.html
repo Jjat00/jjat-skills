@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Instrument Serif";
+        font-style: italic;
+        font-weight: 400;
+        src: url("assets/fonts/InstrumentSerif-Italic.ttf") format("truetype");
+      }
+      @font-face {
+        font-family: "Instrument Serif";
+        font-style: normal;
+        font-weight: 400;
+        src: url("assets/fonts/InstrumentSerif-Regular.ttf") format("truetype");
+      }
+      :root {
+        --paper: #f1ece3;
+        --ink: #1b1714;
+        --red: #e0301e;
+        --blue: #2f4be0;
+        --clay: #d9876a;
+        --claude: #d97757;
+        --dim: #8a8177;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: Montserrat, sans-serif;
+        color: var(--ink);
+      }
+      .layer {
+        position: absolute;
+        inset: 0;
+      }
+      .serif {
+        font-family: "Instrument Serif", serif;
+        font-style: italic;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+      }
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+      }
+      .red {
+        color: var(--red);
+      }
+
+      /* ---------- pantalla completa ---------- */
+      #full {
+        overflow: hidden;
+        background: #120e0b;
+      }
+      #full-zoom {
+        position: absolute;
+        inset: 0;
+        transform-origin: 54.7% 40%;
+      }
+      #presenter-full {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 54.7% 50%;
+      }
+      .full-shade {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 620px;
+        pointer-events: none;
+      }
+      .full-shade.top {
+        top: 0;
+        background: linear-gradient(to bottom, rgba(18, 14, 11, 0.55), rgba(18, 14, 11, 0));
+      }
+      .full-shade.bottom {
+        bottom: 0;
+        background: linear-gradient(to top, rgba(18, 14, 11, 0.6), rgba(18, 14, 11, 0));
+      }
+
+      /* ---------- pantalla dividida ---------- */
+      #split {
+        opacity: 0;
+        overflow: hidden;
+      }
+      #paper {
+        position: absolute;
+        inset: 0;
+        background: var(--paper);
+      }
+      .grain {
+        position: absolute;
+        inset: 0;
+        opacity: 0.22;
+        mix-blend-mode: multiply;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='7'/><feColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.28  0 0 0 0 0.22  0 0 0 0.55 0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+      }
+      #blob-top {
+        position: absolute;
+        top: -70px;
+        right: -110px;
+        width: 400px;
+        height: 230px;
+      }
+      #blob-bottom {
+        position: absolute;
+        bottom: 30px;
+        left: -70px;
+        width: 300px;
+        height: 180px;
+      }
+      #card-wrap {
+        position: absolute;
+        left: 150px;
+        top: 880px;
+        width: 780px;
+        height: 880px;
+      }
+      #card {
+        position: absolute;
+        inset: 0;
+        background: var(--red);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 30px 60px rgba(27, 23, 20, 0.28);
+      }
+      #presenter-alpha {
+        position: absolute;
+        left: -235px;
+        bottom: 0;
+        width: 1250px;
+        height: 1071px;
+      }
+      .panel {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 880px;
+      }
+      .label {
+        position: absolute;
+        left: 80px;
+        top: 96px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        color: var(--ink);
+        opacity: 0;
+      }
+      .label b {
+        color: var(--red);
+      }
+      .beat {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+      }
+      .headline {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        font-size: 108px;
+        line-height: 0.98;
+      }
+      .headline span {
+        display: block;
+      }
+      .pill {
+        display: inline-block;
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        font-size: 30px;
+        padding: 12px 26px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .pill.red {
+        background: var(--red);
+        color: #fff8f2;
+      }
+      .pill.outline {
+        background: transparent;
+        color: var(--ink);
+        border: 3px solid var(--ink);
+      }
+
+      /* tarjetas de comparación */
+      #p1-cards {
+        position: absolute;
+        left: 80px;
+        top: 470px;
+        width: 920px;
+        height: 330px;
+        perspective: 1400px;
+      }
+      .cmp {
+        position: absolute;
+        top: 0;
+        width: 430px;
+        height: 300px;
+        border-radius: 22px;
+        background: #fffaf3;
+        border: 3px solid var(--ink);
+        padding: 34px 34px;
+        opacity: 0;
+      }
+      .cmp img {
+        width: 78px;
+        height: 78px;
+      }
+      .cmp .name {
+        margin-top: 18px;
+        font-size: 50px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .cmp .who {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 24px;
+        color: var(--dim);
+        margin-top: 4px;
+      }
+      .cmp .badge {
+        position: absolute;
+        bottom: -28px;
+        opacity: 0;
+      }
+      #p1-left {
+        left: 0;
+      }
+      #p1-right {
+        right: 0;
+      }
+      #p1-left .badge {
+        right: -18px;
+      }
+      #p1-right .badge {
+        left: -18px;
+      }
+      .ink-logo {
+        filter: brightness(0) saturate(100%);
+      }
+
+      /* problema */
+      .chip-row {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 520px;
+        display: flex;
+        align-items: center;
+        gap: 26px;
+      }
+      .chip-row img {
+        width: 96px;
+        height: 96px;
+      }
+      .giant {
+        position: absolute;
+        left: 70px;
+        font-size: 178px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        line-height: 0.9;
+      }
+      .strike {
+        position: absolute;
+        height: 14px;
+        background: var(--red);
+        transform-origin: left center;
+      }
+      .xmark {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        opacity: 0;
+      }
+      .xmark {
+        display: block;
+      }
+      .xmark i {
+        position: absolute;
+        left: -60px;
+        top: 66px;
+        width: 270px;
+        height: 18px;
+        background: var(--red);
+        border-radius: 9px;
+      }
+      .mascot {
+        position: absolute;
+        width: 150px;
+        height: 140px;
+        opacity: 0;
+      }
+
+      /* ventanas de terminal */
+      .term {
+        position: absolute;
+        left: 80px;
+        width: 920px;
+        border-radius: 22px;
+        background: #1b1714;
+        color: #f1ece3;
+        font-family: "JetBrains Mono", monospace;
+        box-shadow: 0 26px 50px rgba(27, 23, 20, 0.3);
+        overflow: hidden;
+        opacity: 0;
+      }
+      .term .bar {
+        height: 58px;
+        background: #2a241f;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 24px;
+        font-size: 22px;
+        color: #b9ae9f;
+      }
+      .term .bar i {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #5a4f45;
+      }
+      .term .bar span {
+        margin-left: 14px;
+      }
+      .panes {
+        display: flex;
+        height: 320px;
+      }
+      .pane {
+        flex: 1;
+        padding: 26px 28px;
+        font-size: 25px;
+        line-height: 1.55;
+      }
+      .pane + .pane {
+        border-left: 3px solid #3a322b;
+      }
+      .pane .head {
+        font-weight: 800;
+        font-size: 27px;
+        margin-bottom: 12px;
+      }
+      .dim {
+        color: #9c9084;
+      }
+      .orange {
+        color: var(--claude);
+      }
+      .ok {
+        color: #7ccf8a;
+      }
+      #p3-word {
+        position: absolute;
+        left: 80px;
+        top: 150px;
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 800;
+        font-size: 128px;
+        letter-spacing: -0.05em;
+        opacity: 0;
+      }
+      #p3-sub {
+        position: absolute;
+        left: 84px;
+        top: 305px;
+        font-size: 50px;
+        opacity: 0;
+      }
+      .sticker {
+        position: absolute;
+        opacity: 0;
+      }
+      #p4-term .body {
+        padding: 30px 32px;
+        font-size: 28px;
+        line-height: 1.6;
+      }
+      #p4-commit {
+        opacity: 0;
+        margin: 10px 0 16px;
+        display: inline-block;
+        background: #2d3a2c;
+        color: #bfe9c4;
+        border-radius: 12px;
+        padding: 8px 18px;
+      }
+      #p4-prompt {
+        border: 3px solid var(--claude);
+        border-radius: 14px;
+        padding: 18px 22px;
+        min-height: 150px;
+        font-size: 30px;
+      }
+      #p4-prompt {
+        white-space: pre-wrap;
+      }
+      #p4-prompt .c {
+        opacity: 0;
+      }
+      #p4-caret {
+        display: inline-block;
+        width: 16px;
+        height: 34px;
+        background: var(--claude);
+        vertical-align: -6px;
+        margin-left: 4px;
+      }
+
+      /* conversación */
+      .agent {
+        position: absolute;
+        top: 170px;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        opacity: 0;
+      }
+      .avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--ink);
+      }
+      .avatar img {
+        width: 64px;
+        height: 64px;
+      }
+      .agent .nm {
+        font-size: 46px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .role {
+        position: absolute;
+        opacity: 0;
+      }
+      .bubble {
+        position: absolute;
+        max-width: 700px;
+        font-size: 36px;
+        font-weight: 600;
+        line-height: 1.25;
+        padding: 22px 30px;
+        border-radius: 30px;
+        opacity: 0;
+      }
+      .bubble.l {
+        left: 80px;
+        background: #fffaf3;
+        border: 3px solid var(--ink);
+        border-bottom-left-radius: 8px;
+      }
+      .bubble.r {
+        right: 80px;
+        background: var(--ink);
+        color: var(--paper);
+        border-bottom-right-radius: 8px;
+      }
+
+      /* resultado */
+      #p6-review {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 180px;
+        height: 170px;
+        border-radius: 26px;
+        background: #fffaf3;
+        border: 3px solid var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        padding: 0 40px;
+        opacity: 0;
+      }
+      #p6-review img {
+        width: 80px;
+        height: 80px;
+      }
+      #p6-review .t {
+        font-size: 50px;
+        font-weight: 800;
+      }
+      #p6-review .s {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 26px;
+        color: var(--dim);
+      }
+      #p6-spin {
+        margin-left: auto;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 8px solid #e6dccf;
+        border-top-color: var(--red);
+      }
+      #p6-stamp {
+        position: absolute;
+        left: 120px;
+        top: 420px;
+        font-size: 112px;
+        font-weight: 900;
+        letter-spacing: 0.02em;
+        color: var(--red);
+        border: 12px solid var(--red);
+        border-radius: 20px;
+        padding: 6px 34px;
+        opacity: 0;
+      }
+      #p6-chips {
+        position: absolute;
+        left: 80px;
+        top: 690px;
+        display: flex;
+        gap: 22px;
+      }
+      #p6-chips .pill {
+        opacity: 0;
+      }
+      .node {
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        border: 4px solid var(--ink);
+        background: #fffaf3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 38px;
+        font-weight: 800;
+      }
+      .node img {
+        width: 80px;
+        height: 80px;
+      }
+      #p6-arrows {
+        position: absolute;
+        left: 330px;
+        top: 440px;
+        width: 420px;
+        height: 250px;
+      }
+      #p6-round {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 520px;
+        text-align: center;
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 800;
+        font-size: 34px;
+      }
+
+      /* pantalla completa: textos superpuestos */
+      .ovl {
+        position: absolute;
+        left: 60px;
+        right: 60px;
+        top: 150px;
+        text-align: center;
+        opacity: 0;
+      }
+      .ovl-card {
+        display: inline-block;
+        background: var(--paper);
+        padding: 30px 46px 38px;
+        border-radius: 14px;
+        box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
+      }
+      .ovl-card .s1 {
+        font-size: 74px;
+        line-height: 1;
+      }
+      .ovl-card .s2 {
+        font-size: 96px;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+        color: var(--red);
+        opacity: 0;
+        display: none;
+      }
+
+      /* subtítulos */
+      .cap {
+        position: absolute;
+        left: 50px;
+        right: 50px;
+        text-align: center;
+        font-family: Montserrat, sans-serif;
+        font-weight: 800;
+        font-size: 74px;
+        line-height: 1.12;
+        color: #fffaf3;
+        -webkit-text-stroke: 14px #1b1714;
+        paint-order: stroke fill;
+        opacity: 0;
+      }
+      .cap-split {
+        top: 1560px;
+      }
+      .cap-full {
+        top: 1400px;
+      }
+      .cap .w {
+        display: inline-block;
+      }
+      .cap .key {
+        color: var(--red);
+        -webkit-text-stroke: 0;
+        background: #fffaf3;
+        border-radius: 14px;
+        padding: 0 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="__DURATION__"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- ============ PANTALLA COMPLETA ============ -->
+      <div id="full" class="layer">
+        <div id="full-zoom">
+          <video
+            id="presenter-full"
+            src="assets/edit.mp4"
+            data-start="0"
+            data-duration="__DURATION__"
+            data-track-index="0"
+            muted
+            playsinline
+          ></video>
+        </div>
+        <div class="full-shade top"></div>
+        <div class="full-shade bottom"></div>
+
+        <!--__OVERLAYS__-->
+      </div>
+
+      <!-- ============ PANTALLA DIVIDIDA ============ -->
+      <div id="split" class="layer">
+        <div id="paper">
+          <div class="grain"></div>
+          <svg id="blob-top" viewBox="0 0 520 300">
+            <path
+              fill="#D9876A"
+              d="M60 0 L520 0 L520 250 L488 262 L470 240 L446 268 L420 246 L392 276 L366 250 L340 282 L310 256 L284 290 L254 262 L226 286 L196 254 L170 272 L142 240 L118 250 L96 214 L72 222 L60 186 L34 190 L40 150 L12 140 L30 104 L6 86 L34 58 L18 26 Z"
+            />
+          </svg>
+          <svg id="blob-bottom" viewBox="0 0 300 180">
+            <path
+              fill="#D9876A"
+              d="M0 20 L40 34 L64 8 L96 30 L122 4 L150 28 L182 10 L204 40 L236 26 L252 60 L282 74 L262 104 L290 128 L256 146 L268 180 L0 180 Z"
+            />
+          </svg>
+        </div>
+
+        <div id="card-wrap">
+          <div id="card">
+            <video
+              id="presenter-alpha"
+              src="assets/presenter-alpha.webm"
+              data-start="0"
+              data-duration="__DURATION__"
+              data-track-index="1"
+              muted
+              playsinline
+            ></video>
+          </div>
+        </div>
+
+        <!--__PANELS__-->
+      </div>
+
+      <!-- ============ SUBTÍTULOS ============ -->
+      <div id="captions" class="layer">
+        <!--__CAPTIONS__-->
+      </div>
+
+      <!-- ============ AUDIO ============ -->
+      <audio id="voice" src="assets/edit.mp4" data-start="0" data-duration="__DURATION__" data-track-index="10" data-volume="1"></audio>
+      <!--__SFX__-->
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const pop = (sel, t, from = {}) =>
+        tl.fromTo(sel, { opacity: 0, scale: 0.6, ...from }, { opacity: 1, scale: 1, x: 0, y: 0, duration: 0.42, ease: "back.out(2.2)" }, t);
+      const rise = (sel, t, y = 40) =>
+        tl.fromTo(sel, { opacity: 0, y }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, t);
+      const show = (sel, a, b) => {
+        tl.set(sel, { opacity: 1 }, a);
+        if (b !== undefined) tl.set(sel, { opacity: 0 }, b);
+      };
+
+      /* estados base: los fromTo repetidos no deben decidir el reposo antes de su primer tramo */
+      tl.set("#card-wrap", { y: 0, scale: 1 }, 0);
+      tl.set("#paper", { yPercent: 0 }, 0);
+      tl.set("#full-zoom", { scale: 1 }, 0);
+
+      /* ---------- composiciones ---------- */
+      /*__LAYOUT__*/
+
+      /* manchas de papel: deriva lenta durante todo el video */
+      tl.fromTo("#blob-top", { rotation: -2, x: 0 }, { rotation: 2, x: -14, duration: 16, ease: "sine.inOut", yoyo: true, repeat: 3 }, 0);
+      tl.fromTo("#blob-bottom", { rotation: 1, y: 0 }, { rotation: -2, y: 10, duration: 13, ease: "sine.inOut", yoyo: true, repeat: 4 }, 0);
+
+      /*__SCENES_JS__*/
+
+      /* ---------- subtítulos ---------- */
+      /*__CAPTIONS__*/
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

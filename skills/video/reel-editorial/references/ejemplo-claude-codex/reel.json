@@ -1,0 +1,255 @@
+{
+ "duration": 65.0,
+ "windows": [
+  {
+   "layout": "full",
+   "start": 0.0,
+   "end": 2.9,
+   "zoom": [
+    1.0,
+    1.05
+   ]
+  },
+  {
+   "layout": "split",
+   "start": 2.9,
+   "end": 15.1,
+   "card": "red"
+  },
+  {
+   "layout": "full",
+   "start": 15.1,
+   "end": 18.62,
+   "zoom": [
+    1.14,
+    1.19
+   ]
+  },
+  {
+   "layout": "split",
+   "start": 18.62,
+   "end": 34.9,
+   "card": "blue"
+  },
+  {
+   "layout": "full",
+   "start": 34.9,
+   "end": 39.0,
+   "zoom": [
+    1.05,
+    1.09
+   ]
+  },
+  {
+   "layout": "split",
+   "start": 39.0,
+   "end": 57.3,
+   "card": "red"
+  },
+  {
+   "layout": "full",
+   "start": 57.3,
+   "end": 62.2,
+   "zoom": [
+    1.1,
+    1.15
+   ]
+  },
+  {
+   "layout": "split",
+   "start": 62.2,
+   "end": 65.0,
+   "card": "red"
+  }
+ ],
+ "keywords": [
+  "claude",
+  "code",
+  "codex",
+  "implementar",
+  "evaluar",
+  "evaluador",
+  "evaluación",
+  "sesga",
+  "errores",
+  "herdr",
+  "commit",
+  "apruebo",
+  "pr",
+  "iterando",
+  "mejor",
+  "mejores",
+  "resultado",
+  "resultados",
+  "tips",
+  "fácil",
+  "otro",
+  "comunicar",
+  "listo"
+ ],
+ "sfx": [
+  {
+   "name": "pop",
+   "at": 2.96,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 5.04,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 6.62,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 11.66,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 12.76,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 16.44,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 19.44,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 21.46,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 23.46,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 30.5,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 38.52,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 39.06,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 40.12,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 43.0,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 43.9,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 44.8,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 51.8,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 52.46,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 61.22,
+   "volume": 0.3
+  },
+  {
+   "name": "pop",
+   "at": 63.56,
+   "volume": 0.3
+  },
+  {
+   "name": "click-suave",
+   "at": 31.4,
+   "volume": 0.16
+  },
+  {
+   "name": "click-suave",
+   "at": 31.82,
+   "volume": 0.16
+  },
+  {
+   "name": "click-suave",
+   "at": 32.24,
+   "volume": 0.16
+  },
+  {
+   "name": "click-suave",
+   "at": 32.66,
+   "volume": 0.16
+  },
+  {
+   "name": "click-suave",
+   "at": 33.08,
+   "volume": 0.16
+  },
+  {
+   "name": "click-suave",
+   "at": 33.5,
+   "volume": 0.16
+  },
+  {
+   "name": "click-suave",
+   "at": 33.92,
+   "volume": 0.16
+  },
+  {
+   "name": "click-suave",
+   "at": 34.34,
+   "volume": 0.16
+  },
+  {
+   "name": "chime-exito",
+   "at": 48.82,
+   "volume": 0.45
+  },
+  {
+   "name": "ping",
+   "at": 56.64,
+   "volume": 0.3
+  },
+  {
+   "name": "impacto-grave-swell",
+   "at": 0.0,
+   "volume": 0.22
+  }
+ ],
+ "typing": [
+  {
+   "id": "pc",
+   "text": "revisa este commit con Codex como evaluador y dime si todo está ok",
+   "start": 31.3,
+   "end": 34.6
+  }
+ ]
+}
