@@ -21,13 +21,14 @@ Una skill nueva va en la carpeta de su categoría; si no encaja en ninguna, se c
 
 | Skill | Descripcion |
 |---|---|
-| `noticias-ia-carrusel` | Investiga las noticias de IA y software del dia (ultimas 24-36 h, fecha verificada), descarga o captura el video o la imagen de cada una y renderiza el carrusel para Instagram (4:5, video + imagen) y TikTok (9:16, solo imagenes) con caption, hashtags, hora y una pagina de descarga. Playwright + ffmpeg. |
+| `noticias-ia-carrusel` | Investiga las noticias de IA y software del dia (ultimas 24-36 h, fecha verificada), descarga o captura el video o la imagen de cada una y renderiza el carrusel para Instagram (4:5, video + imagen), TikTok (9:16, solo imagenes) y un reel con o sin narracion, con caption, hashtags, hora y una pagina de descarga. Playwright + ffmpeg + edge-tts. |
 
 ### Video
 
 | Skill | Descripcion |
 |---|---|
 | `reel-editorial` | Convierte una toma de webcam o celular en un reel vertical con estilo editorial: montaje por transcripcion (quita tomas falsas y pausas), persona recortada sobre tarjetas de color, paneles de motion graphics, subtitulos palabra a palabra y audio a -14 LUFS. Local con ffmpeg, faster-whisper y [HyperFrames](https://hyperframes.heygen.com). |
+| `ruta-dron-ubicacion` | Video de ubicacion estilo inmobiliaria desde una toma de dron de cualquier propiedad (local, casa, lote, finca): ruta animada pegada a las calles, pin, tarjeta y cierre; opcionalmente el lote con cotas y area. OpenCV + COLMAP + ffmpeg. |
 
 ### Gemini Embedding 2
 

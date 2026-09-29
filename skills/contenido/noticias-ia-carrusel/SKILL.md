@@ -1,6 +1,6 @@
 ---
 name: noticias-ia-carrusel
-description: Investiga las noticias de inteligencia artificial y software del DÍA (últimas 24-36 h, fecha verificada), descarga o captura el video o la imagen de cada una y entrega el carrusel ya renderizado para Instagram (4:5, láminas de video MP4 e imagen PNG) y TikTok (9:16, solo imágenes), con caption, hashtags, hora de publicación y una página de descarga. Estilo visual de jaimeaza.tech. Úsala siempre que Jaime pida "las noticias de IA de hoy", "el carrusel de hoy", "el post del día", "ideas de posts de IA para hoy", "haz el carrusel de noticias" o quiera publicar noticias de IA/software en sus redes, aunque no nombre la skill. Solo para el nicho IA y software; otro nicho es otra skill.
+description: Investiga las noticias de inteligencia artificial y software del DÍA (últimas 24-36 h, fecha verificada), descarga o captura el video o la imagen de cada una y entrega el carrusel ya renderizado para Instagram (4:5, láminas de video MP4 e imagen PNG) y TikTok (9:16, solo imágenes) más un reel vertical con las mismas noticias (con o sin narración, con la voz que elija Jaime), con caption, hashtags, hora de publicación y una página de descarga. Estilo visual de jaimeaza.tech. Úsala siempre que Jaime pida "las noticias de IA de hoy", "el carrusel de hoy", "el reel de noticias", "el post del día", "ideas de posts de IA para hoy" o quiera publicar noticias de IA/software en sus redes, aunque no nombre la skill. Solo para el nicho IA y software; otro nicho es otra skill.
 ---
 
 # Carrusel diario de noticias de IA y software
