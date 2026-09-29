@@ -123,6 +123,21 @@ def normalize_segment(src, out, clip_vol=0.35):
     subprocess.run(cmd, check=True)
 
 
+def dur_of(p):
+    return float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(p)],
+                                capture_output=True, text=True).stdout.strip())
+
+
+def add_voice(seg, voice):
+    """Mezcla la narración sobre el segmento (el sonido del clip baja para que no compita con la voz)."""
+    tmp = seg.with_name(seg.stem + "_v.mp4")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(seg), "-i", str(voice), "-filter_complex",
+                    "[0:a]volume=0.45[c];[1:a]adelay=150|150,aresample=48000,aformat=channel_layouts=stereo,volume=1.15[v];"
+                    "[c][v]amix=inputs=2:normalize=0:duration=first[a]",
+                    "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-ar", "48000", str(tmp)], check=True)
+    tmp.replace(seg)
+
+
 def build_reel(seg_dir, out_mp4, musica=None):
     """Une los segmentos, pone un whoosh en cada corte y, si hay, una pista de música de fondo."""
     segs = sorted(seg_dir.glob("[0-9][0-9].mp4"))
@@ -147,7 +162,7 @@ def build_reel(seg_dir, out_mp4, musica=None):
     if musica and pathlib.Path(musica).exists():
         inputs += ["-i", str(musica)]
         fc.append(f"[{k}:a]volume=0.25,atrim=0:{total},afade=t=out:st={total - 1.5}:d=1.5[m]"); mix.append("[m]"); k += 1
-    fc.append(f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,alimiter=limit=0.9[a]")
+    fc.append(f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[a]")
     subprocess.run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", ";".join(fc), "-map", "0:v", "-map", "[a]",
                     "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", "-t", str(total), str(out_mp4)], check=True)
     return total
@@ -170,7 +185,8 @@ def ffmpeg_compose(s, src, ov, rect, W, Hh, out):
                                capture_output=True, text=True).stdout.strip() != ""
     fc = (f"color=0x0a0a0a:s={W}x{Hh}:r=30:d={t}[bg];[0:v]fps=30,{vf},setsar=1[v];"
           f"[bg][v]overlay={x}:{y}:shortest=1[b];[b][1:v]overlay=0:0,format=yuv420p[out]")
-    cmd = ["ffmpeg", "-v", "error", "-y", "-ss", str(s.get("ss", 0)), "-t", str(t), "-i", str(src), "-loop", "1", "-t", str(t), "-i", str(ov),
+    # -stream_loop: si la lámina dura más que lo que queda de clip (p. ej. por la narración), el clip se repite
+    cmd = ["ffmpeg", "-v", "error", "-y", "-stream_loop", "-1", "-ss", str(s.get("ss", 0)), "-t", str(t), "-i", str(src), "-loop", "1", "-t", str(t), "-i", str(ov),
            "-filter_complex", fc, "-map", "[out]"]
     if has_audio:
         cmd += ["-map", "0:a:0", "-c:a", "aac", "-b:a", "128k", "-af", f"afade=t=in:d=0.3,afade=t=out:st={t - 0.5}:d=0.5"]
@@ -185,6 +201,7 @@ async def main():
     ap.add_argument("--mode", choices=MODES, default="ig")
     ap.add_argument("--only", type=int, nargs="*")
     ap.add_argument("--musica", help="solo reel: pista de música de fondo (opcional)")
+    ap.add_argument("--sin-voz", action="store_true", help="solo reel: ignora reel/voz/ aunque exista (versión sin narración)")
     a = ap.parse_args()
     plan_path = pathlib.Path(a.plan).resolve()
     base = plan_path.parent
@@ -211,8 +228,14 @@ async def main():
                 continue
             name = f"{i + 1:02d}"
             vid = is_video(s.get("media", ""))
+            voice = base / "reel" / "voz" / f"{name}.mp3"
+            if a.sin_voz:
+                voice = pathlib.Path("/nonexistent")
             if a.mode == "reel":
-                s = dict(s, t=s.get("reel_t", REEL_T[s.get("kind", "news")]), ss=s.get("reel_ss", s.get("ss", 0)))
+                t = s.get("reel_t", REEL_T[s.get("kind", "news")])
+                if voice.exists():
+                    t = max(t, round(dur_of(voice) + 0.5, 2))   # la lámina dura lo que dura su voz
+                s = dict(s, t=t, ss=s.get("reel_ss", s.get("ss", 0)))
             if a.mode in ("tiktok", "reel") and s.get("tt_media"):
                 # imagen propia para TikTok (p. ej. paneles apilados en vertical)
                 s = dict(s, media=s["tt_media"], fit=s.get("tt_fit", "contain"), pill=s.get("tt_pill", s.get("pill", "")))
@@ -235,6 +258,8 @@ async def main():
                 if a.mode == "reel":
                     image_segment(out / f"{name}.png", s["t"], out / f"{name}.mp4")
                     (out / f"{name}.png").unlink()
+                    if voice.exists():
+                        add_voice(out / f"{name}.mp4", voice)
                     print("reel", name, "imagen con zoom")
                 else:
                     print("png", name)
@@ -248,10 +273,13 @@ async def main():
             audio = ffmpeg_compose(s, medios / s["media"], ov, rect, W, Hh, raw)
             if a.mode == "reel":
                 normalize_segment(raw, dst)
+                if voice.exists():
+                    add_voice(dst, voice)
             print("mp4", name, "con audio" if audio else "sin audio")
         await b.close()
     if a.mode == "reel" and not a.only:
-        final = base / "reel" / f"reel_{plan['fecha']}.mp4"
+        narrado = (not a.sin_voz) and (base / "reel" / "voz").exists() and any((base / "reel" / "voz").glob("*.mp3"))
+        final = base / "reel" / f"reel_{plan['fecha']}{'_narrado' if narrado else ''}.mp4"
         total = build_reel(out, final, a.musica)
         print(f"reel {final} ({total:.1f} s)")
 

@@ -5,7 +5,7 @@ description: Investiga las noticias de inteligencia artificial y software del D�
 
 # Carrusel diario de noticias de IA y software
 
-Resultado: un carrusel de 10 a 14 láminas sobre las noticias de IA y software de hoy, listo para subir. No son ideas ni guiones: son los archivos finales más una página donde se descarga cada uno.
+Resultado: un carrusel de 10 a 14 láminas y un reel con las mismas noticias de IA y software de hoy, listos para subir. No son ideas ni guiones: son los archivos finales más una página donde se descarga cada uno.
 
 - **Instagram:** 1080×1350. Las láminas con video son MP4 de 8-9 s con audio original; las demás, PNG.
 - **TikTok (modo foto):** 1080×1920, solo PNG. La franja inferior y el borde derecho quedan libres para la interfaz de TikTok.
@@ -63,6 +63,60 @@ uv run --with playwright python $S/render.py "<carpeta>/plan.json" --mode ig
 uv run --with playwright python $S/render.py "<carpeta>/plan.json" --mode tiktok
 ```
 `--only 4 7` re-renderiza solo esas láminas. Revisa el resultado con una hoja de miniaturas (un fotograma de cada MP4 y cada PNG, `hstack`/`vstack` con ffmpeg) y corrige: texto que se sale, medio mal encuadrado, rótulos del video, subtítulos que chocan con la frase del medio.
+
+### 6b. Reel con las mismas noticias
+Siempre se entrega también un reel vertical (1080×1920) con las mismas láminas.
+- Cada lámina muestra el titular grande y la frase sobre el medio. El párrafo no sale, porque en el tiempo que dura no se alcanza a leer.
+- Las láminas de video usan su clip; las de imagen, un zoom lento.
+- En cada corte suena un whoosh de `D:\sonidos\transiciones`.
+- La mezcla sale normalizada a −14 LUFS.
+
+**Antes de hacerlo, pregunta en una sola AskUserQuestion** (dos preguntas):
+1. **¿Con narración o sin narración?**
+   - Sin narración: unos 45 s (3,5 s por noticia). Jaime pone un audio en tendencia desde la app.
+   - Con narración: la voz cuenta cada noticia y cada lámina dura lo que dura su frase (unos 55-60 s).
+2. **Voz** (solo si hay narración). Ofrece estas y deja «Other» para cualquier otra:
+   - **Gonzalo, colombiano** (`es-CO-GonzaloNeural`, edge-tts, **gratis**). Es la opción por defecto.
+   - **Salomé, colombiana** (`es-CO-SalomeNeural`, edge-tts, **gratis**).
+   - **Locutor latino de ElevenLabs** (`gWS10amJmGDgPWjYrvU7`, voz comercial, **de pago**).
+   - **Jennifer, colombiana, de ElevenLabs** (`Y11rBAl8on4Ba9ZpY3DY`, **de pago**).
+
+   Otras voces de la cuenta, con `list_voices` de HF Studio:
+   - Joel (`2mAzYQbilw9TukGpFoQV`, voz grave mexicana);
+   - Carlos Corella (`LnGOA2SxH2fX1e1iNzEp`);
+   - Alejandro (`qXvyMc4erc4RzqXLpiiR`).
+
+   En edge-tts también hay `es-MX-JorgeNeural` y `es-MX-DaliaNeural`.
+
+**Narración:** campo `"narracion"` en cada lámina del plan.
+- **Largo:** 8-15 palabras por lámina.
+- **Gancho:** el de la portada va en los primeros 2-3 s y cabe en 12 palabras.
+- **Números:** escritos en letras, para que la voz los lea bien («seis punto uno», «ocho mil doscientos millones», «cuatro K»).
+- **Duración total:** 60 s como máximo.
+
+**Voz gratis (edge-tts):**
+```bash
+python $S/narrar.py "<carpeta>/plan.json" --voz es-CO-GonzaloNeural --velocidad +15%
+```
+Escribe `reel/voz/NN.mp3` e imprime la duración de cada frase. Si el total pasa de 60 s, acorta textos.
+
+**Voz de ElevenLabs (de pago):**
+1. Por cada lámina, llama a `text_to_speech` de HF Studio, primero sin `quote_id`, y suma el costo.
+2. Díselo a Jaime y espera su OK (regla de costo visible).
+3. Genera con los `quote_id`.
+4. Descarga cada MP3 a `reel/voz/NN.mp3`.
+
+**Render:**
+```bash
+uv run --with playwright python $S/render.py "<carpeta>/plan.json" --mode reel            # con voz si existe reel/voz/
+uv run --with playwright python $S/render.py "<carpeta>/plan.json" --mode reel --sin-voz  # sin narración
+```
+Salen `reel/reel_<fecha>.mp4` y `reel/reel_<fecha>_narrado.mp4`.
+- **Tramo distinto para el reel:** `reel_ss` elige otro tramo del video (el clip del carrusel puede caer en un rótulo del tráiler).
+- **Duración a mano:** `reel_t` fija cuánto dura una lámina.
+- **Música:** `--musica <archivo>` agrega una pista de fondo.
+
+Revisa una tira de fotogramas y el volumen (`ebur128`) antes de entregar.
 
 ### 7. Página de descarga
 ```bash
