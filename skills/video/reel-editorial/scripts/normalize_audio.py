@@ -26,10 +26,10 @@ m = json.loads(re.search(r"\{[^{}]*\}", probe, re.S).group(0))
 af = (
     f"loudnorm=I={args.lufs}:TP=-2:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
     f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']},"
-    "aresample=192000,alimiter=limit=0.75:attack=1:release=50:level=false,aresample=48000"
+    "aresample=192000,alimiter=limit=0.63:attack=1:release=50:level=false,aresample=48000"
 )
 subprocess.run(
-    ["ffmpeg", "-v", "error", "-y", "-i", args.src, "-c:v", "copy", "-af", af, "-c:a", "aac", "-b:a", "192k",
+    ["ffmpeg", "-v", "error", "-y", "-i", args.src, "-c:v", "copy", "-af", af, "-c:a", "aac", "-b:a", "256k",
      "-movflags", "+faststart", args.out],
     check=True,
 )

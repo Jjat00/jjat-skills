@@ -68,6 +68,7 @@ uv run --with playwright python $S/render.py "<carpeta>/plan.json" --mode tiktok
 Siempre se entrega también un reel vertical (1080×1920) con las mismas láminas.
 - Cada lámina muestra el titular grande y la frase sobre el medio. El párrafo no sale, porque en el tiempo que dura no se alcanza a leer.
 - Las láminas de video usan su clip; las de imagen, un zoom lento.
+- Mientras suena la narración, el sonido del clip baja unos 20 dB (ducking con sidechain) y vuelve al terminar la frase.
 - En cada corte suena un whoosh de `D:\sonidos\transiciones`.
 - La mezcla sale normalizada a −14 LUFS.
 
