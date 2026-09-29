@@ -140,7 +140,7 @@ uv run --with playwright --with pillow python $S/render.py "<carpeta>/plan.json"
   - Abre con la noticia principal y sigue con lo que Jaime opina como AI Engineer: costo, evaluación, control de agentes. Nada de «¿cuál es la más loca?».
   - Cierra con una pregunta de trabajo.
   - Máximo 3 hashtags.
-  - Largo: 1.200-1.500 caracteres.
+  - Largo: 900-1.500 caracteres.
 - **Hora:** entre semana de 7:30 a 9:00, o junto con las demás redes si la portada dice «hoy».
 
 ### 7. Página de descarga
