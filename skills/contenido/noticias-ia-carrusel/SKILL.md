@@ -11,10 +11,10 @@ Resultado: un carrusel de 10 a 14 láminas sobre las noticias de IA y software d
 - **TikTok (modo foto):** 1080×1920, solo PNG. La franja inferior y el borde derecho quedan libres para la interfaz de TikTok.
 - **Página de descarga:** un Artifact con pestañas Instagram/TikTok, caption con botón de copiar y hora de publicación.
 
-Todo va en `C:\Users\Jaime Jjat\Downloads\posts_ia_<AAAA-MM-DD>\` (en WSL: `/mnt/c/Users/Jaime Jjat/Downloads/posts_ia_<fecha>/`):
+Todo va en `D:\contenido\noticias <día> <mes> <año>\` (en WSL: `/mnt/d/contenido/noticias <día> <mes> <año>/`). Ejemplo: `D:\contenido\noticias 29 sept 2026`. El nombre dice de qué trata la carpeta, con el mes abreviado en español (ene, feb, mar, abr, may, jun, jul, ago, sept, oct, nov, dic) y sin ceros a la izquierda en el día. Jaime lo pidió así el 2026-09-29. No uses `Downloads`, y no toques las carpetas `instragram` y `tiktok` que ya hay en `D:\contenido`. La ruta lleva espacios: ponla siempre entre comillas.
 
 ```
-posts_ia_<fecha>/
+noticias <día> <mes> <año>/
   plan.json            # el guion del carrusel (la fuente de verdad)
   medios/              # videos e imágenes originales de cada noticia
   carrusel/            # Instagram: 01.mp4, 02.mp4, 03.png…
