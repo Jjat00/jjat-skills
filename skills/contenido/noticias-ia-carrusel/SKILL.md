@@ -129,6 +129,20 @@ Salen `reel/reel_<fecha>.mp4` y `reel/reel_<fecha>_narrado.mp4`.
 
 Revisa una tira de fotogramas y el volumen (`ebur128`) antes de entregar.
 
+### 6c. LinkedIn
+El carrusel de LinkedIn es un **documento PDF**: no admite video, pero sí 4:5.
+```bash
+uv run --with playwright --with pillow python $S/render.py "<carpeta>/plan.json" --mode linkedin
+```
+- **Salida:** `carrusel_linkedin/NN.png`, con las láminas de video convertidas en su fotograma limpio (`still`), y `carrusel_linkedin_<fecha>.pdf`.
+- **Video:** el reel narrado se sube tal cual como video nativo.
+- **Texto (`publicacion.linkedin` en el plan):** tono profesional, de ingeniero.
+  - Abre con la noticia principal y sigue con lo que Jaime opina como AI Engineer: costo, evaluación, control de agentes. Nada de «¿cuál es la más loca?».
+  - Cierra con una pregunta de trabajo.
+  - Máximo 3 hashtags.
+  - Largo: 1.200-1.500 caracteres.
+- **Hora:** entre semana de 7:30 a 9:00, o junto con las demás redes si la portada dice «hoy».
+
 ### 7. Página de descarga
 ```bash
 python $S/build_page.py "<carpeta>/plan.json" --out <scratchpad>/pagina_<fecha>

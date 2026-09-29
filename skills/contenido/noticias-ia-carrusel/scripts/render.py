@@ -20,6 +20,8 @@ MODES = {
     "ig": dict(h=1350, pad="56px 52px 60px", hero=800, h2bottom=70, h2size=88, tagtop=52, cta_pad=120),
     # TikTok tapa la franja de abajo (caption) y el borde derecho (botones): se dejan libres.
     "tiktok": dict(h=1920, pad="150px 130px 290px 52px", hero=1180, h2bottom=380, h2size=92, tagtop=150, cta_pad=170),
+    # LinkedIn: mismo 4:5 que Instagram, pero solo imágenes (su carrusel es un PDF y no admite video).
+    "linkedin": dict(h=1350, pad="56px 52px 60px", hero=800, h2bottom=70, h2size=88, tagtop=52, cta_pad=120),
     # Reel: mismas zonas seguras que TikTok, sin párrafo (no da tiempo a leerlo) y titular más grande.
     "reel": dict(h=1920, pad="150px 130px 290px 52px", hero=1180, h2bottom=380, h2size=92, tagtop=150, cta_pad=170),
 }
@@ -209,7 +211,7 @@ async def main():
     base = plan_path.parent
     plan = json.loads(plan_path.read_text(encoding="utf-8"))
     medios = base / "medios"
-    out = base / {"ig": "carrusel", "tiktok": "carrusel_tiktok", "reel": "reel/segmentos"}[a.mode]
+    out = base / {"ig": "carrusel", "tiktok": "carrusel_tiktok", "linkedin": "carrusel_linkedin", "reel": "reel/segmentos"}[a.mode]
     tmp = base / ".render_tmp"
     out.mkdir(parents=True, exist_ok=True); tmp.mkdir(exist_ok=True)
     m = MODES[a.mode]
@@ -242,7 +244,7 @@ async def main():
                 # imagen propia para TikTok (p. ej. paneles apilados en vertical)
                 s = dict(s, media=s["tt_media"], fit=s.get("tt_fit", "contain"), pill=s.get("tt_pill", s.get("pill", "")))
                 vid = False
-            if vid and a.mode == "tiktok":
+            if vid and a.mode in ("tiktok", "linkedin"):
                 fr = tmp / f"still{name}.png"
                 ffmpeg_still(medios / s["media"], s.get("ss", 0) + s.get("still", 3), s.get("crop"), fr)
                 s = dict(s, media=str(fr), fit=s.get("vfit", "cover"))
@@ -279,6 +281,13 @@ async def main():
                     add_voice(dst, voice)
             print("mp4", name, "con audio" if audio else "sin audio")
         await b.close()
+    if a.mode == "linkedin":
+        pngs = sorted(out.glob("[0-9][0-9].png"))
+        pdf = base / f"carrusel_linkedin_{plan['fecha']}.pdf"
+        from PIL import Image
+        imgs = [Image.open(p).convert("RGB") for p in pngs]
+        imgs[0].save(pdf, save_all=True, append_images=imgs[1:], resolution=144)
+        print(f"pdf {pdf} ({len(imgs)} páginas)")
     if a.mode == "reel" and not a.only:
         narrado = (not a.sin_voz) and (base / "reel" / "voz").exists() and any((base / "reel" / "voz").glob("*.mp3"))
         final = base / "reel" / f"reel_{plan['fecha']}{'_narrado' if narrado else ''}.mp4"
