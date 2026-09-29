@@ -106,6 +106,18 @@ Escribe `reel/voz/NN.mp3` e imprime la duración de cada frase. Si el total pasa
 3. Genera con los `quote_id`.
 4. Descarga cada MP3 a `reel/voz/NN.mp3`.
 
+**Configuración de ElevenLabs (a 2026-09):**
+- **Modelo:** `model_id="eleven_v4"`. Salió el 28-09-2026, es el más natural y tiene el mejor acento latino. Hasta el 12-10 tiene 72 % de descuento.
+- **Parámetros:** `language_code="es"`, `stability` 0.5 (bájala a 0.3 si suena plana).
+- **Etiquetas de expresión:** 1 o 2 al inicio del guion, por ejemplo `[energetic news anchor, upbeat]` o `[serious]`.
+- **Pausas:** con `…` o `—` (sin SSML).
+- **Respaldo:** si v4 falla, usa `eleven_v3` con las mismas etiquetas.
+
+**Elegir la voz:** Jaime puede escuchar todas las voces en `http://localhost:3000/voices` (HF Studio, página «Voces»).
+- **Pestaña gratis:** las voces de edge-tts dicen su propio texto.
+- **Pestañas de pago:** tus voces de ElevenLabs y la biblioteca filtrada por acento colombiano (Lina, Mauricio Londoño, Fernando, Nicolás Gnecco, Nayla…).
+- **Voz de la biblioteca:** pasa también su `public_owner_id` a `text_to_speech`; se añade a la cuenta y ocupa un espacio de voces.
+
 **Render:**
 ```bash
 uv run --with playwright python $S/render.py "<carpeta>/plan.json" --mode reel            # con voz si existe reel/voz/
