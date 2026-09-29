@@ -150,6 +150,10 @@ async def main():
                 continue
             name = f"{i + 1:02d}"
             vid = is_video(s.get("media", ""))
+            if a.mode == "tiktok" and s.get("tt_media"):
+                # imagen propia para TikTok (p. ej. paneles apilados en vertical)
+                s = dict(s, media=s["tt_media"], fit=s.get("tt_fit", "contain"), pill=s.get("tt_pill", s.get("pill", "")))
+                vid = False
             if vid and a.mode == "tiktok":
                 fr = tmp / f"still{name}.png"
                 ffmpeg_still(medios / s["media"], s.get("ss", 0) + s.get("still", 3), s.get("crop"), fr)

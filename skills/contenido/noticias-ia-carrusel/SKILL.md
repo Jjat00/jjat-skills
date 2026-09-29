@@ -49,7 +49,9 @@ Prefijo `NN_` con el número de la noticia. Revisa cada medio (hoja de contactos
 Por cada video: `scripts/sheet.sh <video> 2 hoja.jpg [crop=…]` y mira la hoja. El número de cada miniatura es exactamente el segundo que va en el plan.
 - `ss`: inicio del clip (8-9 s en `t`). Evita tramos con subtítulos quemados en otro idioma o con rótulos del tráiler.
 - `still`: segundos desde `ss` para el fotograma de TikTok. Tiene que ser un fotograma limpio, sin rótulos.
-- `crop`: si el video trae franjas negras (tráileres), detéctalas con `cropdetect` (comando en `sheet.sh`).
+- `crop`: si el video trae franjas negras (tráileres), detéctalas con `cropdetect` (comando en `sheet.sh`). También sirve para quedarte con la pantalla del escenario en un keynote.
+- `tt_media` / `tt_pill`: imagen y frase propias solo para TikTok. Úsalas cuando el medio es muy horizontal (dos paneles lado a lado): en TikTok van apilados en vertical (ffmpeg `crop` + `vstack`) y la frase cambia de «izquierda/derecha» a «arriba/abajo».
+- Si el día tiene un evento después de publicar la versión de la mañana (keynote), rehaz el plan con sus láminas primero y guarda el anterior como `plan_manana.json` y `version_manana/`.
 
 ### 5. Escribir `plan.json`
 Copia la forma de `references/ejemplo-2026-09-29/plan.json`. Reglas de texto en `references/copy.md` (titular ≤ 12 palabras con una parte en `<b>` que se pinta con el degradado, párrafo ≤ 45 palabras con cifras concretas, frase corta sobre el medio, fuente siempre).
