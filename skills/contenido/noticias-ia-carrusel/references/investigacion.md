@@ -14,7 +14,7 @@ firecrawl-search. Revisa: The Verge, TechCrunch, Ars Technica, 9to5Mac, MacRumor
 Luma, Kling, Higgsfield, ElevenLabs, Figure, Tesla Optimus, Unitree, SpaceX), Hacker News (portada),
 Product Hunt de hoy, GitHub trending, y el resumen diario de Reddit que se publica en GitHub
 ("reddit-daily-news") porque Reddit bloquea el acceso directo.
-Para X, Reddit, TikTok e Instagram usa agent-browser (Bash), que abre un navegador real: ver la sección
+Para X, Reddit y TikTok usa agent-browser (sesión ya iniciada) (Bash), que abre un navegador real: ver la sección
 "Redes con agent-browser" de references/investigacion.md en la skill noticias-ia-carrusel.
 
 Prioriza noticias MUY VISUALES (demos en video, robots, gadgets, generadores de video o imagen,
@@ -48,32 +48,36 @@ de IA virales de la semana adaptables al nicho; 3) cambios recientes del algorit
 
 ## Redes con agent-browser
 
-`agent-browser` (CLI global, `~/.nvm/.../bin/agent-browser`) maneja un Chromium real, así que llega a donde WebFetch y Firecrawl se quedan fuera: X, Reddit, TikTok e Instagram. Sirve para confirmar la fecha exacta de un post, ver el video original, leer los comentarios y detectar qué se está compartiendo hoy.
+`agent-browser` maneja un Chrome real, así que llega a donde WebFetch y Firecrawl no llegan: X, Reddit y TikTok. Sirve para descubrir qué se comparte hoy, confirmar la fecha exacta de un post y encontrar el video original. Receta completa y lo que falla en el vault: `Conocimiento/Leer X, Reddit y TikTok con agent-browser y sesión propia.md`.
+
+**La sesión ya está iniciada** (a 2026-09-30) en el perfil `~/.agent-browser/profiles/redes-chrome`: X, Reddit, TikTok y YouTube. **No pidas a Jaime que vuelva a iniciar sesión** salvo que una red muestre la pantalla de login. Instagram todavía no tiene sesión en ese perfil.
 
 ```bash
-AB="agent-browser --session-name redes"         # guarda cookies y login entre sesiones
-$AB open "https://x.com/search?q=AI%20since%3A<FECHA>&f=live"
-$AB wait 3000 && $AB snapshot -i                # árbol accesible con refs @eN
-$AB get text @e12                               # texto de un post
-$AB scroll down 2000 && $AB snapshot -i         # más resultados
-$AB screenshot "<carpeta>/medios/NN_post.png"   # captura del post si no hay otro medio
-$AB close
+# 1. Lanzar el Chrome normal con el perfil logueado y puerto de depuración
+google-chrome --user-data-dir=$HOME/.agent-browser/profiles/redes-chrome --remote-debugging-port=9333 --no-first-run about:blank &
+# 2. Conectarse (en zsh usa la variable de entorno, no "$AB open": zsh no separa palabras)
+export AGENT_BROWSER_SESSION=redes
+agent-browser connect 9333
+agent-browser open "https://x.com/search?q=AI%20min_faves%3A1000%20within_time%3A1d&f=top"
+agent-browser wait 3000 && agent-browser snapshot -i
+agent-browser eval --stdin < extraer.js          # devuelve JSON como texto
+agent-browser screenshot "<carpeta>/medios/NN_post.png"
 ```
 
-- **Qué revisar:** X (búsqueda en vivo y cuentas oficiales: @OpenAI, @AnthropicAI, @GoogleDeepMind, @xai, @runwayml, @higgsfield_ai…), Reddit (`r/singularity`, `r/LocalLLaMA`, `r/artificial`, `r/OpenAI`, orden «new» o «top hoy»), TikTok (búsqueda «inteligencia artificial» y «IA noticias») e Instagram (reels de las cuentas del nicho).
-- **Login:** la primera vez, Jaime inicia sesión a mano con `agent-browser --session-name redes --headed open https://x.com/login` (igual para Instagram y TikTok). Con `--session-name redes` el estado queda guardado y las siguientes veces ya entra logueado. Nunca escribas contraseñas en comandos ni en la skill.
+- **No uses** `--session-name`, `--profile` ni el Chrome for Testing de agent-browser: Google no deja iniciar sesión y X responde 403.
+- **X:** búsqueda `min_faves:1000 within_time:1d` con `f=top`; leer `article`, `[data-testid=tweetText]`, `time` y `[data-testid=like]`. Cuentas oficiales: @OpenAI, @AnthropicAI, @GoogleDeepMind, @xai, @runwayml, @higgsfield_ai…
+- **Reddit:** dentro de la página, `fetch('/r/LocalLLaMA+singularity+OpenAI+ClaudeAI/top.json?t=day')` devuelve JSON limpio con score, título, URL e `is_video`. Es la mejor fuente de las tres.
+- **TikTok:** `/search/video?q=inteligencia%20artificial`; filtra los enlaces `a[href*="/video/"]` que salen del panel de notificaciones.
 - **Solo lectura:** mirar, leer y capturar. Nada de dar like, seguir, comentar ni publicar.
-- **Ritmo humano:** esperas de unos segundos entre páginas y pocas decenas de vistas por sesión, para no activar bloqueos anti-bot.
-- **Descarga del video:** agent-browser encuentra el post; el archivo se sigue bajando con `uvx yt-dlp <url del post>` (paso 3 de la skill).
-- `agent-browser skills get core` muestra la guía completa del CLI.
-
-> [!question] Hueco
-> A 2026-09-30 falta probar qué redes cargan sin login y cuáles piden el login guardado; anótalo aquí tras la primera corrida.
+- **Poco volumen:** esperas de unos segundos entre páginas y pocas decenas de vistas por sesión; X y TikTok detectan automatización.
+- **Cerrar Chrome al terminar:** recorre `pgrep -x chrome` y revisa `/proc/<pid>/cmdline`; no uses `pkill -f`, que puede matar la propia shell.
+- **Descarga del video:** agent-browser encuentra el post; el archivo se baja con `uvx yt-dlp <url del post>` (paso 3 de la skill).
+- **Playwright** (`scripts/capture.py`) sigue siendo para capturar sitios públicos sin sesión (comunicados, demos); no tiene el login de las redes.
 
 ## Fuentes que fallan (a 2026-09)
 - Reddit: bloquea WebFetch y Firecrawl (JSON y RSS). Usar agent-browser o el resumen diario en GitHub.
 - X: devuelve 402 a WebFetch y xcancel está suspendido. Usar agent-browser para leer; los posts se descargan con `uvx yt-dlp <url del post>`.
-- TikTok e Instagram: no cargan con WebFetch. Usar agent-browser.
+- TikTok: no carga con WebFetch. Usar agent-browser. Instagram: sin sesión en el perfil todavía.
 - CNBC: 403. The Verge: solo RSS y metadatos. Ars Technica: solo metadatos.
 - TikTok Creative Center: no carga con WebFetch; probar con agent-browser.
 - openai.com: a veces sirve un challenge de Cloudflare a Playwright; reintentar una vez con user agent de Chrome.

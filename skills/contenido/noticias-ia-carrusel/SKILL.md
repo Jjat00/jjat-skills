@@ -31,7 +31,7 @@ Lanza dos agentes `general-purpose` en el mismo mensaje con los prompts de `refe
 - **Noticias:** 10-12 noticias de las últimas 24-36 h con fecha verificada, fuente, y URL directa del medio (mp4, YouTube, post de X, og:image).
 - **Tendencias:** temas y formatos que funcionan esta semana. No hace falta todos los días; úsalo si pasó más de una semana desde la última vez o si Jaime lo pide.
 
-Para las redes (X, Reddit, TikTok, Instagram), que bloquean WebFetch y Firecrawl, los agentes usan `agent-browser` con la sesión guardada `redes`: ver «Redes con agent-browser» en `references/investigacion.md`. Solo lectura, nunca interactuar ni publicar.
+Para las redes (X, Reddit, TikTok), que bloquean WebFetch y Firecrawl, los agentes usan `agent-browser` conectado por CDP al Chrome normal con el perfil ya logueado `~/.agent-browser/profiles/redes-chrome`: ver «Redes con agent-browser» en `references/investigacion.md`. La sesión ya existe, no hay que volver a iniciarla. Solo lectura, nunca interactuar ni publicar.
 
 Hoy es la fecha del sistema. Descarta todo lo que no sea de hoy o ayer: es la regla que más pide Jaime.
 
