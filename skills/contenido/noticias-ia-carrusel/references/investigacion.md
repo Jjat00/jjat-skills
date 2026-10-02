@@ -12,10 +12,11 @@ Usa WebSearch y WebFetch (cárgalos con ToolSearch "select:WebSearch,WebFetch") 
 firecrawl-search. Revisa: The Verge, TechCrunch, Ars Technica, 9to5Mac, MacRumors, blogs oficiales
 (OpenAI, Anthropic, Google DeepMind, Meta AI, NVIDIA, Microsoft, Apple, xAI, Mistral, Runway, Pika,
 Luma, Kling, Higgsfield, ElevenLabs, Figure, Tesla Optimus, Unitree, SpaceX), Hacker News (portada),
-Product Hunt de hoy, GitHub trending, y el resumen diario de Reddit que se publica en GitHub
-("reddit-daily-news") porque Reddit bloquea el acceso directo.
-Para X, Reddit y TikTok usa agent-browser (sesión ya iniciada) (Bash), que abre un navegador real: ver la sección
-"Redes con agent-browser" de references/investigacion.md en la skill noticias-ia-carrusel.
+Product Hunt de hoy y GitHub trending.
+Para X, Reddit y TikTok, que bloquean WebFetch y Firecrawl, usa agent-browser (Bash; sesión ya iniciada),
+que abre un navegador real: ver la sección "Redes con agent-browser" de references/investigacion.md en
+la skill noticias-ia-carrusel. Si agent-browser falla, el resumen diario de Reddit que se publica en
+GitHub ("reddit-daily-news") sirve de respaldo.
 
 Prioriza noticias MUY VISUALES (demos en video, robots, gadgets, generadores de video o imagen,
 lanzamientos con clip oficial, juegos o apps hechos con IA): cada lámina del carrusel lleva el video o
