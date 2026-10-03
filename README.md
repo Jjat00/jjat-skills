@@ -27,6 +27,7 @@ Una skill nueva va en la carpeta de su categoría; si no encaja en ninguna, se c
 
 | Skill | Descripcion |
 |---|---|
+| `google-flow` | Genera video e imagen en Google Flow (Veo 3.1, Omni, Nano Banana) desde la terminal con los creditos del plan de Google AI: crea el proyecto, sube referencias, elige modelo y escribe el prompt; la persona solo pulsa enviar y Aprobar. CLI propio sobre las RPC internas + agent-browser. |
 | `reel-editorial` | Convierte una toma de webcam o celular en un reel vertical con estilo editorial: montaje por transcripcion (quita tomas falsas y pausas), persona recortada sobre tarjetas de color, paneles de motion graphics, subtitulos palabra a palabra y audio a -14 LUFS. Local con ffmpeg, faster-whisper y [HyperFrames](https://hyperframes.heygen.com). |
 | `ruta-dron-ubicacion` | Video de ubicacion estilo inmobiliaria desde una toma de dron de cualquier propiedad (local, casa, lote, finca): ruta animada pegada a las calles, pin, tarjeta y cierre; opcionalmente el lote con cotas y area. OpenCV + COLMAP + ffmpeg. |
 
