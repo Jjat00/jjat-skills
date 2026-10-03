@@ -16,6 +16,16 @@ Flow (`flow.google.com`) no tiene API. El CLI `~/projects/google-flow-cli/flow.p
 No intentes saltarlo: arriesga la cuenta. Todo lo demás sí se automatiza: configurar, subir, adjuntar, escribir,
 esperar y descargar. Si a Jaime le sale «unusual activity», que pulse «Reintentar».
 
+## Límite de uso
+
+El 2026-10-03, tras unas 3 h de uso intensivo (varios envíos, rechazos y reintentos), Flow empezó a rechazar **también
+los clics humanos**: primero `PUBLIC_ERROR_UNUSUAL_ACTIVITY_TOO_MUCH_TRAFFIC` y después `UNUSUAL_ACTIVITY`. Siguió igual
+una hora después, con la página limpia. Por eso:
+- Usa `prep --clean` y `wait --clean` por defecto: no inyectan nada en la página.
+- Si sale «unusual activity», que Jaime pulse «Reintentar» **una sola vez**. Si falla de nuevo, para hasta el día
+  siguiente; reintentar en bucle empeora el bloqueo.
+- No se cobra nada por los envíos rechazados.
+
 ## Flujo
 
 ```bash
@@ -25,8 +35,8 @@ python3 $F credits                    # saldo; dilo antes de proponer cuántos p
 python3 $F new-project "<título>"     # o reutiliza uno: el id está en la URL /project/<id>
 python3 $F upload <id> foto1.png video.mp4 ...   # referencias; la 1.ª vez Jaime acepta «Derechos para usar esta imagen»
 python3 $F assets <id>                # nombres exactos para --ref (los videos generados también salen aquí)
-python3 $F prep <id> "<prompt>" --ref image_1.jpeg --model "Omni 1.1 Flash" --aspect 9:16 --pin-model
-python3 $F wait <carpeta>             # en segundo plano; descarga cuando Jaime envía y aprueba
+python3 $F prep <id> "<prompt>" --ref image_1.jpeg --model "Omni 1.1 Flash" --aspect 9:16 --clean
+python3 $F wait <carpeta> --clean     # en segundo plano; descarga cuando Jaime envía y aprueba
 ```
 
 Después de `prep`, dile a Jaime exactamente: «En Flow: pulsa enviar, revisa el costo y pulsa Aprobar». Lanza `wait`
