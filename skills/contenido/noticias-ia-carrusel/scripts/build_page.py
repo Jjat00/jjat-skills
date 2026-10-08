@@ -51,7 +51,17 @@ def main():
             shutil.rmtree(d)
     for mp4 in sorted((base / "reel").glob(f"reel_{plan['fecha']}*.mp4")):
         (out / "reel").mkdir(exist_ok=True)
-        shutil.copy2(mp4, out / "reel" / mp4.name)
+        dst = out / "reel" / mp4.name
+        if mp4.stat().st_size > 15 * 2**20:
+            # el Artifact admite 16 MB por archivo: la página lleva una copia comprimida y el original queda en la carpeta
+            secs = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(mp4)],
+                                        capture_output=True, text=True).stdout)
+            kbps = int(14 * 8 * 1024 / secs) - 170
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(mp4), "-c:v", "libx264", "-preset", "medium", "-b:v", f"{kbps}k",
+                            "-maxrate", f"{kbps * 2}k", "-bufsize", f"{kbps * 2}k", "-c:a", "aac", "-b:a", "160k",
+                            "-movflags", "+faststart", str(dst)], check=True)
+        else:
+            shutil.copy2(mp4, dst)
         reels.append({"file": mp4.name, "label": "Reel narrado" if "narrado" in mp4.name else "Reel sin narración",
                       "dur": dur(mp4)})
     pdf = base / f"carrusel_linkedin_{plan['fecha']}.pdf"
