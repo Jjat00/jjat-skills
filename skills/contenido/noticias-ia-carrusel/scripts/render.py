@@ -26,7 +26,7 @@ MODES = {
     "reel": dict(h=1920, pad="150px 130px 290px 52px", hero=1180, h2bottom=380, h2size=92, tagtop=150, cta_pad=170),
 }
 REEL_CSS = ".txt p{display:none}.txt h1{font-size:62px;margin-bottom:34px}.pill{font-size:34px}"
-REEL_T = {"cover": 3.0, "cta": 3.0, "news": 3.5}   # segundos por lámina en el reel
+REEL_T = {"cover": 3.0, "cta": 3.0, "news": 10.0}   # segundos por lámina en el reel (Jaime, 08-10: 10 s por noticia, reel de 1:30 como máximo)
 WHOOSH = pathlib.Path("/mnt/d/sonidos/transiciones/whoosh-corto.mp3")  # biblioteca de sonidos de Jaime
 
 PLEXUS_JS = """
@@ -133,11 +133,15 @@ def dur_of(p):
 def add_voice(seg, voice):
     """Mezcla la narración sobre el segmento. El sonido del clip se agacha mientras habla la voz (sidechain)."""
     tmp = seg.with_name(seg.stem + "_v.mp4")
+    d = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries", "stream=duration", "-of", "csv=p=0", str(seg)],
+                       capture_output=True, text=True).stdout.strip()
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(seg), "-i", str(voice), "-filter_complex",
                     # Ducking: mientras suena la voz, el clip baja ~20 dB (sidechain) y vuelve al terminar la frase.
-                    "[1:a]adelay=150|150,aresample=48000,aformat=channel_layouts=stereo,volume=1.15,asplit=2[v][sc];"
-                    "[0:a]volume=0.6[c];[c][sc]sidechaincompress=threshold=0.012:ratio=20:attack=15:release=400[cd];"
-                    "[cd][v]amix=inputs=2:normalize=0:duration=first[a]",
+                    # apad en la voz: sidechaincompress corta en la entrada más corta; sin él, el audio del segmento
+                    # quedaba ~0,4 s más corto que el video y al concatenar la voz se adelantaba lámina a lámina.
+                    "[1:a]adelay=150|150,aresample=48000,aformat=channel_layouts=stereo,volume=1.15,apad,asplit=2[v][sc];"
+                    "[0:a]volume=0.6,apad[c];[c][sc]sidechaincompress=threshold=0.012:ratio=20:attack=15:release=400[cd];"
+                    f"[cd][v]amix=inputs=2:normalize=0:duration=first,atrim=0:{d}[a]",
                     "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-ar", "48000", str(tmp)], check=True)
     tmp.replace(seg)
 
@@ -145,6 +149,11 @@ def add_voice(seg, voice):
 def build_reel(seg_dir, out_mp4, musica=None):
     """Une los segmentos, pone un whoosh en cada corte y, si hay, una pista de música de fondo."""
     segs = sorted(seg_dir.glob("[0-9][0-9].mp4"))
+    for p in segs:   # si audio y video no duran lo mismo, el concat desfasa la voz de forma acumulada
+        dv, da = (float(subprocess.run(["ffprobe", "-v", "error", "-select_streams", st, "-show_entries", "stream=duration",
+                                        "-of", "csv=p=0", str(p)], capture_output=True, text=True).stdout) for st in ("v", "a"))
+        if abs(dv - da) > 0.05:
+            raise SystemExit(f"{p.name}: video {dv:.2f} s y audio {da:.2f} s no coinciden; el reel saldría desincronizado")
     lst = seg_dir / "lista.txt"
     lst.write_text("".join(f"file '{p.as_posix()}'\n" for p in segs), encoding="utf-8")
     joined = seg_dir / "unido.mp4"
@@ -235,6 +244,10 @@ async def main():
             voice = base / "reel" / "voz" / f"{name}.mp3"
             if a.sin_voz:
                 voice = pathlib.Path("/nonexistent")
+            if a.mode == "reel" and s.get("reel") is False:
+                (out / f"{name}.mp4").unlink(missing_ok=True)   # va en el carrusel pero no cabe en el reel
+                print("reel", name, "fuera del reel")
+                continue
             if a.mode == "reel":
                 t = s.get("reel_t", REEL_T[s.get("kind", "news")])
                 if voice.exists():

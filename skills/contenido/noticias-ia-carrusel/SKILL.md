@@ -68,7 +68,9 @@ uv run --with playwright python $S/render.py "<carpeta>/plan.json" --mode tiktok
 
 ### 6b. Reel con las mismas noticias
 Siempre se entrega también un reel vertical (1080×1920) con las mismas láminas.
-- Cada lámina muestra el titular grande y la frase sobre el medio. El párrafo no sale, porque en el tiempo que dura no se alcanza a leer.
+- Cada lámina muestra el titular grande y la frase sobre el medio. El párrafo no sale en pantalla: lo cuenta la voz.
+- **Cada noticia dura 10 s** (`REEL_T` en `render.py`) y el reel completo, **1:30 como máximo**. Jaime lo pidió el 08-10 para profundizar un poco en cada noticia. Con portada y cierre de 3 s caben unas 8 noticias: las que sobren van con `"reel": false` (siguen en el carrusel) y salen del reel las más flojas.
+- El tramo del video tiene que dar 10 s limpios: si el `ss` del carrusel no alcanza, usa `reel_ss`.
 - Las láminas de video usan su clip; las de imagen, un zoom lento.
 - Mientras suena la narración, el sonido del clip baja unos 20 dB (ducking con sidechain) y vuelve al terminar la frase.
 - En cada corte suena un whoosh de `D:\sonidos\transiciones`.
@@ -76,8 +78,8 @@ Siempre se entrega también un reel vertical (1080×1920) con las mismas lámina
 
 **Antes de hacerlo, pregunta en una sola AskUserQuestion** (dos preguntas):
 1. **¿Con narración o sin narración?**
-   - Sin narración: unos 45 s (3,5 s por noticia). Jaime pone un audio en tendencia desde la app.
-   - Con narración: la voz cuenta cada noticia y cada lámina dura lo que dura su frase (unos 55-60 s).
+   - Sin narración: 10 s por noticia (unos 80-90 s). Jaime pone un audio en tendencia desde la app.
+   - Con narración: la voz lee el titular y cuenta un poco de la noticia; cada lámina dura 10 s o lo que dure su frase si es más larga (máximo 1:30 en total).
 2. **Voz** (solo si hay narración). Ofrece estas y deja «Other» para cualquier otra:
    - **Andrés, «Social Media Host»** (`u36BhA6zuwclwVyAT1Bi`, `public_owner_id` `bfededef119bd9abb2b18fbf17d86d58267c725eac0d59db6fe86938f99736fd`). Es de la biblioteca de ElevenLabs, acento mexicano, **de pago** (~0,10 USD por reel a precio de lista y ~0,02 con el descuento de v4 hasta el 12-10). **Es la opción por defecto: la eligió Jaime el 29-09.**
    - **Jennifer, colombiana** (`Y11rBAl8on4Ba9ZpY3DY`, ElevenLabs, **de pago**).
@@ -88,23 +90,23 @@ Siempre se entrega también un reel vertical (1080×1920) con las mismas lámina
    Para escuchar antes de elegir: página «Voces» de HF Studio (`http://localhost:3000/voices`).
 
 **Narración:** campo `"narracion"` en cada lámina del plan.
-- **Largo:** 8-15 palabras por lámina.
+- **Largo:** 22-28 palabras por noticia (unos 9 s de voz): primero el titular y luego uno o dos datos concretos del párrafo (cifra, quién, por qué importa). No basta con leer el titular. Portada y cierre: 8-12 palabras.
 - **Gancho:** el de la portada va en los primeros 2-3 s y cabe en 12 palabras.
 - **Números:** escritos en letras, para que la voz los lea bien («seis punto uno», «ocho mil doscientos millones», «cuatro K»).
-- **Duración total:** 60 s como máximo.
+- **Duración total:** 1:30 como máximo.
 
 **Voz gratis (edge-tts):**
 ```bash
 python $S/narrar.py "<carpeta>/plan.json" --voz es-CO-GonzaloNeural --velocidad +15%
 ```
-Escribe `reel/voz/NN.mp3` e imprime la duración de cada frase. Si el total pasa de 60 s, acorta textos.
+Escribe `reel/voz/NN.mp3` e imprime la duración de cada frase. Si una frase pasa de 10 s o el total pasa de 1:30, acorta textos.
 
 **Voz de ElevenLabs (de pago):**
 1. Por cada lámina, llama a `text_to_speech` de HF Studio, primero sin `quote_id`, y suma el costo.
 2. Díselo a Jaime y espera su OK (regla de costo visible).
 3. Genera con los `quote_id`.
 4. Copia cada MP3 a `reel/voz/NN.mp3`. HF Studio los guarda en `~/projects/hf-studio/data/files/outputs/<id>/0-audio.mp3`.
-5. Si el total pasa de 60 s, recorta los silencios de cada frase y acelera un 8 % sin cambiar el tono: `silenceremove` al inicio y al final, y `atempo=1.08`. Guarda los originales en `reel/voz_<voz>_original/`.
+5. Si una frase pasa de 10 s o el total pasa de 1:30, recorta los silencios de cada frase y acelera un 8 % sin cambiar el tono: `silenceremove` al inicio y al final, y `atempo=1.08`. Guarda los originales en `reel/voz_<voz>_original/`.
 6. Etiquetas por frase: `[upbeat]` en las noticias, `[serious]` en las polémicas, `[excited]` en los hitos, y una más larga en la portada (`[energetic social media host, upbeat]`).
 
 **Configuración de ElevenLabs (a 2026-09):**
