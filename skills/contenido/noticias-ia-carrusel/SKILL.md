@@ -45,7 +45,7 @@ Por orden de preferencia:
 3. `scripts/capture.py shot|rec` (Playwright) cuando no hay archivo: captura del titular o del comunicado, o grabación de una demo o galería (`rec --scroll`).
 4. Un gráfico propio (`"stat"` en el plan) cuando el dato es un número que se lee mal en una captura (benchmarks, precios).
 
-Prefijo `NN_` con el número de la noticia. Revisa cada medio (hoja de contactos o una miniatura) antes de usarlo.
+Prefijo `NN_` con el número de la noticia. Los clips de cuentas de noticias (UHN, clips de streamers) suelen venir recortados en vertical y dejan la acción fuera de cuadro: busca el clip horizontal del stream original (`uvx yt-dlp --print "%(upload_date)s %(title)s" "ytsearch10:<tema>"`) y muéstralo completo con `"vfit": "contain"`. Revisa cada medio (hoja de contactos o una miniatura) antes de usarlo.
 
 ### 4. Elegir tramos de video
 Por cada video: `scripts/sheet.sh <video> 2 hoja.jpg [crop=…]` y mira la hoja. El número de cada miniatura es exactamente el segundo que va en el plan.
@@ -93,6 +93,7 @@ Siempre se entrega también un reel vertical (1080×1920) con las mismas lámina
 **Narración:** campo `"narracion"` en cada lámina del plan.
 - **Largo:** 22-28 palabras por noticia (unos 9 s de voz): primero el titular y luego uno o dos datos concretos del párrafo (cifra, quién, por qué importa). No basta con leer el titular. Portada y cierre: 8-12 palabras.
 - **Gancho:** el de la portada va en los primeros 2-3 s y cabe en 12 palabras.
+- **Siglas:** «IA» se escribe «I A» separado; si no, la voz la lee mal (Jaime, 08-10).
 - **Números:** escritos en letras, para que la voz los lea bien («seis punto uno», «ocho mil doscientos millones», «cuatro K»).
 - **Duración total:** 1:30 como máximo.
 
