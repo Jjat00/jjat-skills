@@ -71,6 +71,7 @@ Siempre se entrega también un reel vertical (1080×1920) con las mismas lámina
 - Cada lámina muestra el titular grande y la frase sobre el medio. El párrafo no sale en pantalla: lo cuenta la voz.
 - **Cada noticia dura 10 s** (`REEL_T` en `render.py`) y el reel completo, **1:30 como máximo**. Jaime lo pidió el 08-10 para profundizar un poco en cada noticia. Con portada y cierre de 3 s caben unas 8 noticias: las que sobren van con `"reel": false` (siguen en el carrusel) y salen del reel las más flojas.
 - El tramo del video tiene que dar 10 s limpios: si el `ss` del carrusel no alcanza, usa `reel_ss`.
+- Si el reel lleva menos noticias que el carrusel, la portada del reel usa `reel_title` con el número correcto (p. ej. «8 NOTICIAS» en vez de «11»).
 - Las láminas de video usan su clip; las de imagen, un zoom lento.
 - Mientras suena la narración, el sonido del clip baja unos 20 dB (ducking con sidechain) y vuelve al terminar la frase.
 - En cada corte suena un whoosh de `D:\sonidos\transiciones`.

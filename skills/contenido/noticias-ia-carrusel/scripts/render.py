@@ -252,7 +252,7 @@ async def main():
                 t = s.get("reel_t", REEL_T[s.get("kind", "news")])
                 if voice.exists():
                     t = max(t, round(dur_of(voice) + 0.5, 2))   # la lámina dura lo que dura su voz
-                s = dict(s, t=t, ss=s.get("reel_ss", s.get("ss", 0)))
+                s = dict(s, t=t, ss=s.get("reel_ss", s.get("ss", 0)), title=s.get("reel_title", s.get("title", "")))
             if a.mode in ("tiktok", "reel") and s.get("tt_media"):
                 # imagen propia para TikTok (p. ej. paneles apilados en vertical)
                 s = dict(s, media=s["tt_media"], fit=s.get("tt_fit", "contain"), pill=s.get("tt_pill", s.get("pill", "")))
