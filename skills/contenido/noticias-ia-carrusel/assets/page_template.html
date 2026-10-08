@@ -38,7 +38,7 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
 .grid.tt{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
 .slide{display:flex;flex-direction:column;gap:10px;min-width:0}
 .frame{position:relative;aspect-ratio:4/5;max-width:100%;border-radius:4px;overflow:hidden;background:var(--surface);border:1px solid var(--line)}
-.grid.tt .frame{aspect-ratio:9/16}
+.grid.tt .frame,.grid.reel .frame{aspect-ratio:9/16}
 .frame video,.frame img{width:100%;height:100%;object-fit:cover;display:block}
 .no{position:absolute;top:8px;left:8px;font-family:var(--mono);font-size:12px;background:rgba(10,10,10,.8);border:1px solid var(--line);padding:2px 8px;border-radius:3px}
 .kind{position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;padding:2px 8px;border-radius:3px;background:rgba(10,10,10,.8);border:1px solid var(--line);color:var(--cyan)}
@@ -57,6 +57,8 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
     <div class="tabs" role="tablist" aria-label="Red social">
       <button class="tab" role="tab" id="tab-ig" aria-selected="true" type="button">Instagram · videos e imágenes</button>
       <button class="tab" role="tab" id="tab-tt" aria-selected="false" type="button">TikTok · solo imágenes</button>
+      <button class="tab" role="tab" id="tab-reel" aria-selected="false" type="button" hidden>Reel · 9:16</button>
+      <button class="tab" role="tab" id="tab-li" aria-selected="false" type="button" hidden>LinkedIn · PDF</button>
     </div>
   </header>
 
@@ -92,7 +94,26 @@ const P = {
   tt: { dir: "tiktok", fmt: "TikTok · 1080×1920 (9:16)",
     lead: "La versión para el modo foto de TikTok: imágenes verticales. Donde había un video va su mejor fotograma, y la franja de abajo queda libre para el caption y los botones. Súbelas en este orden y añade un sonido en tendencia desde la app.",
     when: "Publica como «Foto» en TikTok y elige un sonido en tendencia; el texto de las láminas se lee sin audio." },
+  reel: { dir: "reel", fmt: "Reel · 1080×1920 (9:16)",
+    lead: "El reel vertical con las mismas noticias. Súbelo tal cual a Instagram Reels y TikTok; también sirve como video nativo en LinkedIn.",
+    when: "Ya trae narración, whoosh en cada corte y mezcla a −14 LUFS." },
+  li: { dir: "linkedin", fmt: "LinkedIn · PDF 4:5",
+    lead: "El carrusel de LinkedIn es un documento PDF: las láminas de video van como su fotograma limpio. Súbelo como «Documento» en una publicación.",
+    when: "LinkedIn no admite video en carruseles; el reel narrado se puede subir aparte como video nativo." },
 };
+const TABS = [["tab-ig", "ig"], ["tab-tt", "tt"], ["tab-reel", "reel"], ["tab-li", "li"]];
+const PUB = { ig: "ig", tt: "tiktok", reel: "reel", li: "linkedin" };
+const has = { ig: true, tt: true, reel: (DATA.reels || []).length > 0, li: !!DATA.linkedin };
+$("tab-reel").hidden = !has.reel; $("tab-li").hidden = !has.li;
+
+function items() {
+  if (current === "reel") return DATA.reels.map(r => ({ file: r.file, label: r.label, dur: r.dur, video: true }));
+  if (current === "li") return [{ file: DATA.linkedin.file, label: DATA.linkedin.label, preview: DATA.linkedin.preview }];
+  return DATA.slides.map(sl => {
+    const file = current === "tt" ? sl.file.replace(/\.mp4$/, ".png") : sl.file;
+    return { file, label: sl.label, dur: sl.dur, video: file.endsWith(".mp4"), no: file.slice(0, 2) };
+  });
+}
 
 $("date").textContent = DATA.fecha_texto;
 $("count").textContent = DATA.slides.length;
@@ -101,26 +122,26 @@ $("extra").textContent = DATA.nota || "";
 $("sources").textContent = DATA.fuentes || "";
 
 function render() {
-  const cfg = P[current], pub = DATA.publicacion[current === "ig" ? "ig" : "tiktok"];
+  const cfg = P[current], pub = DATA.publicacion[PUB[current]] || DATA.publicacion.ig;
   grid.innerHTML = "";
   grid.classList.toggle("tt", current === "tt");
+  grid.classList.toggle("reel", current === "reel");
   $("fmt").textContent = cfg.fmt; $("lead").textContent = cfg.lead; $("when").textContent = cfg.when;
   $("hour").textContent = pub.hora; $("cap").textContent = pub.caption; $("copyst").textContent = "";
-  DATA.slides.forEach(sl => {
-    const file = current === "tt" ? sl.file.replace(/\.mp4$/, ".png") : sl.file;
-    const isVid = file.endsWith(".mp4");
+  items().forEach(sl => {
+    const file = sl.file, isVid = !!sl.video;
     const el = document.createElement("article");
     el.className = "slide";
     el.innerHTML = `<div class="frame">${isVid
-        ? `<video src="${cfg.dir}/${file}" muted loop playsinline autoplay preload="metadata"></video>`
-        : `<img src="${cfg.dir}/${file}" alt="" loading="lazy">`}
-        <span class="no">${file.slice(0, 2)}</span><span class="kind ${isVid ? "" : "img"}">${isVid ? "VIDEO " + sl.dur : "IMAGEN"}</span></div>
+        ? `<video src="${cfg.dir}/${file}" muted loop playsinline ${current === "reel" ? "controls" : "autoplay"} preload="metadata"></video>`
+        : `<img src="${cfg.dir}/${sl.preview || file}" alt="" loading="lazy">`}
+        ${sl.no ? `<span class="no">${sl.no}</span>` : ""}<span class="kind ${isVid ? "" : "img"}">${isVid ? "VIDEO " + sl.dur : sl.preview ? "PDF" : "IMAGEN"}</span></div>
       <div class="meta"><span></span><button class="btn" type="button">Descargar</button></div>`;
     el.querySelector(".meta span").textContent = sl.label;
     el.querySelector("img")?.setAttribute("alt", sl.label);
     const btn = el.querySelector("button");
     btn.hidden = !downloads;
-    btn.setAttribute("aria-label", "Descargar lámina " + file.slice(0, 2));
+    btn.setAttribute("aria-label", "Descargar " + (sl.no ? "lámina " + sl.no : sl.label));
     btn.addEventListener("click", () => save(cfg.dir, file, btn));
     grid.appendChild(el);
   });
@@ -132,27 +153,26 @@ async function save(dir, file, btn) {
   try {
     const res = await fetch(dir + "/" + file);
     if (!res.ok) throw { message: "No se pudo leer el archivo (" + res.status + ")." };
-    await downloads.save({ filename: DATA.prefijo + (dir === "tiktok" ? "tiktok_" : "ig_") + file, data: await res.blob() });
-    dlst.textContent = "Lámina " + file.slice(0, 2) + " guardada.";
+    const pre = { tiktok: "tiktok_", slides: "ig_" }[dir] || "";
+    await downloads.save({ filename: (pre ? DATA.prefijo + pre : "") + file, data: await res.blob() });
+    dlst.textContent = file + " guardado.";
     btn.textContent = "Guardada ✓";
   } catch (e) {
     btn.textContent = label;
-    dlst.textContent = e && e.code === "declined" ? "Descarga cancelada." : "No se pudo descargar la lámina " + file.slice(0, 2) + ". " + (e && e.message ? e.message : "");
+    dlst.textContent = e && e.code === "declined" ? "Descarga cancelada." : "No se pudo descargar " + file + ". " + (e && e.message ? e.message : "");
   } finally { btn.disabled = false; }
 }
 
-for (const [id, key] of [["tab-ig", "ig"], ["tab-tt", "tt"]]) {
+const mark = () => TABS.forEach(([id, k]) => $(id).setAttribute("aria-selected", k === current));
+for (const [id, key] of TABS) {
   $(id).addEventListener("click", () => {
-    current = key;
-    $("tab-ig").setAttribute("aria-selected", key === "ig");
-    $("tab-tt").setAttribute("aria-selected", key === "tt");
+    current = key; mark();
     try { localStorage.setItem("red", key); } catch {}
     render();
   });
 }
-try { if (localStorage.getItem("red") === "tt") current = "tt"; } catch {}
-$("tab-ig").setAttribute("aria-selected", current === "ig");
-$("tab-tt").setAttribute("aria-selected", current === "tt");
+try { const r = localStorage.getItem("red"); if (r && has[r]) current = r; } catch {}
+mark();
 render();
 
 (async () => {

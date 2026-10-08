@@ -152,7 +152,7 @@ uv run --with playwright --with pillow python $S/render.py "<carpeta>/plan.json"
 ```bash
 python $S/build_page.py "<carpeta>/plan.json" --out <scratchpad>/pagina_<fecha>
 ```
-Imprime `index`, `root` y `files`. Publica un Artifact **nuevo por día** con `file_path=index`, `root`, `files` (todas las rutas que imprimió), `capabilities={"downloads": true}` e `icon="download"`. Los `<a download>` no funcionan dentro de un Artifact; la página ya usa la capacidad `downloads`. El Artifact solo acepta archivos bajo el scratchpad o el directorio de trabajo: por eso `--out`.
+Imprime `index`, `root` y `files`. La página trae cuatro pestañas: Instagram, TikTok, Reel (los MP4 de `reel/`) y LinkedIn (el PDF), cada una con su caption de `publicacion` (`ig`, `tiktok`, `reel`, `linkedin`). Renderiza el reel y el PDF antes de armarla. Publica un Artifact **nuevo por día** con `file_path=index`, `root`, `files` (todas las rutas que imprimió), `capabilities={"downloads": true}` e `icon="download"`. Los `<a download>` no funcionan dentro de un Artifact; la página ya usa la capacidad `downloads`. El Artifact solo acepta archivos bajo el scratchpad o el directorio de trabajo: por eso `--out`.
 
 ### 8. Entregar
 - Tabla corta de las láminas (número, tipo, noticia), link de la página, carpeta local y la hora sugerida.
