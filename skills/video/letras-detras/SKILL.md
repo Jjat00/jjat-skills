@@ -78,6 +78,14 @@ sujeto; `top` usa `block_top`), `head_offset`, `block_w` (ancho de fila), `row_m
 `condense` (0.56; más bajo = más estrecho), `font_weight`, `font` (otra .ttf), `letter_reveal`,
 `fade_in`, `fade_out`, `dim_bg` (oscurecer el fondo), `shadow`, `auto_ink`, `ink_threshold`, `center_x`.
 
+**Video horizontal (W>H)**: `plan` lo detecta y usa otros valores, porque con la cara centrada en 16:9
+la cabeza llena casi todo el alto y los bloques de 3–4 filas a la altura de la cabeza quedaban tapados
+(probado con webcam 1280x720, 2026-10): `anchor: top`, `block_top: 0.02`, `row_max_h: 0.34`,
+`block_max_h: 0.6`, `block_w: 0.94`, `condense: 0.66`; máximo **2 filas por bloque** (uno de 3 filas
+se parte en 1 + 2) y los bloques de menos de **0.7 s** se funden con el vecino de su misma línea.
+Se fuerza o se ajusta con `--layout horizontal|vertical`, `--max-rows N` (0 = sin límite) y
+`--merge-short S` (0 = no fundir); los flags explícitos mandan sobre lo automático. El vertical no cambia.
+
 ### 3. Control visual antes del render
 
 `preview` y mira `sheet.png`:

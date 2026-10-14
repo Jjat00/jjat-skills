@@ -18,8 +18,8 @@ Subcomandos (todos escriben dentro de <proyecto>/):
            → segment.json (qué tramo de la canción suena bajo el video)
   align    <proyecto> [--model small]
            → words.json (cada palabra con su tiempo, relativo al video)
-  plan     <proyecto> [--words-per-block 4]
-           → plan.json (bloques, filas, colores; editable a mano)
+  plan     <proyecto> [--words-per-block 4] [--layout auto|horizontal|vertical]
+           → plan.json (bloques, filas, colores; editable a mano; W>H usa el estilo horizontal)
   matte    <proyecto>
            → matte/f_%05d.png (alfa del sujeto, Robust Video Matting)
   preview  <proyecto> [t …]
@@ -81,6 +81,19 @@ DEFAULT_STYLE = {
         "ink":   {"top": "#141210", "bottom": "#2E2A26"},
     },
 }
+
+# Video horizontal (W>H): la cabeza ocupa casi todo el alto y con anchor=head los bloques de 3–4
+# filas quedaban tapados. Probado con webcam 1280x720 y cara centrada (paranoid, 2026-10): letra
+# arriba, más ancha y más alta, con máximo 2 filas por bloque.
+LANDSCAPE_STYLE = {
+    "anchor": "top",
+    "block_top": 0.02,
+    "row_max_h": 0.34,
+    "block_max_h": 0.60,
+    "block_w": 0.94,
+    "condense": 0.66,
+}
+LANDSCAPE_PLAN = {"max_rows": 2, "merge_short": 0.7}
 
 # ─────────────────────────────── utilidades ───────────────────────────────
 
@@ -472,25 +485,77 @@ def rows_of(block, maxchars=10):
     return rows
 
 
+def fit_rows(rows, max_rows):
+    """Junta filas vecinas (la pareja más corta primero) hasta que queden ≤max_rows."""
+    rows = [list(r) for r in rows]
+    while max_rows and len(rows) > max_rows:
+        size = [len(" ".join(w["text"] for w in rows[i] + rows[i + 1])) for i in range(len(rows) - 1)]
+        i = size.index(min(size))
+        rows[i:i + 2] = [rows[i] + rows[i + 1]]
+    return rows
+
+
 def cmd_plan(a):
     p = Path(a.project)
     W = load(p, "words.json")
     seg = load(p, "segment.json")
     words = W["words"]
+    layout = a.layout
+    if layout == "auto":
+        layout = "horizontal" if seg.get("width", 0) > seg.get("height", 0) else "vertical"
+    land = layout == "horizontal"
+    max_rows = a.max_rows if a.max_rows is not None else (LANDSCAPE_PLAN["max_rows"] if land else 0)
+    merge_short = a.merge_short if a.merge_short is not None else (LANDSCAPE_PLAN["merge_short"] if land else 0.0)
+
     groups = {}
     for w in words:
         groups.setdefault(w["line"], []).append(w)
-    blocks = []
+    blocks, line_of = [], []  # cada bloque = lista de filas; cada fila = lista de palabras
     for key in sorted(groups, key=lambda k: groups[k][0]["t"]):
         for b in chunk_line(groups[key], a.words_per_block):
-            blocks.append(b)
+            rows = rows_of(b, a.row_chars)
+            if not max_rows or len(rows) <= max_rows:
+                blocks.append(rows); line_of.append(key)
+                continue
+            # más de max_rows filas: se parte en varios bloques; el más corto va primero
+            # (3 filas → 1 + 2: «FINISHED» y luego «WITH MY / WOMAN»)
+            first = len(rows) % max_rows or max_rows
+            blocks.append(rows[:first]); line_of.append(key)
+            for i in range(first, len(rows), max_rows):
+                blocks.append(rows[i:i + max_rows]); line_of.append(key)
+
+    def span(bi):
+        first = blocks[bi][0][0]
+        last = blocks[bi][-1][-1]
+        nxt = blocks[bi + 1][0][0]["t"] if bi + 1 < len(blocks) else seg["duration"]
+        return max(0.0, first["t"]), min(nxt, last["e"] + a.hold)
+
+    # bloques que duran menos de merge_short s se funden con el vecino pegado en el tiempo,
+    # de preferencia el de su misma línea cantada
+    i = 0
+    while merge_short and i < len(blocks):
+        s0, e0 = span(i)
+        if e0 - s0 >= merge_short or len(blocks) == 1:
+            i += 1
+            continue
+        prev_ok = i > 0 and span(i - 1)[1] >= s0 - 0.05
+        next_ok = i + 1 < len(blocks) and blocks[i + 1][0][0]["t"] <= e0 + 0.05
+        if not (prev_ok or next_ok):
+            i += 1
+            continue
+        same_prev = prev_ok and line_of[i - 1] == line_of[i]
+        same_next = next_ok and line_of[i + 1] == line_of[i]
+        j = i - 1 if prev_ok and (same_prev or not same_next) else i
+        ws = [w for r in blocks[j] + blocks[j + 1] for w in r]
+        blocks[j:j + 2] = [fit_rows(rows_of(ws, a.row_chars), max_rows)]
+        line_of[j:j + 2] = [line_of[j]]
+        i = max(0, j)
+
     out = []
-    for bi, b in enumerate(blocks):
-        rows = rows_of(b, a.row_chars)
-        nxt = blocks[bi + 1][0]["t"] if bi + 1 < len(blocks) else seg["duration"]
-        end = min(nxt, b[-1]["e"] + a.hold)
+    for bi, rows in enumerate(blocks):
+        start, end = span(bi)
         out.append({
-            "start": max(0.0, b[0]["t"]), "end": round(end, 3),
+            "start": start, "end": round(end, 3),
             "rows": [{"color": "white", "words": [{"text": w["text"], "t": w["t"], "e": w["e"]} for w in r]} for r in rows],
         })
     # acentos por defecto (el agente debe revisarlos con criterio): la última fila de
@@ -503,7 +568,10 @@ def cmd_plan(a):
                 blk["rows"][-1]["color"] = "red"
             elif k % 6 == 0:
                 blk["rows"][0]["color"] = "gold"
-    plan = {"style": DEFAULT_STYLE, "blocks": out}
+    style = {**DEFAULT_STYLE, **(LANDSCAPE_STYLE if land else {})}
+    plan = {"style": style, "blocks": out}
+    print(f"  layout {layout} ({seg.get('width')}x{seg.get('height')}): "
+          f"máx. {max_rows or '∞'} filas por bloque, funde bloques < {merge_short} s")
     old = p / "plan.json"
     if old.exists() and not a.force:
         sys.exit("plan.json ya existe (puede tener ediciones a mano). Usa --force para regenerarlo.")
@@ -858,6 +926,13 @@ def main():
         x.add_argument("--auto", choices=["chorus", "first"], default="chorus")
         x.add_argument("--lead", type=float, default=0.4, help="segundos de música antes de la primera palabra")
 
+    def plan_opts(x):
+        x.add_argument("--layout", choices=["auto", "horizontal", "vertical"], default="auto",
+                       help="auto = horizontal si el video es más ancho que alto (estilo y cortes para 16:9)")
+        x.add_argument("--max-rows", type=int, help="filas máximas por bloque (horizontal: 2; vertical: sin límite)")
+        x.add_argument("--merge-short", type=float,
+                       help="funde bloques más cortos que esto, en s (horizontal: 0.7; vertical: 0)")
+
     s = sub.add_parser("song"); s.add_argument("project"); s.add_argument("song"); s.add_argument("--audio")
     s.add_argument("--lyrics", help="archivo con la letra (texto plano o LRC) si LRCLib no la tiene")
     s = sub.add_parser("segment"); s.add_argument("project"); seg_opts(s)
@@ -866,6 +941,7 @@ def main():
     s = sub.add_parser("plan"); s.add_argument("project")
     s.add_argument("--words-per-block", type=int, default=4); s.add_argument("--row-chars", type=int, default=10)
     s.add_argument("--hold", type=float, default=0.5); s.add_argument("--force", action="store_true")
+    plan_opts(s)
     s = sub.add_parser("matte"); s.add_argument("project"); s.add_argument("--ratio", type=float)
     s = sub.add_parser("preview"); s.add_argument("project"); s.add_argument("times", nargs="*")
     s = sub.add_parser("render"); s.add_argument("project"); s.add_argument("--out")
@@ -875,6 +951,7 @@ def main():
     seg_opts(s); s.add_argument("--model", default="small"); s.add_argument("--language")
     s.add_argument("--words-per-block", type=int, default=4); s.add_argument("--row-chars", type=int, default=10)
     s.add_argument("--hold", type=float, default=0.5); s.add_argument("--force", action="store_true")
+    plan_opts(s)
     s.add_argument("--ratio", type=float)
 
     a = ap.parse_args()
