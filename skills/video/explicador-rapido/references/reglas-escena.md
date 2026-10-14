@@ -1,0 +1,24 @@
+# Reglas de escena para los subagentes (plantilla)
+
+Copia este archivo a `.hyperframes/frame-packets/_reglas.md` del proyecto, cambia lo que va entre `<…>` y pásalo
+a cada subagente junto con su packet de `frame-packets.mjs`. Así salió el ep/02 (26 escenas, 24 con subagentes).
+
+---
+
+# Reglas del proyecto (jato.run · ep/<NN> <tema>), se suman al rol y al packet
+
+- **Lienzo** 1080×1920, 30 fps. Subtítulos ACTIVOS en la banda 1470–1700 px. Todo el contenido de la escena vive entre y=120 y **y ≤ 1440**. Debajo de 1440 no pongas nada salvo la red de partículas.
+- **Modelo estructural obligatorio:** lee primero `compositions/frames/<cuadro A>.html` y `compositions/frames/<cuadro B>.html` (ya aprobados por Jaime) y reutiliza su esqueleto tal cual: `<template>` → `#root` con `data-composition-id`, `<style>` con las `@font-face` (rutas `assets/fonts/...`, relativas a la raíz del proyecto), el fondo `clip` con id, la red de partículas SVG (círculos: es la única excepción a «sin círculos»), el HUD superior (izquierda VACÍA; a la derecha la etapa en mono tenue), el kicker superior (mono cian con cuadrito degradado), los paneles con 4 esquinas de mira, la línea de metadatos mono, las barras segmentadas de bloques cuadrados, y el patrón de timeline (`tl.fromTo`, `immediateRender:false` en las entradas tardías y en todo fromTo repetido sobre el mismo elemento, `tl.to({}, {duration: D}, 0)` al final). Copia sus bloques CSS y su generador de partículas (sus coordenadas) cambiando el prefijo.
+- **Prefijo de ids y clases:** `f<frame_id>-` (ej. `f11-coseno-arc`). Los ids NUNCA empiezan con número. El `data-composition-id` es el frame_id exacto (`11-coseno`).
+- **Forma:** CERO redondeo. Nada de `border-radius`, píldoras ni círculos (salvo las partículas). Puntos y marcadores son cuadrados. Barras = bloques segmentados cuadrados. Flechas con puntas triangulares rectas.
+- **Color:** paleta pastel sobre negro: cian `#9fe3f5`, lavanda `#c4b5fd`, durazno `#ffd9a0`, rosa `#ffadbb`, menta `#b4ecc8`, azul `#a8c5ff`; texto `#ededed`, `#a1a09a`, tenue `#8f8f8a` (NO uses `#666` para texto: falla el chequeo de contraste); superficies `#111110`, `#161615`, líneas `#232323`. Degradado de palabra clave: `linear-gradient(135deg,#9fe3f5,#c4b5fd)` con background-clip:text (una por escena como máximo).
+- **Colores por rol:** <p. ej. cian = consulta / lo correcto / cerca; lavanda = segunda clase; rosa = lo que falla / lejos; durazno = metadatos y advertencias; menta = confirmación>.
+- **Tipos:** Anton (golpes, MAYÚSCULAS, cifras grandes), Poppins 400/600 (poco texto), JetBrains Mono 400/700 (datos, rótulos, metadatos, código). **Anton no tiene símbolos** como ≈ ≠ → ↔ ✓ −: ponlos siempre en JetBrains Mono o Poppins (o dibújalos), nunca en Anton.
+- **Datos reales:** en `assets/data/` están <archivos>, calculados con <modelos>. En render no hay red: **lee tú los JSON y escribe sus valores dentro del HTML** (no `fetch`). No inventes cifras: si la escena muestra un número, sale del guion, del packet o de esos JSON. Lo que el packet marca como ilustrativo dilo en la línea de metadatos. Números en español: coma decimal en textos grandes («0,81», «16 ms»), punto de miles («200.000»); los valores crudos en mono pueden ir con punto decimal (-0.060).
+- **Medios:** solo si el packet los nombra: `assets/media/...` con `<img>` y `object-fit: cover`. Créditos en `assets/media/CREDITOS.md` (solo lectura). Sin logos ni colores de marca de terceros.
+- **Sincronía:** el campo `words` trae `palabra@segundos` (relativo al inicio de la escena). Cada revelación cae en su palabra (puedes adelantarla 0,1–0,2 s). Nada se queda quieto más de ~1,5 s: si no hay palabra clave, mantén un movimiento lento (scale 1→1.04 del panel principal) y la deriva de las partículas.
+- **Texto visible:** rótulos cortos, etiquetas de datos, cifras. Nunca frases completas de la narración (los subtítulos ya las muestran). Excepción: UI simulada (buscador, chat, código, tabla) con su texto propio.
+- **Sin solapes:** el chequeo marca como error dos textos que se tocan o texto tapado por un elemento opaco. Reserva el espacio de cada etiqueta; los tachados van como `background: linear-gradient(...)` animando `backgroundSize` sobre el propio texto, no como una barra encima.
+- **Animación:** nunca animes `left/top` (lint lo marca); usa `x/y` y `scaleX/scaleY` con `transform-origin: 0 0`. Un `<video>` va como hijo directo del root.
+- **No** pongas `<audio>`. **No** hagas animaciones de salida (salvo la última escena). **No** edites STORYBOARD.md ni otros frames. **No** toques los dos cuadros aprobados.
+- Al terminar, valida desde la raíz del proyecto con `npx --yes hyperframes@<versión fijada> lint` (ignora hallazgos de otros archivos) y corrige los de tu archivo. Responde solo con: ruta escrita, duración, y cualquier dato que hayas tenido que suponer.
