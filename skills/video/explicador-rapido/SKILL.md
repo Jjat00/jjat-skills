@@ -1,33 +1,52 @@
 ---
 name: explicador-rapido
-description: Produce un explicador vertical (1080x1920, ~2:30) en español sobre un tema de software o ingeniería, narrado por una voz y sin nadie frente a la cámara, con el estilo visual jato.run (negro, paleta pastel, todo esquinado, Anton + Poppins + JetBrains Mono, red de partículas), voz de ElevenLabs vía HF Studio, subtítulos palabra a palabra y DATOS REALES calculados con modelos de verdad (YOLO, ResNet, embeddings, benchmarks), como los episodios «Visión por computadora» y «Bases de datos vectoriales». Úsala cuando Jaime pida "un explicador de <tema>", "otro video como el de computer vision", "como el de bases de datos vectoriales", "explícame <tema> en un reel", "<tema> explicado rápido", el siguiente episodio de la serie, o un video estilo @rick.theengineer, aunque no nombre la skill. Construye sobre HyperFrames (flujo faceless-explainer) con subagentes por escena.
+description: Produce un explicador vertical (1080x1920, ~2:30) en español sobre un tema de software o ingeniería, narrado por una voz y sin nadie frente a la cámara, con el estilo visual jato.run (negro, paleta pastel, todo esquinado, Anton + Poppins + JetBrains Mono, red de partículas), voz de ElevenLabs (vía HF Studio, la API directa u otro TTS), subtítulos palabra a palabra y DATOS REALES calculados con modelos de verdad (YOLO, ResNet, embeddings, benchmarks), como los episodios «Visión por computadora» y «Bases de datos vectoriales». Úsala cuando el usuario pida "un explicador de <tema>", "otro video como el de computer vision", "como el de bases de datos vectoriales", "explícame <tema> en un reel", "<tema> explicado rápido", el siguiente episodio de la serie, o un video estilo @rick.theengineer, aunque no nombre la skill. Construye sobre HyperFrames (flujo faceless-explainer) con subagentes por escena.
 ---
 
-# Explicador rápido (serie jato.run)
+# Explicador rápido (estilo jato.run)
 
-Serie de reels que explican un tema técnico en ~2:30. Ya salieron dos episodios (octubre de 2026):
+Reels que explican un tema técnico en ~2:30. La skill nació con dos episodios de la serie de jato.run (octubre de
+2026): «Visión por computadora» (YOLOv8, ResNet-18/50, FaceNet, Sobel) y «Bases de datos vectoriales» (bge-m3, CLIP,
+hnswlib). Los dos cuadros de estilo aprobados del ep/02 vienen dentro de la skill, en `references/cuadros-aprobados/`.
+Si en la máquina existen proyectos de episodios anteriores (p. ej. `videos/*-explicado`), son la mejor referencia:
+copia de ahí `tools/` y la estructura.
 
-| Ep | Tema | Proyecto | Datos reales |
-|---|---|---|---|
-| 01 | Visión por computadora | `~/projects/videos/computer-vision-explicado` | YOLOv8, ResNet-18/50, FaceNet, Sobel |
-| 02 | Bases de datos vectoriales | `~/projects/videos/bases-vectoriales-explicado` | bge-m3, CLIP, hnswlib |
-
-Si esos proyectos existen en la máquina, son la mejor referencia: copia de ahí `tools/` y la estructura.
 `<SKILL>` es la carpeta de esta skill.
 
 **Qué lo hace funcionar:** una idea por escena, cada revelación cae en la palabra que la motiva, y todas las cifras
 salen de un modelo o benchmark corrido de verdad (lo ilustrativo se marca como tal en pantalla).
 
+## Requisitos
+
+- **HyperFrames** con su flujo `faceless-explainer` (skills `/hyperframes` y `/faceless-explainer`;
+  [hyperframes.heygen.com](https://hyperframes.heygen.com)). Node 20+ y `npx hyperframes`.
+- **ffmpeg** con `rubberband` (para acelerar la voz sin cambiar el tono) y **Python 3** (para `scripts/alinear.py` y
+  los cálculos de datos reales en un venv del proyecto).
+- **Un TTS** para la narración (ver § 4). Sugerido: HF Studio; también sirve ElevenLabs directo u otro.
+- **Opcional:** Codex CLI u otro generador de imágenes, para imágenes ilustrativas (ver § 3).
+
+## Preferencias del usuario
+
+Antes de empezar, mira si el usuario dejó preferencias (CLAUDE.md, memoria): carpeta de entrega, voz, TTS, marca.
+Si no hay, pregunta solo lo que haga falta y usa estos valores por defecto:
+
+| Qué | Por defecto |
+|---|---|
+| Carpeta del proyecto | `videos/<tema>-explicado` en el directorio de trabajo |
+| Entrega | `entregas/<tema> <día> <mes> <año>` (el autor original usa `D:\contenido\<tema> 11 oct 2026`) |
+| Voz | ElevenLabs `4GeB1bS2GAHAsGRM0eeU` («juvenil latina»), `eleven_v4`, velocidad 1,08 |
+| Estilo | `references/estilo-jato-run.md`. Si el usuario tiene marca propia, cambia paleta y fuentes y conserva la estructura |
+| Música | Sin música, salvo que la pida |
+
 ## Puertas de aprobación (no te las saltes)
 
-Jaime aprueba en este orden y nada avanza sin su sí:
+El usuario aprueba en este orden y nada avanza sin su sí:
 1. **Guion** completo.
 2. **Prueba de voz** de ~10 s con el guion real (antes de pagar la toma completa).
 3. **Dos cuadros de estilo** (las escenas más representativas) antes de construir el resto.
 4. **Preview** de todo el video antes del render final.
 
-Toda generación de pago muestra su costo en USD antes (HF Studio cotiza con `estimate_cost` o con el modo sin
-`quote_id`). La toma completa del ep/02 costó US$0,33.
+Toda generación de pago muestra su costo en USD antes y espera el OK. La toma completa del ep/02 costó US$0,33.
 
 ## 1. Proyecto
 
@@ -76,8 +95,9 @@ del proyecto (p. ej. `.cv-venv` con torch CPU) y scripts en `tools/` que escriba
 - **Imágenes generadas (si hay Codex CLI o un generador de imágenes):** úsalo para lo ilustrativo que no existe con
   licencia libre: fotos de producto de un catálogo de ejemplo, portadas de álbum de una app simulada, pares
   «parecido» (perro/cachorro). Con imágenes el ep/02 quedó mejor que la versión solo con gráficos (2026-10-14).
-  - Con Codex (sin API key, herramienta integrada, gpt-image-2): un `codex exec` por lote con el prompt por stdin y
-    una lista numerada de imágenes con su nombre de archivo; 3 corridas en paralelo hicieron 13 imágenes en ~6 min.
+  - Con Codex (herramienta integrada de imágenes, sin API key aparte; a 2026-10 usa gpt-image-2): un `codex exec`
+    por lote con el prompt por stdin y una lista numerada de imágenes con su nombre de archivo; 3 corridas en
+    paralelo hicieron 13 imágenes en ~6 min.
 
     ```bash
     echo "Genera estas imágenes con tu herramienta integrada y guárdalas en este directorio: 1) prod-botas.png …
@@ -89,14 +109,33 @@ del proyecto (p. ej. `.cv-venv` con torch CPU) y scripts en `tools/` que escriba
     `-i perro.png` y describe los rasgos que cambian.
   - Pásalas a JPG de 640 px (`assets/gen/*.jpg`, todo el lote < 1 MB) y no dejes los PNG en el proyecto. En pantalla,
     recortes cuadrados sin `border-radius`, dentro de los paneles del estilo.
-  - Si el generador es de pago (HF Studio, Higgsfield), muestra el costo en USD y espera el OK antes de generar.
+  - Si el generador es de pago (HF Studio, Higgsfield, una API), muestra el costo en USD y espera el OK.
   - Créditos en `assets/gen/CREDITOS.md`, aclarando que son ilustrativas y no fotos reales. Los **datos** siguen
     saliendo de modelos reales: la imagen ilustra, nunca reemplaza un número.
 
 ## 4. Voz
 
-- Voz de la serie: ElevenLabs `4GeB1bS2GAHAsGRM0eeU` («juvenil latina»), `eleven_v4`, velocidad 1,08, vía HF Studio
-  (`text_to_speech`). Si el tema pide otra, ofrece muestras y deja elegir.
+Voz por defecto: ElevenLabs `4GeB1bS2GAHAsGRM0eeU` («juvenil latina»), `eleven_v4`, velocidad 1,08. Si el usuario
+tiene otra voz o el tema pide otra, ofrece muestras y deja elegir. Cualquier TTS sirve mientras entregue un MP3:
+`alinear.py` trabaja sobre el audio, no sobre el proveedor.
+
+- **Sugerido: HF Studio** (MCP `hf-studio`, `text_to_speech`). Sin `quote_id` cotiza; con el `quote_id`, tras el OK,
+  genera. Guarda la generación en la sonoteca.
+- **ElevenLabs directo**, con `ELEVENLABS_API_KEY` propia. Cobra por carácter según el plan; estima el costo con el
+  largo del guion y avísalo antes:
+
+  ```bash
+  curl -sS "https://api.elevenlabs.io/v1/text-to-speech/<voice_id>?output_format=mp3_44100_128" \
+    -H "xi-api-key: $ELEVENLABS_API_KEY" -H "Content-Type: application/json" \
+    -d '{"text": "<guion>", "model_id": "eleven_v4", "voice_settings": {"speed": 1.08}}' \
+    -o assets/audio/narracion-completa.mp3
+  ```
+
+- **Otras:** el TTS de OpenAI o uno local y gratis (Kokoro, Piper, edge-tts) si no hay presupuesto. Las etiquetas de
+  tono del guion (`[curious, engaging explainer]`) son de ElevenLabs v3/v4: quítalas del texto para otros TTS.
+
+Pasos:
+
 - Prueba de ~10 s con líneas reales del guion → aprobación → **una sola toma** del guion completo.
 - Mide la toma. Si pasa de ~2:35, acelera con rubberband (tono y formantes intactos) en vez de pagar otra:
 
@@ -125,7 +164,7 @@ del proyecto (p. ej. `.cv-venv` con torch CPU) y scripts en `tools/` que escriba
 - Construye primero **dos cuadros de estilo** a mano, partiendo de los aprobados del ep/02
   (`references/cuadros-aprobados/09-cerca.html` y `13-resultado.html`). `scripts/comun.py` tiene las piezas (fuentes,
   fondo, red de partículas, esquinas de mira, HUD, plantilla) si prefieres generarlos con Python.
-- Enséñaselos a Jaime en Studio (`npx hyperframes preview --background`) y espera su aprobación.
+- Enséñaselos al usuario en Studio (`npx hyperframes preview --background`) y espera su aprobación.
 
 ## 6. El resto de escenas con subagentes
 
@@ -144,12 +183,12 @@ del proyecto (p. ej. `.cv-venv` con torch CPU) y scripts en `tools/` que escriba
    transparente el fondo propio de cada escena (`.scene [id$="-bg"] { background: transparent !important; }`) y pon en
    `#root` el degradado `radial-gradient(120% 80% at 50% 45%, #121212 0%, #0a0a0a 55%, #050505 100%)`. Así el
    contenido (y=140–1440 en cada escena) cae en ~305–1430 y los subtítulos en ~1445–1615; en pantalla completa
-   se sigue viendo bien. Lo pidió Jaime tras ver el episodio 1 en el feed (2026-10-14).
+   se sigue viendo bien (se detectó al ver el ep/01 en el feed, 2026-10-14).
 2. `transitions inject` y `verify`, `npx hyperframes lint` y `npm run check` sin errores.
 3. Hoja de capturas a mitad de cada escena para revisar todo de un vistazo.
-4. Preview en Studio → aprobación de Jaime → `npm run render`.
-5. Entrega en `D:\contenido\<tema> <día> <mes> <año>` (p. ej. `D:\contenido\computer vision 11 oct 2026`):
-   el MP4 (H.264), `creditos-descripcion.txt` y el caption. Sin música salvo que Jaime la pida.
+4. Preview en Studio → aprobación del usuario → `npm run render`.
+5. Entrega en la carpeta de entrega (ver «Preferencias del usuario»): el MP4 (H.264), `creditos-descripcion.txt` y
+   el caption.
 
 Antes de construir, lee `references/trampas.md`: HDR, subagentes, contraste, símbolos en Anton y la banda de
 subtítulos ya costaron horas.

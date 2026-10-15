@@ -2,7 +2,7 @@
 version: alpha
 name: jato.run — Frame (explicadores rápidos de software e ingeniería)
 description: >
-  Estilo propio de la serie de explicadores de Jaime Aza, derivado de jaimeaza.tech. Lienzo casi
+  Estilo de la serie de explicadores de jato.run (de Jaime Aza), derivado de jaimeaza.tech. Lienzo casi
   negro, un solo degradado cian→violeta como voltaje, red de partículas como firma, Anton para
   golpes de titular, Poppins para lectura y JetBrains Mono para la capa de datos (píxeles,
   matrices, probabilidades, etiquetas de modelo). Fotografía y video reales enmarcados como
@@ -53,7 +53,7 @@ components:
     typography: "{typography.kicker}"
     description: "El rótulo de la escena (2 a 5 palabras, MAYÚSCULAS, mono, cian) con un punto degradado cian→violeta delante. Equivale al título de escena del ejemplo. Una por escena."
   hud-strip:
-    position: "franja superior a 70px: izquierda VACÍA (sin rótulo de serie: Jaime lo pidió quitar), derecha el nombre de la etapa actual en mono-meta"
+    position: "franja superior a 70px: izquierda VACÍA (sin rótulo de serie, a propósito), derecha el nombre de la etapa actual en mono-meta"
     description: "Chrome fino de laboratorio. Hairline inferior {colors.line}. Siempre tenue (dim), nunca compite."
   specimen-frame:
     description: "Marco para foto o video real: sin redondeo, hairline {colors.line}, sombra media, cuatro esquinas de mira en cian (ángulos de 28px, 2px), y debajo una línea mono-meta tipo `input: calle.jpg · 1080×1350 · RGB`. El medio va dentro; nada se dibuja encima salvo anotaciones del modelo."
@@ -88,7 +88,7 @@ vive en las esquinas como firma.
 
 ## Colors
 
-**Paleta pastel sobre negro** (pedido de Jaime, 2026-10-11): cian pastel `#9fe3f5`, lavanda `#c4b5fd`, durazno `#ffd9a0`, rosa `#ffadbb`, menta `#b4ecc8`, azul pastel `#a8c5ff`. Nada saturado.
+**Paleta pastel sobre negro** (desde 2026-10-11): cian pastel `#9fe3f5`, lavanda `#c4b5fd`, durazno `#ffd9a0`, rosa `#ffadbb`, menta `#b4ecc8`, azul pastel `#a8c5ff`. Nada saturado.
 
 Suelo `canvas`; superficies `surface`/`surface-2`; hairline `line`. Texto `fg`, `muted`, `dim`.
 El **degradado cian→violeta** (`#9fe3f5 → #c4b5fd`) es el único acento de marca: palabra clave,

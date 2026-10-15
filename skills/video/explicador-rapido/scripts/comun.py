@@ -69,7 +69,7 @@ def corners(prefix, x, y, w, h, color="#9fe3f5", ids=True):
 
 
 def hud(prefix, right=""):
-    """HUD superior: la izquierda va vacía a propósito (Jaime pidió quitar el rótulo); a la derecha, la etapa."""
+    """HUD superior: la izquierda va vacía a propósito (sin rótulo de serie); a la derecha, la etapa."""
     return f'<div class="{prefix}-hud" id="{prefix}-hud"><span></span><span>{right}</span></div>'
 
 
