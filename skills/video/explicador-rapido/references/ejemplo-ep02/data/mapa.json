@@ -1,0 +1,134 @@
+{
+  "modelo": "BAAI/bge-m3",
+  "proyeccion": "tsne",
+  "dims": 1024,
+  "puntos": [
+    {
+      "palabra": "perro",
+      "grupo": "animales",
+      "x": 0.6382,
+      "y": 0.355
+    },
+    {
+      "palabra": "cachorro",
+      "grupo": "animales",
+      "x": 0.7083,
+      "y": 0.4107
+    },
+    {
+      "palabra": "gato",
+      "grupo": "animales",
+      "x": 0.8034,
+      "y": 0.3236
+    },
+    {
+      "palabra": "lobo",
+      "grupo": "animales",
+      "x": 1.0,
+      "y": 0.6707
+    },
+    {
+      "palabra": "caballo",
+      "grupo": "animales",
+      "x": 0.6094,
+      "y": 0.5439
+    },
+    {
+      "palabra": "carro",
+      "grupo": "vehículos",
+      "x": 0.5559,
+      "y": 0.6418
+    },
+    {
+      "palabra": "camión",
+      "grupo": "vehículos",
+      "x": 0.5866,
+      "y": 0.8039
+    },
+    {
+      "palabra": "moto",
+      "grupo": "vehículos",
+      "x": 0.901,
+      "y": 0.699
+    },
+    {
+      "palabra": "bus",
+      "grupo": "vehículos",
+      "x": 0.6593,
+      "y": 0.8718
+    },
+    {
+      "palabra": "bicicleta",
+      "grupo": "vehículos",
+      "x": 0.7947,
+      "y": 0.7169
+    },
+    {
+      "palabra": "pizza",
+      "grupo": "comida",
+      "x": 0.4336,
+      "y": 0.3338
+    },
+    {
+      "palabra": "hamburguesa",
+      "grupo": "comida",
+      "x": 0.5063,
+      "y": 0.0
+    },
+    {
+      "palabra": "arepa",
+      "grupo": "comida",
+      "x": 0.2666,
+      "y": 0.138
+    },
+    {
+      "palabra": "taco",
+      "grupo": "comida",
+      "x": 0.5443,
+      "y": 0.2185
+    },
+    {
+      "palabra": "empanada",
+      "grupo": "comida",
+      "x": 0.4032,
+      "y": 0.135
+    },
+    {
+      "palabra": "factura",
+      "grupo": "dinero",
+      "x": 0.0,
+      "y": 1.0
+    },
+    {
+      "palabra": "impuesto",
+      "grupo": "dinero",
+      "x": 0.1447,
+      "y": 0.8794
+    },
+    {
+      "palabra": "banco",
+      "grupo": "dinero",
+      "x": 0.1232,
+      "y": 0.7175
+    },
+    {
+      "palabra": "préstamo",
+      "grupo": "dinero",
+      "x": 0.0212,
+      "y": 0.6936
+    },
+    {
+      "palabra": "salario",
+      "grupo": "dinero",
+      "x": 0.0583,
+      "y": 0.8651
+    }
+  ],
+  "sim": {
+    "perro-cachorro": 0.812,
+    "carro-camión": 0.652,
+    "perro-factura": 0.437,
+    "carro-factura": 0.463,
+    "perro-carro": 0.605
+  }
+}

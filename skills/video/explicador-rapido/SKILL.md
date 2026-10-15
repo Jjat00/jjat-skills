@@ -8,8 +8,10 @@ description: Produce un explicador vertical (1080x1920, ~2:30) en español sobre
 Reels que explican un tema técnico en ~2:30. La skill nació con dos episodios de la serie de jato.run (octubre de
 2026): «Visión por computadora» (YOLOv8, ResNet-18/50, FaceNet, Sobel) y «Bases de datos vectoriales» (bge-m3, CLIP,
 hnswlib). Los dos cuadros de estilo aprobados del ep/02 vienen dentro de la skill, en `references/cuadros-aprobados/`.
-Si en la máquina existen proyectos de episodios anteriores (p. ej. `videos/*-explicado`), son la mejor referencia:
-copia de ahí `tools/` y la estructura.
+**Ejemplo completo en `references/ejemplo-ep02/`:** brief, guion, storyboard, hoja de capturas del video final, 7
+escenas de tipos distintos (portada, tabla, fórmula, benchmark, grafo, flujo, tarjetas) y los scripts de datos reales.
+Léelo antes de escribir el guion y vuelve a él al diseñar escenas. Si en la máquina hay proyectos de episodios
+anteriores (p. ej. `videos/*-explicado`), también sirven: copia de ahí `tools/` y la estructura.
 
 `<SKILL>` es la carpeta de esta skill.
 
@@ -68,6 +70,7 @@ cp <SKILL>/references/estilo-jato-run.md videos/<tema>-explicado/frame.md
 - Si hay video de referencia: transcríbelo (`npx hyperframes transcribe ref.mp4 -m large-v3 -l es`) y arma una hoja de
   contacto (`ffmpeg -i ref.mp4 -vf "fps=1/2,scale=270:-1,tile=8x5" hoja.png`). **Cubre punto por punto todo lo que
   dice la referencia**: en el ep/01 hubo que reponer 6 detalles perdidos al condensar.
+- Mira `references/ejemplo-ep02/SCRIPT.md` para el tono, el largo de cada línea y el arco.
 - Arco que funcionó: gancho cotidiano → la pregunta → cómo se hacía antes / por qué falla → idea clave → el mecanismo
   paso a paso con datos reales → cómo se hace rápido o a escala → usos → herramientas → idea central → cierre.
 - ~510 palabras para 2:30 tras acelerar. 24 a 28 escenas («Line»).
@@ -158,7 +161,7 @@ Pasos:
 
 - `STORYBOARD.md` del flujo faceless-explainer, con `words: palabra@seg` (relativo al inicio de la escena, sale de
   `audio_meta.json`) para que cada revelación caiga en su palabra. Define la continuidad (qué elemento reaparece
-  igual en varias escenas) y los colores por rol.
+  igual en varias escenas) y los colores por rol. Modelo: `references/ejemplo-ep02/STORYBOARD.md`.
 - Sistema visual en `references/estilo-jato-run.md`. Lo no negociable: cero `border-radius` (salvo las partículas),
   HUD con la izquierda vacía, nada debajo de y=1440, un solo degradado cian→violeta por escena.
 - Construye primero **dos cuadros de estilo** a mano, partiendo de los aprobados del ep/02
@@ -170,7 +173,8 @@ Pasos:
 
 - `frame-packets.mjs` (del flujo faceless-explainer) arma un paquete por escena.
 - Copia `references/reglas-escena.md` a `.hyperframes/frame-packets/_reglas.md`, rellena lo que va entre `<…>` y pásalo
-  a cada subagente con su paquete. Los dos cuadros aprobados son el esqueleto obligatorio.
+  a cada subagente con su paquete. Los dos cuadros aprobados son el esqueleto obligatorio; si la escena es de un tipo
+  que tiene modelo en `references/ejemplo-ep02/frames/` (tabla, benchmark, grafo, flujo, tarjetas), pásale también ese.
 - **Máximo 20 subagentes a la vez**; el exceso falla sin reintentarse. Lanza en tandas y lleva la cuenta.
 
 ## 7. Cierre

@@ -1,0 +1,176 @@
+{
+  "modelo": "BAAI/bge-m3",
+  "busqueda": {
+    "consulta": "tenis para correr bajo la lluvia",
+    "exacta_sql": [
+      "tenis de mesa profesional"
+    ],
+    "resultados": [
+      {
+        "texto": "zapatillas impermeables para trotar",
+        "sim": 0.628
+      },
+      {
+        "texto": "chaqueta rompevientos para running",
+        "sim": 0.561
+      },
+      {
+        "texto": "zapatos de cuero para oficina",
+        "sim": 0.512
+      },
+      {
+        "texto": "botas de caucho para niños",
+        "sim": 0.483
+      },
+      {
+        "texto": "tenis de mesa profesional",
+        "sim": 0.48
+      },
+      {
+        "texto": "paraguas plegable negro",
+        "sim": 0.468
+      },
+      {
+        "texto": "licuadora de 600 vatios",
+        "sim": 0.357
+      }
+    ]
+  },
+  "embedding_perro": {
+    "dims": 1024,
+    "primeros": [
+      -0.06,
+      0.005,
+      -0.051,
+      0.002,
+      -0.023,
+      0.024,
+      -0.006,
+      0.029,
+      0.008,
+      -0.04,
+      -0.005,
+      0.031
+    ]
+  },
+  "mapa": [
+    {
+      "palabra": "perro",
+      "x": -0.283,
+      "y": 0.23
+    },
+    {
+      "palabra": "cachorro",
+      "x": -0.361,
+      "y": 0.277
+    },
+    {
+      "palabra": "gato",
+      "x": -0.271,
+      "y": 0.178
+    },
+    {
+      "palabra": "lobo",
+      "x": -0.135,
+      "y": -0.219
+    },
+    {
+      "palabra": "carro",
+      "x": -0.238,
+      "y": -0.076
+    },
+    {
+      "palabra": "moto",
+      "x": -0.152,
+      "y": -0.186
+    },
+    {
+      "palabra": "bus",
+      "x": -0.006,
+      "y": -0.226
+    },
+    {
+      "palabra": "camión",
+      "x": -0.092,
+      "y": -0.215
+    },
+    {
+      "palabra": "pizza",
+      "x": 0.116,
+      "y": 0.265
+    },
+    {
+      "palabra": "hamburguesa",
+      "x": 0.215,
+      "y": 0.296
+    },
+    {
+      "palabra": "arepa",
+      "x": 0.492,
+      "y": 0.287
+    },
+    {
+      "palabra": "taco",
+      "x": -0.163,
+      "y": 0.099
+    },
+    {
+      "palabra": "factura",
+      "x": 0.344,
+      "y": 0.079
+    },
+    {
+      "palabra": "impuesto",
+      "x": 0.196,
+      "y": -0.21
+    },
+    {
+      "palabra": "banco",
+      "x": 0.105,
+      "y": -0.357
+    },
+    {
+      "palabra": "préstamo",
+      "x": 0.234,
+      "y": -0.221
+    }
+  ],
+  "pares": {
+    "perro-cachorro": 0.812,
+    "perro-gato": 0.639,
+    "perro-factura": 0.437
+  },
+  "analogia": [
+    {
+      "palabra": "reina",
+      "sim": 0.687
+    },
+    {
+      "palabra": "princesa",
+      "sim": 0.531
+    },
+    {
+      "palabra": "señora",
+      "sim": 0.53
+    },
+    {
+      "palabra": "monarca",
+      "sim": 0.369
+    },
+    {
+      "palabra": "príncipe",
+      "sim": 0.282
+    }
+  ],
+  "velocidad": {
+    "n": 200000,
+    "dims": 1024,
+    "k": 10,
+    "bruta_ms": 15.87,
+    "hnsw_ms": 2.386,
+    "acelera": 6.6,
+    "recall": 1.0,
+    "construccion_s": 130.4,
+    "memoria_mb_float32": 819
+  }
+}
