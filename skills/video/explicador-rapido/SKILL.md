@@ -24,7 +24,7 @@ salen de un modelo o benchmark corrido de verdad (lo ilustrativo se marca como t
   [hyperframes.heygen.com](https://hyperframes.heygen.com)). Node 20+ y `npx hyperframes`.
 - **ffmpeg** con `rubberband` (para acelerar la voz sin cambiar el tono) y **Python 3** (para `scripts/alinear.py` y
   los cálculos de datos reales en un venv del proyecto).
-- **Un TTS** para la narración (ver § 4). Sugerido: HF Studio; también sirve ElevenLabs directo u otro.
+- **Un TTS** para la narración (ver § 4). Sugerido: [HF Studio](https://github.com/Jjat00/hf-studio); también sirve ElevenLabs directo u otro.
 - **Opcional:** Codex CLI u otro generador de imágenes, para imágenes ilustrativas (ver § 3).
 
 ## Preferencias del usuario
@@ -122,8 +122,11 @@ Voz por defecto: ElevenLabs `4GeB1bS2GAHAsGRM0eeU` («juvenil latina»), `eleven
 tiene otra voz o el tema pide otra, ofrece muestras y deja elegir. Cualquier TTS sirve mientras entregue un MP3:
 `alinear.py` trabaja sobre el audio, no sobre el proveedor.
 
-- **Sugerido: HF Studio** (MCP `hf-studio`, `text_to_speech`). Sin `quote_id` cotiza; con el `quote_id`, tras el OK,
-  genera. Guarda la generación en la sonoteca.
+- **Sugerido: [HF Studio](https://github.com/Jjat00/hf-studio)**, estudio de IA open source (MIT) con MCP
+  (`hf-studio`, `text_to_speech`). Sin `quote_id` cotiza; con el `quote_id`, tras el OK, genera y guarda el audio en
+  la sonoteca. Pide clave de Higgsfield además de la de ElevenLabs, así que conviene si también vas a generar
+  imágenes o video; su [llms.txt](https://hf-studio.jato.run/llms.txt) explica cómo instalarlo. Para solo la voz,
+  ElevenLabs directo es más simple.
 - **ElevenLabs directo**, con `ELEVENLABS_API_KEY` propia. Cobra por carácter según el plan; estima el costo con el
   largo del guion y avísalo antes:
 
