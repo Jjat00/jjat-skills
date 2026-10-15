@@ -73,6 +73,25 @@ del proyecto (p. ej. `.cv-venv` con torch CPU) y scripts en `tools/` que escriba
 - Prueba varios modelos si el primero no separa bien (ver `references/trampas.md`).
 - Fotos y videos: Wikimedia Commons por categoría y Pexels, de licencia libre, mejor con escenas latinoamericanas.
   Créditos en `assets/media/CREDITOS.md` y el texto para la descripción del post en `creditos-descripcion.txt`.
+- **Imágenes generadas (si hay Codex CLI o un generador de imágenes):** úsalo para lo ilustrativo que no existe con
+  licencia libre: fotos de producto de un catálogo de ejemplo, portadas de álbum de una app simulada, pares
+  «parecido» (perro/cachorro). Con imágenes el ep/02 quedó mejor que la versión solo con gráficos (2026-10-14).
+  - Con Codex (sin API key, herramienta integrada, gpt-image-2): un `codex exec` por lote con el prompt por stdin y
+    una lista numerada de imágenes con su nombre de archivo; 3 corridas en paralelo hicieron 13 imágenes en ~6 min.
+
+    ```bash
+    echo "Genera estas imágenes con tu herramienta integrada y guárdalas en este directorio: 1) prod-botas.png …
+    Cuadradas, fondo neutro, sin texto ni logotipos. No hagas nada más." | \
+      codex exec --skip-git-repo-check --sandbox workspace-write -C assets/gen -
+    ```
+
+  - Para una variante que conserve identidad (el cachorro del mismo perro) pasa la primera como referencia con
+    `-i perro.png` y describe los rasgos que cambian.
+  - Pásalas a JPG de 640 px (`assets/gen/*.jpg`, todo el lote < 1 MB) y no dejes los PNG en el proyecto. En pantalla,
+    recortes cuadrados sin `border-radius`, dentro de los paneles del estilo.
+  - Si el generador es de pago (HF Studio, Higgsfield), muestra el costo en USD y espera el OK antes de generar.
+  - Créditos en `assets/gen/CREDITOS.md`, aclarando que son ilustrativas y no fotos reales. Los **datos** siguen
+    saliendo de modelos reales: la imagen ilustra, nunca reemplaza un número.
 
 ## 4. Voz
 
@@ -118,7 +137,14 @@ del proyecto (p. ej. `.cv-venv` con torch CPU) y scripts en `tools/` que escriba
 ## 7. Cierre
 
 1. `assemble-index`, regenerar subtítulos y **volver a poner la banda** en `compositions/captions.html`
-   (`--cap-band-top: 1460px; --cap-band-height: 240px;`).
+   (`--cap-band-top: 1445px; --cap-band-height: 170px;`).
+   **Zona segura del feed de Instagram:** sin abrir el reel, el feed lo recorta a 4:5 por el centro (solo se ve
+   y≈285–1635) y se pierde el kicker y la parte alta. En `index.html` reduce y baja todas las escenas
+   (`.scene { transform: translate(0px, 184px) scale(0.865); transform-origin: 540px 0px; }`), vuelve
+   transparente el fondo propio de cada escena (`.scene [id$="-bg"] { background: transparent !important; }`) y pon en
+   `#root` el degradado `radial-gradient(120% 80% at 50% 45%, #121212 0%, #0a0a0a 55%, #050505 100%)`. Así el
+   contenido (y=140–1440 en cada escena) cae en ~305–1430 y los subtítulos en ~1445–1615; en pantalla completa
+   se sigue viendo bien. Lo pidió Jaime tras ver el episodio 1 en el feed (2026-10-14).
 2. `transitions inject` y `verify`, `npx hyperframes lint` y `npm run check` sin errores.
 3. Hoja de capturas a mitad de cada escena para revisar todo de un vistazo.
 4. Preview en Studio → aprobación de Jaime → `npm run render`.

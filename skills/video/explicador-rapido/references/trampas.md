@@ -37,3 +37,5 @@ Salieron en el ep/01 (visión por computadora) y el ep/02 (bases de datos vector
 - Un objeto que aparece poco tiempo en un video: `data-playback-rate="0.5"` (cámara lenta compatible con el render).
 - `#666` como color de texto falla el chequeo de contraste: usa `#8f8f8a`.
 - Anton no trae ≈ ≠ → ↔ ✓ −: esos símbolos en JetBrains Mono o Poppins.
+
+- **Feed de Instagram:** la vista previa del feed recorta el reel a 4:5 (y≈285–1635). Si el contenido empieza en y=140 y los subtítulos van en 1460–1700, en el feed se pierde el kicker y sobra espacio abajo. Arreglo en el índice: escala 0.865 + translateY 184 a `.scene` (ver SKILL.md § 7).
