@@ -10,6 +10,7 @@ Las skills se ordenan por carpetas de categoría. Cada skill es una carpeta con 
 skills/
   contenido/     # publicaciones para redes: carruseles, posts
   ia-agentes/    # agentes, LLMs, evaluación, embeddings
+  ingenieria/    # métodos de ingeniería: ingeniería inversa, cajas negras
   video/         # edición y producción de video
 ```
 
@@ -32,6 +33,12 @@ Una skill nueva va en la carpeta de su categoría; si no encaja en ninguna, se c
 | `letras-detras` | Pone la letra de una cancion en tipografia gigante detras del sujeto de un video (serif condensada, palabras al ritmo de la voz, acentos en rojo o dorado) y le monta la cancion. Entradas: video + link de Spotify, nombre o "artista - cancion"; letra sincronizada de LRCLib, audio de YouTube, alineado con faster-whisper y matte con Robust Video Matting. Local y gratis. |
 | `reel-editorial` | Convierte una toma de webcam o celular en un reel vertical con estilo editorial: montaje por transcripcion (quita tomas falsas y pausas), persona recortada sobre tarjetas de color, paneles de motion graphics, subtitulos palabra a palabra y audio a -14 LUFS. Local con ffmpeg, faster-whisper y [HyperFrames](https://hyperframes.heygen.com). |
 | `ruta-dron-ubicacion` | Video de ubicacion estilo inmobiliaria desde una toma de dron de cualquier propiedad (local, casa, lote, finca): ruta animada pegada a las calles, pin, tarjeta y cierre; opcionalmente el lote con cotas y area. OpenCV + COLMAP + ffmpeg. |
+
+### Ingenieria
+
+| Skill | Descripcion |
+|---|---|
+| `caja-negra` | Metodo para replicar exactamente una funcion o un servicio sin codigo ni documentacion a partir de consultas, con un set oculto que lo puntua. Destilado de dos retos reales: uno perdido (20 %) y otro ganado (83, 99 y 100 de 100). Clasifica la caja, reparte el presupuesto (lo transversal antes que lo estructural), mide con regresion, fuzzer diferencial, canario y diferencial exploratorio, y fija la puerta para gastar una evaluacion oficial. Incluye comparador y cliente de laboratorio en Python. |
 
 ### Gemini Embedding 2
 
