@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 410 124" width="820" height="248">
+  <!-- copia aplanada de assets/svg/auto-perfil.svg para ManimGX: ruedas sin <use>/transform, línea sin stroke-opacity -->
+  <path id="carroceria" fill="#111110" stroke="#9fe3f5" stroke-width="2.4" stroke-linejoin="round"
+    d="M 16 90 L 14 76 Q 14 66 27 63 L 110 52 Q 150 27 206 25 Q 248 24 276 42 L 362 59 Q 389 63 396 76 L 398 88 Q 397 95 384 95 L 350 95
+       A 35 35 0 0 0 280 95 L 120 95 A 35 35 0 0 0 50 95 L 26 95 Q 16 95 16 90 Z"/>
+  <path id="ventanas" fill="#1b2a30" stroke="#9fe3f5" stroke-width="1.6" stroke-linejoin="round"
+    d="M 124 52 Q 158 33 204 31 Q 238 31 260 44 L 236 52 Z"/>
+  <line x1="196" y1="31" x2="190" y2="52" stroke="#9fe3f5" stroke-width="1.4"/>
+  <path id="linea" fill="none" stroke="#5f848e" stroke-width="1.2" d="M 40 74 L 380 74"/>
+  <path id="faro" fill="none" stroke="#ededed" stroke-width="2.4" stroke-linecap="round" d="M 372 66 L 392 72"/>
+  <path id="calavera" fill="none" stroke="#ffadbb" stroke-width="2.4" stroke-linecap="round" d="M 15 72 L 30 70"/>
+    <circle id="rueda-trasera" cx="85" cy="95" r="28" fill="#0d0d0d" stroke="#ededed" stroke-width="2.4"/>
+  <circle cx="85" cy="95" r="17" fill="#161615" stroke="#a1a09a" stroke-width="1.6"/>
+  <line x1="85" y1="79" x2="85" y2="111" stroke="#a1a09a" stroke-width="2"/>
+  <line x1="69.8" y1="90" x2="100.2" y2="100" stroke="#a1a09a" stroke-width="2"/>
+  <line x1="75.6" y1="108" x2="94.4" y2="82" stroke="#a1a09a" stroke-width="2"/>
+  <line x1="94.4" y1="108" x2="75.6" y2="82" stroke="#a1a09a" stroke-width="2"/>
+  <line x1="69.8" y1="100" x2="100.2" y2="90" stroke="#a1a09a" stroke-width="2"/>
+  <circle cx="85" cy="95" r="3.5" fill="#9fe3f5"/>
+  <circle id="rueda-delantera" cx="315" cy="95" r="28" fill="#0d0d0d" stroke="#ededed" stroke-width="2.4"/>
+  <circle cx="315" cy="95" r="17" fill="#161615" stroke="#a1a09a" stroke-width="1.6"/>
+  <line x1="315" y1="79" x2="315" y2="111" stroke="#a1a09a" stroke-width="2"/>
+  <line x1="299.8" y1="90" x2="330.2" y2="100" stroke="#a1a09a" stroke-width="2"/>
+  <line x1="305.6" y1="108" x2="324.4" y2="82" stroke="#a1a09a" stroke-width="2"/>
+  <line x1="324.4" y1="108" x2="305.6" y2="82" stroke="#a1a09a" stroke-width="2"/>
+  <line x1="299.8" y1="100" x2="330.2" y2="90" stroke="#a1a09a" stroke-width="2"/>
+  <circle cx="315" cy="95" r="3.5" fill="#9fe3f5"/>
+</svg>

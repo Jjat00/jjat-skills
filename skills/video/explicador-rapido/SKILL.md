@@ -1,13 +1,15 @@
 ---
 name: explicador-rapido
-description: Produce un explicador vertical (1080x1920, ~2:30) en español sobre un tema de software o ingeniería, narrado por una voz y sin nadie frente a la cámara, con el estilo visual jato.run (negro, paleta pastel, todo esquinado, Anton + Poppins + JetBrains Mono, red de partículas), voz de ElevenLabs (vía HF Studio, la API directa u otro TTS), subtítulos palabra a palabra y DATOS REALES calculados con modelos de verdad (YOLO, ResNet, embeddings, benchmarks), como los episodios «Visión por computadora» y «Bases de datos vectoriales». Úsala cuando el usuario pida "un explicador de <tema>", "otro video como el de computer vision", "como el de bases de datos vectoriales", "explícame <tema> en un reel", "<tema> explicado rápido", el siguiente episodio de la serie, o un video estilo @rick.theengineer, aunque no nombre la skill. Construye sobre HyperFrames (flujo faceless-explainer) con subagentes por escena.
+description: Produce un explicador vertical (1080x1920, ~2:30) en español sobre un tema de software o ingeniería, narrado por una voz y sin nadie frente a la cámara, con el estilo visual jato.run (negro, paleta pastel, todo esquinado, Anton + Poppins + JetBrains Mono, red de partículas), voz de ElevenLabs (vía HF Studio, la API directa u otro TTS), subtítulos palabra a palabra y DATOS REALES calculados con modelos de verdad (YOLO, ResNet, embeddings, benchmarks, física con CoolProp) y, si hace falta, gráficos de ManimGX y tomas 3D de Blender, como los episodios «Visión por computadora» y «Bases de datos vectoriales». Úsala cuando el usuario pida "un explicador de <tema>", "otro video como el de computer vision", "como el de bases de datos vectoriales", "explícame <tema> en un reel", "<tema> explicado rápido", el siguiente episodio de la serie, o un video estilo @rick.theengineer, aunque no nombre la skill. Construye sobre HyperFrames (flujo faceless-explainer) con subagentes por escena.
 ---
 
 # Explicador rápido (estilo jato.run)
 
 Reels que explican un tema técnico en ~2:30. La skill nació con dos episodios de la serie de jato.run (octubre de
 2026): «Visión por computadora» (YOLOv8, ResNet-18/50, FaceNet, Sobel) y «Bases de datos vectoriales» (bge-m3, CLIP,
-hnswlib). Los dos cuadros de estilo aprobados del ep/02 vienen dentro de la skill, en `references/cuadros-aprobados/`.
+hnswlib). Después vinieron «Cuánto cuesta un token» y «La física del Tesla volador», el primero con gráficos de
+ManimGX y tomas de Blender. Los dos cuadros de estilo aprobados del ep/02 vienen dentro de la skill, en
+`references/cuadros-aprobados/`.
 **Ejemplo completo en `references/ejemplo-ep02/`:** brief, guion, storyboard, hoja de capturas del video final, 7
 escenas de tipos distintos (portada, tabla, fórmula, benchmark, grafo, flujo, tarjetas) y los scripts de datos reales.
 Léelo antes de escribir el guion y vuelve a él al diseñar escenas. Si en la máquina hay proyectos de episodios
@@ -26,6 +28,8 @@ salen de un modelo o benchmark corrido de verdad (lo ilustrativo se marca como t
   los cálculos de datos reales en un venv del proyecto).
 - **Un TTS** para la narración (ver § 4). Sugerido: [HF Studio](https://github.com/Jjat00/hf-studio); también sirve ElevenLabs directo u otro.
 - **Opcional:** Codex CLI u otro generador de imágenes, para imágenes ilustrativas (ver § 3).
+- **Opcional:** [ManimGX](https://manimgx.academa.ai/) para diagramas, fórmulas y curvas animadas, y **Blender** para
+  tomas 3D de objetos reales (ver § 5 y `references/manim-y-blender.md`).
 
 ## Preferencias del usuario
 
@@ -74,6 +78,9 @@ cp <SKILL>/references/estilo-jato-run.md videos/<tema>-explicado/frame.md
 - Arco que funcionó: gancho cotidiano → la pregunta → cómo se hacía antes / por qué falla → idea clave → el mecanismo
   paso a paso con datos reales → cómo se hace rápido o a escala → usos → herramientas → idea central → cierre.
 - ~510 palabras para 2:30 tras acelerar. 24 a 28 escenas («Line»).
+- **Duración máxima 2:55 si va a Instagram:** los reels de más de 3:00 no se muestran a público nuevo. Antes de pagar
+  la voz, estima la duración final (palabras ÷ ~2,8 palabras/s de la toma × aceleración) y recorta el guion. El ep/04
+  salió en 3:10 con 711 palabras a ×1,20 y hubo que rehacerlo quitando dos escenas enteras (mejor eso que acelerar más).
 - `SCRIPT.md` con este formato exacto (lo lee `alinear.py`):
 
   ```markdown
@@ -93,6 +100,11 @@ del proyecto (p. ej. `.cv-venv` con torch CPU) y scripts en `tools/` que escriba
   mesa» por palabra y «zapatillas impermeables para trotar» (0,63) por significado; FaceNet da 0,73 para la misma
   persona y 1,28 para un extraño con umbral 1,1.
 - Prueba varios modelos si el primero no separa bien (ver `references/trampas.md`).
+- **Temas de ingeniería o física** (ep/04, un auto que flota con aire comprimido): no te quedes con el anuncio.
+  Busca papers, artículos técnicos y lecturas de pantalla del evento, y calcula con bibliotecas de verdad (p. ej.
+  CoolProp para gas real: 600 L con 250 kg de aire dan 454 bar con Z = 1,26, no lo que diría el gas ideal). Lo que sea
+  estimación tuya (masa, áreas, coeficientes) se marca en pantalla y se lista en una escena de supuestos y en los
+  créditos. Guarda las fuentes en `assets/data/fuentes.md`.
 - Fotos y videos: Wikimedia Commons por categoría y Pexels, de licencia libre, mejor con escenas latinoamericanas.
   Créditos en `assets/media/CREDITOS.md` y el texto para la descripción del post en `creditos-descripcion.txt`.
 - **Imágenes generadas (si hay Codex CLI o un generador de imágenes):** úsalo para lo ilustrativo que no existe con
@@ -171,6 +183,12 @@ Pasos:
   (`references/cuadros-aprobados/09-cerca.html` y `13-resultado.html`). `scripts/comun.py` tiene las piezas (fuentes,
   fondo, red de partículas, esquinas de mira, HUD, plantilla) si prefieres generarlos con Python.
 - Enséñaselos al usuario en Studio (`npx hyperframes preview --background`) y espera su aprobación.
+- **Gráficos de ManimGX y tomas de Blender** (opcional): para diagramas de fuerzas, fórmulas que se transforman,
+  curvas que se dibujan o un objeto real en 3D. Se renderizan como MP4 sin texto de lectura y entran a la escena como
+  `<video>` con `mix-blend-mode: lighten`. Todo en `references/manim-y-blender.md`, con las utilidades en
+  `scripts/manim/` (estilo, `Reloj` que sincroniza con las palabras, silueta de auto) y `scripts/blender/` (render,
+  auto 3D, codificación). Los objetos reales se dibujan con su forma real: un auto con carrocería suave y llantas
+  redondas, nunca cajas.
 
 ## 6. El resto de escenas con subagentes
 
@@ -179,6 +197,8 @@ Pasos:
   a cada subagente con su paquete. Los dos cuadros aprobados son el esqueleto obligatorio; si la escena es de un tipo
   que tiene modelo en `references/ejemplo-ep02/frames/` (tabla, benchmark, grafo, flujo, tarjetas), pásale también ese.
 - **Máximo 20 subagentes a la vez**; el exceso falla sin reintentarse. Lanza en tandas y lleva la cuenta.
+- **Un solo `<script>` de timeline por escena.** Un bloque sobrante copiado de otra escena dejó 7 escenas en negro en
+  el ep/04 sin que lint ni check dijeran nada (ver `references/trampas.md`).
 
 ## 7. Cierre
 
@@ -192,10 +212,11 @@ Pasos:
    contenido (y=140–1440 en cada escena) cae en ~305–1430 y los subtítulos en ~1445–1615; en pantalla completa
    se sigue viendo bien (se detectó al ver el ep/01 en el feed, 2026-10-14).
 2. `transitions inject` y `verify`, `npx hyperframes lint` y `npm run check` sin errores.
-3. Hoja de capturas a mitad de cada escena para revisar todo de un vistazo.
+3. Hoja de capturas a mitad de cada escena para revisar todo de un vistazo. Busca textos encimados (fichas sobre
+   ejes, cifras sobre rótulos) y escenas vacías: el usuario los ve antes que nada.
 4. Preview en Studio → aprobación del usuario → `npm run render`.
 5. Entrega en la carpeta de entrega (ver «Preferencias del usuario»): el MP4 (H.264), `creditos-descripcion.txt` y
    el caption.
 
-Antes de construir, lee `references/trampas.md`: HDR, subagentes, contraste, símbolos en Anton y la banda de
-subtítulos ya costaron horas.
+Antes de construir, lee `references/trampas.md`: HDR, subagentes, contraste, símbolos en Anton, la banda de
+subtítulos y los clips de Manim y Blender ya costaron horas.
