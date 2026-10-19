@@ -80,13 +80,35 @@ for n, nx in zip(nums, nums[1:]):
     cuts.append(round((time[last[n]][1] + time[first[nx]][0]) / 2, 3))
 cuts.append(round(total, 3))
 
+# los tiempos de Whisper son aproximados: lleva cada corte al tramo más silencioso (ventanas de 20 ms) a ±0,35 s
+import array
+pcm = array.array("h", subprocess.run(["ffmpeg", "-v", "error", "-i", str(ROOT / a.audio), "-ac", "1", "-ar", "16000", "-f", "s16le", "-"],
+                                     capture_output=True, check=True).stdout)
+SR, WIN = 16000, 320
+
+
+def energia(t):
+    i = int(t * SR)
+    seg = pcm[max(i - WIN // 2, 0):i + WIN // 2]
+    return sum(x * x for x in seg) / max(len(seg), 1)
+
+
+for k in range(1, len(cuts) - 1):
+    c = cuts[k]
+    cand = [c + d / 100 for d in range(-35, 36)]
+    cuts[k] = round(min(cand, key=lambda t: (energia(t), abs(t - c))), 3)
+wav = ROOT / "assets/audio/.toma.wav"
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(ROOT / a.audio), str(wav)], check=True)
+
 outdir = ROOT / "assets/voice"
 outdir.mkdir(parents=True, exist_ok=True)
 voices = []
 for k, n in enumerate(nums):
     s, e = cuts[k], cuts[k + 1]
     p = outdir / f"{n:02d}.mp3"
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{s:.3f}", "-to", f"{e:.3f}", "-i", str(ROOT / a.audio), "-c:a", "libmp3lame", "-b:a", "192k", str(p)], check=True)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{s:.3f}", "-t", f"{e - s:.3f}", "-i", str(wav),
+                    "-af", f"afade=t=in:d=0.01,afade=t=out:st={max(e - s - 0.01, 0):.3f}:d=0.01",
+                    "-c:a", "libmp3lame", "-b:a", "192k", str(p)], check=True)
     words = []
     for i in range(first[n], last[n] + 1):
         ws, we = time[i]
@@ -95,4 +117,5 @@ for k, n in enumerate(nums):
     print(f"{n:02d} {s:7.2f} → {e:7.2f}  ({e - s:5.2f}s)  {' '.join(w['text'] for w in words)[:70]}")
 meta = {"voices": voices, "bgm": None, "sfx": []}
 (ROOT / "audio_meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1))
+wav.unlink()
 print("total", total)

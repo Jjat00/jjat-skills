@@ -20,6 +20,12 @@ ep/04 (física del Tesla volador), octubre de 2026.
 - Las palabras de los subtítulos salen del guion (ortografía exacta), no de la transcripción: eso hace `alinear.py`.
 
 ## Voz
+- **Cortes de escena sobre la voz** (ep/05, 2026-10-19): los tiempos de palabra de Whisper son aproximados y, si entre
+  dos líneas casi no hay pausa, el punto medio cae encima de una palabra («Abrí» salía mordida). `alinear.py` ahora
+  lleva cada corte al tramo más silencioso a ±0,35 s y corta desde WAV con un fundido de 10 ms.
+- **`-ss` antes de `-i` al cortar con `afade`:** con `-ss` después de `-i` el filtro ve los tiempos de la toma
+  completa y el fundido de salida silencia TODO el clip (las escenas 3 a 22 del ep/05 quedaron mudas y el render salió
+  sin voz). Verifica el `mean_volume` de cada clip entero (≈ −22 dB), no solo los bordes.
 - La toma completa de ElevenLabs v4 sale más lenta que la prueba corta (2,8 frente a 3,0 palabras/s). Mide la
   duración y acelera con rubberband en vez de pagar otra toma:
   `ffmpeg -i toma.mp3 -af "rubberband=tempo=1.13:formant=preserved" toma-x1.13.mp3`
