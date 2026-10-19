@@ -216,7 +216,7 @@ Pasos:
    ejes, cifras sobre rótulos) y escenas vacías: el usuario los ve antes que nada.
 4. Preview en Studio → aprobación del usuario → `npm run render`.
 5. Entrega en la carpeta de entrega (ver «Preferencias del usuario»): el MP4 (H.264), `creditos-descripcion.txt` y
-   el caption.
+   el caption (en Instagram, **máximo 5 hashtags**).
 
 Antes de construir, lee `references/trampas.md`: HDR, subagentes, contraste, símbolos en Anton, la banda de
 subtítulos y los clips de Manim y Blender ya costaron horas.
