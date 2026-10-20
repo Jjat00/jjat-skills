@@ -13,7 +13,9 @@ ManimGX y tomas de Blender. Los dos cuadros de estilo aprobados del ep/02 vienen
 **Ejemplo completo en `references/ejemplo-ep02/`:** brief, guion, storyboard, hoja de capturas del video final, 7
 escenas de tipos distintos (portada, tabla, fórmula, benchmark, grafo, flujo, tarjetas) y los scripts de datos reales.
 Léelo antes de escribir el guion y vuelve a él al diseñar escenas. Si en la máquina hay proyectos de episodios
-anteriores (p. ej. `videos/*-explicado`), también sirven: copia de ahí `tools/` y la estructura.
+anteriores (p. ej. `videos/*-explicado`), también sirven: copia de ahí `tools/` y la estructura, **pero `alinear.py` y
+`comun.py` cópialos siempre de `<SKILL>/scripts/`**: los de episodios viejos pueden traer bugs ya corregidos (el ep/06
+salió sin voz desde la escena 3 por usar el `alinear.py` del ep/05).
 
 `<SKILL>` es la carpeta de esta skill.
 
