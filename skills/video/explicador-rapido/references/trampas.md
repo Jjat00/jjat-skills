@@ -52,6 +52,11 @@ ep/04 (física del Tesla volador), octubre de 2026.
 - Las JetBrains Mono de `assets/fonts/` son la fuente completa (≈ μ → ∫ Δ ₀ incluidos) desde el ep/04. Si copias
   fuentes de un proyecto viejo, revisa el peso: las de 21 KB eran un subconjunto de 229 glifos sin esos símbolos.
 
+- **Los fundidos con desenfoque pisan la zona segura** (ep/07, 2026-10-20): `transitions inject` escribe tweens
+  `blur-crossfade` con `scale: 0.97 → 1` y `scale: 1.03` sobre `#el-NN-…`; GSAP reemplaza el `scale(0.865)` de `.scene`
+  y desde el primer fundido las escenas quedan a escala 1 (bajadas 184 px): lo de abajo pisa los subtítulos. Lint y
+  check no lo ven. Después de `inject`, multiplica esas escalas por 0,865 (`0.97→0.839`, `1.03→0.891`, `1→0.865`) y
+  confírmalo con una captura a pantalla completa (el contenido debe acabar en y≈1430).
 - **Feed de Instagram:** la vista previa del feed recorta el reel a 4:5 (y≈285–1635). Si el contenido empieza en y=140 y los subtítulos van en 1460–1700, en el feed se pierde el kicker y sobra espacio abajo. Arreglo en el índice: escala 0.865 + translateY 184 a `.scene` (ver SKILL.md § 7).
 
 ## Clips de ManimGX y Blender (ep/04)
