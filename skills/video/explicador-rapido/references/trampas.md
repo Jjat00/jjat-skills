@@ -77,3 +77,14 @@ ep/04 (física del Tesla volador), octubre de 2026.
 - El detector de solapes por cajas da falsos positivos con Anton (la caja de línea es más alta que las letras):
   confirma cada choque con una captura.
 - En el DOM del runtime, `data-duration` de las escenas montadas aparece como `data-hf-authored-duration`.
+
+## Ep/09 (MCP, 2026-10-21)
+- **`frame-packets.mjs` roto con HyperFrames ≥ 0.8.18x:** falla con `ENOENT … hyperframes/references/frame-worker-core.md`. Escribe los paquetes a mano (un `.md` por escena en `.hyperframes/frame-packets/` con el bloque de `STORYBOARD.md` y las notas propias: video de fondo, posiciones, datos reales) y pásalo al subagente junto con `_reglas.md`. `captions.mjs`, `assemble-index.mjs` y `transitions.mjs` siguen funcionando.
+- **Subtítulos con píldora redondeada:** `captions.mjs build` usa la piel por defecto si el proyecto no trae `.hyperframes/caption-skin.html`. Cópiala de un episodio anterior antes de construir.
+- **Regrabar una sola línea** sin rehacer la toma: genera solo esa frase (centavos), acelérala con el mismo `rubberband`, recorta silencios, transcríbela sola y reemplaza `assets/voice/NN.mp3`; en `audio_meta.json` cambia `duration_s` y `words` de esa escena y corre `start_global` de las siguientes por la diferencia.
+- **Whisper `large-v3` se pasa del límite de 300 s** si Blender está renderizando: para una línea corta usa `-m small` y `HYPERFRAMES_TRANSCRIBE_TIMEOUT_MS=900000` (las palabras salen del guion; solo importan los tiempos).
+- **Blender:** `transform_apply()` aplica por defecto también la posición (todos los objetos quedan en el origen): usa `transform_apply(location=False, rotation=False, scale=True)`. Y `bc.aristas()` copia la posición del objeto: si la emparentas al objeto, ponle `location = (0, 0, 0)` o queda desplazada al doble.
+- **Logos encima de una toma 3D:** con cámara fija, exporta desde Blender la posición en píxeles de cada objeto (`world_to_camera_view`) a un JSON y coloca los logos HTML justo ahí. Logos sueltos, sin cubos ni fichas detrás (preferencia del usuario).
+- **Un cable o pieza 3D que cruza el kicker:** enmascara el `<video>` arriba (`mask-image: linear-gradient(to bottom, transparent 250px, #000 420px)`); si lo de abajo pisa el texto, escala el clip (`transform: translateY(-80px) scale(0.8)`).
+- **zsh no separa variables en palabras:** `ffmpeg … $E out.mp4` con `E="-c:v libx264 …"` falla («At least one output file must be specified»). Escribe las opciones en línea.
+- **`npm run check` en un video de 2:30** puede no terminar («Check did not finish within its deadline»): revisa con `snapshot --at` a mitad de cada escena y la hoja de capturas.
