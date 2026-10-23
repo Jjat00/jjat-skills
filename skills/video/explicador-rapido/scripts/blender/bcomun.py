@@ -1,4 +1,4 @@
-"""Utilidades comunes para las tomas 3D de Blender (estilo jato.run).
+"""Utilidades comunes para las tomas 3D de Blender (estilo base; cambia la paleta si la marca es otra).
 
 Lo importan las tomas (p. ej. ejemplo-auto.py). Todo procedural: mallas, materiales emisivos,
 tubos de flujo con UV = "tiempo de vuelo" para animar pulsos que viajan a la

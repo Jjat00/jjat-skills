@@ -6,7 +6,7 @@ subagente carga además la skill `/hyperframes`, que tiene el contrato de compos
 
 ---
 
-# Reglas del proyecto (jato.run · ep/<NN> <tema>), se suman al rol y al packet
+# Reglas del proyecto (<marca> · ep/<NN> <tema>), se suman al paquete de cada escena
 
 - **Lienzo** 1080×1920, 30 fps. Todo el contenido de la escena vive entre y=120 y **y ≤ 1440**; debajo de 1440 no pongas nada salvo la red de partículas (ahí caen los subtítulos cuando el ensamblado reduce y baja la escena para la zona segura del feed).
 - **Modelo estructural obligatorio:** lee primero `compositions/frames/<cuadro A>.html` y `compositions/frames/<cuadro B>.html` (ya aprobados por el usuario) y reutiliza su esqueleto tal cual: `<template>` → `#root` con `data-composition-id`, `<style>` con las `@font-face` (rutas `assets/fonts/...`, relativas a la raíz del proyecto), el fondo `clip` con id, la red de partículas SVG (círculos: es la única excepción a «sin círculos»), el HUD superior (izquierda VACÍA; a la derecha la etapa en mono tenue), el kicker superior (mono cian con cuadrito degradado), los paneles con 4 esquinas de mira, la línea de metadatos mono, las barras segmentadas de bloques cuadrados, y el patrón de timeline (`tl.fromTo`, `immediateRender:false` en las entradas tardías y en todo fromTo repetido sobre el mismo elemento, `tl.to({}, {duration: D}, 0)` al final). Si la PRIMERA aparición de un elemento usa `immediateRender:false`, ocúltalo antes con `opacity:0` en su CSS (o `gsap.set(sel, {opacity: 0})` antes de armar el timeline; el lint marca `tl.set` en el segundo 0); si no, se ve desde el segundo 0. Copia sus bloques CSS y su generador de partículas (sus coordenadas) cambiando el prefijo.

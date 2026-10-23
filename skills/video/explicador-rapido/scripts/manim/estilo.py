@@ -1,4 +1,4 @@
-"""Estilo jato.run para las escenas de ManimGX de los explicadores.
+"""Estilo base para las escenas de ManimGX de los explicadores (cambia la paleta si la marca es otra).
 
 Cópialo a tools/manim/ del proyecto (ROOT es dos carpetas arriba). Salió del ep/04 (física del Tesla volador, 2026-10).
 

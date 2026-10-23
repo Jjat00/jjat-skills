@@ -1,4 +1,4 @@
-"""Piezas compartidas del estilo jato.run para generar frames (fondo, red de partículas, HUD, fuentes).
+"""Piezas compartidas del estilo base para generar frames (fondo, red de partículas, HUD, fuentes).
 
 Se importa desde los scripts del proyecto que generan los cuadros de estilo:
     sys.path.insert(0, "<SKILL>/scripts"); from comun import css, particle_net, corners, hud, template

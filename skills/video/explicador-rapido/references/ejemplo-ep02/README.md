@@ -35,4 +35,4 @@ a `compositions/frames/` de un proyecto que ya tenga las fuentes de `<SKILL>/ass
 
 - La voz y los cortes por escena (`assets/voice/`, `audio_meta.json`): se generan para cada episodio.
 - Las otras 17 escenas y las fotos con licencia libre de la escena 21.
-- El video final: en [skills.jato.run/explicador-rapido](https://skills.jato.run/explicador-rapido/) hay recortes.
+- El video final: la hoja de capturas `capturas-*.jpg` lo resume escena por escena.

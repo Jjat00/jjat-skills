@@ -13,8 +13,8 @@ voice: "ElevenLabs 4GeB1bS2GAHAsGRM0eeU (juvenil latina) eleven_v4 (sirve cualqu
 
 ## Intent
 
-Episodio 2 de la serie de explicadores rápidos (el ep/01 fue «Visión por computadora»).
-Mismo sistema visual jato.run, misma voz, mismo pipeline. Narrado por una voz, sin nadie frente a la cámara.
+Episodio 2 de una serie de explicadores rápidos (el ep/01 fue «Visión por computadora»).
+Mismo sistema visual (el estilo base de la skill), misma voz, mismo pipeline. Narrado por una voz, sin nadie frente a la cámara.
 
 ## Assets
 

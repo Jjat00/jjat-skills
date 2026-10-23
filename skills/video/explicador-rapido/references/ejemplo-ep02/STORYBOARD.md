@@ -10,7 +10,7 @@ music: none
 
 # STORYBOARD — Bases de datos vectoriales, explicadas rápido
 
-Convenciones comunes: ver `frame.md` (estilo jato.run: negro, pastel, TODO esquinado salvo partículas de la red) y los
+Convenciones comunes: ver `frame.md` (estilo base: negro, pastel, TODO esquinado salvo partículas de la red) y los
 dos frames de referencia ya aprobados `compositions/frames/e09-cerca.html` y `compositions/frames/e13-resultado.html`
 (estructura, HUD, kicker, specimen-frame con esquinas de mira, línea de metadatos mono, barras segmentadas, red de
 partículas). Los tiempos `palabra@seg` del campo `words` son el instante en que la voz dice esa palabra, relativos al
@@ -500,7 +500,7 @@ SIGNIFICADO). Ritmo más lento, cámara 1→1.05. Kicker «DE PALABRAS A SIGNIFI
 ## Frame 26 — Firma
 
 - status: animated
-- scene: Firma: BASES DE DATOS VECTORIALES en Anton con degradado, red de partículas, «jato.run · explicado rápido · ep/02».
+- scene: Firma: BASES DE DATOS VECTORIALES en Anton con degradado, red de partículas, «tu marca · explicado rápido · ep/02».
 - duration: 2.311s
 - transition_in: crossfade
 - voiceover: "Eso es una base de datos vectorial."
@@ -510,4 +510,4 @@ SIGNIFICADO). Ritmo más lento, cámara 1→1.05. Kicker «DE PALABRAS A SIGNIFI
 - words: Eso@-0.00 es@0.18 una@0.20 base@0.33 de@0.49 datos@0.57 vectorial.@0.76
 
 «BASES DE DATOS» (fg) y «VECTORIALES» (degradado) Anton, entran @base @vectorial; red de partículas densa; mono
-«jato.run · explicado rápido · ep/02». Fade a negro final permitido (es el último frame).
+«tu marca · explicado rápido · ep/02». Fade a negro final permitido (es el último frame).

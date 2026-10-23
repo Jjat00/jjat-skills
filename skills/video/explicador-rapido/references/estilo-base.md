@@ -1,8 +1,8 @@
 ---
 version: alpha
-name: jato.run — Frame (explicadores rápidos de software e ingeniería)
+name: Estilo base — laboratorio oscuro (explicadores verticales de software e ingeniería)
 description: >
-  Estilo de la serie de explicadores de jato.run. Lienzo casi
+  Estilo de partida de la skill: se adapta a la marca de cada persona (colores, fuentes, esquinas). Lienzo casi
   negro, un solo degradado cian→violeta como voltaje, red de partículas como firma, Anton para
   golpes de titular, Poppins para lectura y JetBrains Mono para la capa de datos (píxeles,
   matrices, probabilidades, etiquetas de modelo). Fotografía y video reales enmarcados como
@@ -70,7 +70,7 @@ components:
     description: "Firma de marca: red de partículas (puntos cian/violeta/azul, 2–3px, líneas de 1px a <110px, opacidad 0.35) en dos cúmulos, arriba a la derecha y abajo a la izquierda. Deriva lenta y determinista. Nunca sobre el medio ni sobre texto."
 ---
 
-# jato.run — Frame
+# Estilo base — Frame
 
 ## Overview
 

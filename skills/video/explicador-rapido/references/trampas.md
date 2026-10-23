@@ -15,10 +15,10 @@ ep/04 (física del Tesla volador), octubre de 2026.
 - **Rutas de recursos** en las subcomposiciones: relativas a la raíz del proyecto (`assets/...`), no al archivo.
 
 ## Subtítulos
-- La banda de subtítulos de la serie es 1445–1615 (antes de la zona segura del feed). `armar.py` la escribe así; si
+- La banda de subtítulos es 1445–1615 por defecto (antes de la zona segura del feed; `subtitulos.json` la cambia). `armar.py` la escribe así; si
   editas `compositions/captions.html` a mano, se pierde al volver a armar.
 - El `check` de HyperFrames puede marcar como pequeño el texto mono de 22 px del HUD y de los metadatos. Es el tamaño
-  de la serie y se lee bien en el teléfono: no lo subas por el aviso. El texto de lectura sí va de 28 px para arriba.
+  del estilo base y se lee bien en el teléfono: no lo subas por el aviso. El texto de lectura sí va de 28 px para arriba.
 - Las palabras de los subtítulos salen del guion (ortografía exacta), no de la transcripción: eso hace `alinear.py`.
 
 ## Voz
@@ -90,7 +90,7 @@ ep/04 (física del Tesla volador), octubre de 2026.
 ## Ep/09 (MCP, 2026-10-21)
 - **Flujo `faceless-explainer` retirado (HyperFrames, oct-2026):** sus scripts de paquetes, subtítulos, índice y transiciones dejaron de existir. Los reemplazan `scripts/paquetes.py` y `scripts/armar.py` de la skill.
 - **Regrabar una sola línea** sin rehacer la toma: genera solo esa frase (centavos), acelérala con el mismo `rubberband`, recorta silencios, transcríbela sola y reemplaza `assets/voice/NN.mp3`; en `audio_meta.json` cambia `duration_s` y `words` de esa escena y corre `start_global` de las siguientes por la diferencia.
-- **Whisper `large-v3` se pasa del límite de 300 s** si Blender está renderizando: para una línea corta usa Parakeet o `--model small --language es`, con `HYPERFRAMES_TRANSCRIBE_TIMEOUT_MS=900000` (las palabras salen del guion; solo importan los tiempos). Con `voz_edge.py` no hace falta transcribir.
+- **Whisper `large-v3` se pasa del límite de 300 s** si Blender está renderizando: para una línea corta usa Parakeet o `--model small --language es`, con `HYPERFRAMES_TRANSCRIBE_TIMEOUT_MS=900000` (las palabras salen del guion; solo importan los tiempos). Con `voz_elevenlabs.py` no hace falta transcribir.
 - **Blender:** `transform_apply()` aplica por defecto también la posición (todos los objetos quedan en el origen): usa `transform_apply(location=False, rotation=False, scale=True)`. Y `bc.aristas()` copia la posición del objeto: si la emparentas al objeto, ponle `location = (0, 0, 0)` o queda desplazada al doble.
 - **Logos encima de una toma 3D:** con cámara fija, exporta desde Blender la posición en píxeles de cada objeto (`world_to_camera_view`) a un JSON y coloca los logos HTML justo ahí. Logos sueltos, sin cubos ni fichas detrás (preferencia del usuario).
 - **Un cable o pieza 3D que cruza el kicker:** enmascara el `<video>` arriba (`mask-image: linear-gradient(to bottom, transparent 250px, #000 420px)`); si lo de abajo pisa el texto, escala el clip (`transform: translateY(-80px) scale(0.8)`).

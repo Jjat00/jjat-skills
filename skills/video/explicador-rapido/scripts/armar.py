@@ -1,5 +1,5 @@
 """Arma el video: index.html con todas las escenas, la voz y el fundido entre escenas, y compositions/captions.html con
-los subtítulos palabra a palabra de la serie. Luego corre el lint de HyperFrames. Se puede repetir cuantas veces haga
+los subtítulos palabra a palabra. Luego corre el lint de HyperFrames. Se puede repetir cuantas veces haga
 falta: reescribe los dos archivos desde cero.
 
   python3 <SKILL>/scripts/armar.py --root .
@@ -9,7 +9,8 @@ empieza cada escena, cuánto dura su voz y el tiempo de cada palabra). Sigue el 
 host de cada escena lleva el mismo id que su `data-composition-id` y que la clave de su timeline; las escenas van en
 la pista `graphics` y los subtítulos en un solo host de la pista `captions`.
 
-Si el proyecto tiene tools/despues_de_armar.py, lo corre antes del lint: ahí van capas propias del episodio (p. ej. un
+El aspecto de los subtítulos sale de subtitulos.json en la raíz del proyecto, si existe (fuente, tamaño, colores y
+banda; ver ESTILO_SUBTITULOS abajo); si no, del estilo base de la skill. Si el proyecto tiene tools/despues_de_armar.py, lo corre antes del lint: ahí van capas propias del episodio (p. ej. un
 botón SEGUIR encima del video).
 """
 import argparse
@@ -29,6 +30,26 @@ a = ap.parse_args()
 ROOT = Path(a.root).resolve()
 W, H = 1080, 1920
 F = a.fundido
+
+# Aspecto de los subtítulos. El proyecto lo cambia con un subtitulos.json que trae solo las claves que quiere cambiar.
+ESTILO_SUBTITULOS = {
+    "fuente": "Poppins",                 # familia
+    "archivo": "Poppins-SemiBold.ttf",   # en assets/fonts/; null si la fuente viene con HyperFrames o el sistema
+    "peso": 600,
+    "tamano": 54,                        # px antes de la zona segura
+    "mayusculas": False,
+    "viene": "rgba(237, 237, 237, 0.38)",  # palabras que todavía no se dicen
+    "activa": "#9fe3f5",                 # la que suena
+    "dicha": "#ededed",                  # las ya dichas
+    "cifra": "#c4b5fd",                  # una cifra mientras suena
+    "sombra": "0 2px 14px rgba(0, 0, 0, 0.85), 0 0 2px rgba(0, 0, 0, 0.9)",
+    "banda_arriba": 1445,                # px desde arriba, antes de la zona segura
+    "banda_alto": 170,
+}
+propio = ROOT / "subtitulos.json"
+if propio.exists():
+    ESTILO_SUBTITULOS.update(json.loads(propio.read_text()))
+E = ESTILO_SUBTITULOS
 
 # --- escenas: el orden y el archivo salen del storyboard; los tiempos, de audio_meta.json ---------------------------
 sb = (ROOT / "STORYBOARD.md").read_text()
@@ -154,23 +175,27 @@ for g, ws in enumerate(grupos):
     tiempos = ", ".join("%.3f" % w["ini"] for w in ws)
     lineas_js.append(f"      grupo({g}, {ini:.3f}, {fin:.3f}, [{tiempos}], {min(fin, ws[-1]['fin'] + 0.1):.3f});")
 
+fuente = (
+    f'@font-face {{ font-family: "{E["fuente"]}"; src: url("assets/fonts/{E["archivo"]}"); font-weight: {E["peso"]}; }}'
+    if E.get("archivo")
+    else ""
+)
 captions = f"""<template>
   <style>
-    @font-face {{ font-family: "Poppins"; src: url("assets/fonts/Poppins-SemiBold.ttf") format("truetype"); font-weight: 600; }}
+    {fuente}
     #root {{ position: absolute; inset: 0; pointer-events: none; }}
-    /* la banda de subtítulos de la serie: 1445–1615 antes de la zona segura del feed */
-    .cap-banda {{ position: absolute; left: 0; right: 0; top: 1445px; height: 170px; }}
+    /* la banda de subtítulos, antes de la zona segura del feed */
+    .cap-banda {{ position: absolute; left: 0; right: 0; top: {E["banda_arriba"]}px; height: {E["banda_alto"]}px; }}
     .cap-grupo {{ position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; overflow: visible; }}
     .cap-linea {{
       max-width: 86%; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.1em 0.28em;
-      font-family: "Poppins", sans-serif; font-weight: 600; font-size: 54px; line-height: 1.2; letter-spacing: -0.01em;
-      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85), 0 0 2px rgba(0, 0, 0, 0.9);
+      font-family: "{E["fuente"]}", sans-serif; font-weight: {E["peso"]}; font-size: {E["tamano"]}px; line-height: 1.2;
+      letter-spacing: -0.01em; text-shadow: {E["sombra"]};{" text-transform: uppercase;" if E["mayusculas"] else ""}
     }}
-    /* tenues las que vienen, cian la que suena, blanco roto las dichas; cifras activas en violeta */
-    .cap-palabra {{ display: inline-block; color: rgba(237, 237, 237, 0.38); }}
-    .cap-palabra.activa {{ color: #9fe3f5; }}
-    .cap-palabra.dicha {{ color: #ededed; }}
-    .cap-palabra.cap-num.activa {{ color: #c4b5fd; }}
+    .cap-palabra {{ display: inline-block; color: {E["viene"]}; }}
+    .cap-palabra.activa {{ color: {E["activa"]}; }}
+    .cap-palabra.dicha {{ color: {E["dicha"]}; }}
+    .cap-palabra.cap-num.activa {{ color: {E["cifra"]}; }}
   </style>
   <div id="root" data-composition-id="captions" data-width="{W}" data-height="{H}">
     <div class="cap-banda">
