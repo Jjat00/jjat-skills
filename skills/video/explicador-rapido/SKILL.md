@@ -151,7 +151,7 @@ el proveedor. Si el usuario tiene una voz preferida, úsala; si no, ofrece muest
 
   ```bash
   python3 -m venv .voz-venv && .voz-venv/bin/pip install edge-tts
-  .voz-venv/bin/python <SKILL>/scripts/voz_edge.py --root . --prueba 3   # ~10 s: assets/audio/prueba-voz.mp3
+  .voz-venv/bin/python <SKILL>/scripts/voz_edge.py --root . --prueba 3   # 3 líneas, ~10 s: assets/audio/prueba-voz.mp3
   .voz-venv/bin/python <SKILL>/scripts/voz_edge.py --root .              # narracion-completa.mp3 + transcript.json
   ```
 
@@ -189,9 +189,11 @@ Pasos:
   npx hyperframes transcribe assets/audio/narracion-completa.mp3 --language es --json
   ```
 
-  Escribe `assets/transcript.json`, que es lo que lee `alinear.py` con `--tx assets/transcript.json`.
+  Escribe `assets/transcript.json`: pásaselo a `alinear.py` con `--tx assets/transcript.json` (con edge-tts, el archivo
+  es `assets/audio/transcript.json`).
 
-- Corta por escena con los tiempos (de edge-tts o de la transcripción):
+- Corta por escena con los tiempos (`--tx assets/audio/transcript.json` si vienen de edge-tts,
+  `--tx assets/transcript.json` si vienen de `transcribe`):
 
   ```bash
   python3 <SKILL>/scripts/alinear.py --root . --tx assets/audio/transcript.json \
@@ -208,12 +210,14 @@ Pasos:
   compositions/frames/<id>.html`, `- transition_in: crossfade` (o `cut`) y `- words: palabra@seg` (relativo al inicio
   de la escena, sale de `audio_meta.json`) para que cada revelación caiga en su palabra. **El id de cada escena
   empieza con letra** (`e01-gancho`, no `01-gancho`): el id es también un selector CSS y uno que empieza con número
-  no es válido. Define la continuidad (qué elemento reaparece
+  no es válido. Escribe las escenas con su `scene` y `voiceover`, y deja que
+  `python3 <SKILL>/scripts/palabras.py --root .` llene `duration` y `words` de cada una desde `audio_meta.json` (se puede
+  repetir si cambia la voz). Define la continuidad (qué elemento reaparece
   igual en varias escenas) y los colores por rol. Modelo: `references/ejemplo-ep02/STORYBOARD.md`.
 - Sistema visual en `references/estilo-jato-run.md`. Lo no negociable: cero `border-radius` (salvo las partículas),
   HUD con la izquierda vacía, nada debajo de y=1440, un solo degradado cian→violeta por escena.
 - Construye primero **dos cuadros de estilo** a mano, partiendo de los aprobados del ep/02
-  (`references/cuadros-aprobados/09-cerca.html` y `13-resultado.html`). `scripts/comun.py` tiene las piezas (fuentes,
+  (`references/cuadros-aprobados/e09-cerca.html` y `e13-resultado.html`). `scripts/comun.py` tiene las piezas (fuentes,
   fondo, red de partículas, esquinas de mira, HUD, plantilla) si prefieres generarlos con Python.
 - Enséñaselos al usuario en Studio (`npm run dev`) y espera su aprobación.
 - **Gráficos de ManimGX y tomas de Blender** (opcional): para diagramas de fuerzas, fórmulas que se transforman,
@@ -237,7 +241,7 @@ Pasos:
   escena es de un tipo que tiene modelo en `references/ejemplo-ep02/frames/` (tabla, benchmark, grafo, flujo,
   tarjetas), pásale también ese.
 - **Máximo 20 subagentes a la vez**; el exceso falla sin reintentarse. Lanza en tandas y lleva la cuenta.
-- **Un solo `<script>` de timeline por escena.** Un bloque sobrante copiado de otra escena dejó 7 escenas en negro en
+- **Un solo script de timeline por escena** (el `<script>` que carga GSAP no cuenta). Un bloque sobrante copiado de otra escena dejó 7 escenas en negro en
   el ep/04 sin que lint ni check dijeran nada (ver `references/trampas.md`).
 
 ## 7. Cierre
@@ -259,8 +263,11 @@ Pasos:
    (`translate(0px, 184px) scale(0.865)`) sobre un degradado de fondo: el contenido (y=140–1440 en cada escena) cae en
    ~305–1430 y los subtítulos debajo; en pantalla completa se sigue viendo bien. `--sin-zona-segura` lo quita (p. ej.
    para TikTok o YouTube Shorts).
-2. `npm run check` (o `npx hyperframes check --json`): corrige cada error y pesa cada aviso. Los avisos de texto
-   pequeño en el HUD y los metadatos (22 px) son el estilo de la serie; el texto de lectura va de 28 px para arriba.
+2. `npm run check` (o `npx hyperframes check --json`): corrige cada error y pesa cada aviso. La zona segura reduce
+   todo a 0,865, así que el texto de lectura va de **33 px para arriba en el diseño** (28 en el video). Los avisos
+   `text_below_floor` del HUD y los metadatos (22 px) son el estilo de la serie y se esperan; si salen en un texto de
+   lectura, súbelo. También se esperan avisos informativos de desborde de la red de partículas y de solape del HUD
+   durante el fundido entre escenas.
 3. Revisión visual: `npx hyperframes snapshot --review` y su hoja de capturas. Busca textos encimados (fichas sobre
    ejes, cifras sobre rótulos), escenas vacías o en negro y subtítulos fuera de la banda: el usuario los ve antes que
    nada.
@@ -271,7 +278,8 @@ Pasos:
 ## Episodios cortos
 
 Para una prueba, un teaser o un anuncio de 20 a 60 s: el mismo flujo con 3 a 8 escenas (≈2,8 palabras por segundo de
-voz, antes de acelerar). Las puertas de aprobación siguen igual, pero basta un cuadro de estilo si son pocas escenas.
+voz, antes de acelerar). Las puertas de aprobación siguen igual, pero basta un cuadro de estilo si son pocas escenas,
+y la prueba de voz es `--prueba 1` (con tan pocas líneas, tres ya son la toma entera).
 Los datos reales siguen siendo obligatorios en lo que salga en pantalla; si no hay cifras, mejor una escena de
 concepto que un número inventado.
 

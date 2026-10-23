@@ -34,7 +34,8 @@ for m in re.finditer(r"(?ms)^## Frame (\d+) — .*?(?=^## Frame|\Z)", sb):
     if not src:
         raise SystemExit(f"paquetes: la escena {m.group(1)} no tiene «- src: compositions/frames/<id>.html»")
     sid = src.group(1)
-    if a.solo and sid not in a.solo:
+    # los cuadros ya aprobados no se vuelven a encargar
+    if (a.solo and sid not in a.solo) or any(Path(r).stem == sid for r in a.refs):
         continue
     (out / f"{sid}.md").write_text(f"""# Paquete de escena: {sid}
 
@@ -47,7 +48,7 @@ for m in re.finditer(r"(?ms)^## Frame (\d+) — .*?(?=^## Frame|\Z)", sb):
   STORYBOARD.md; léela antes de empezar.
 - Datos reales: assets/data/ (no inventes cifras: si falta un dato, dilo en tu respuesta).
 - Archivo a escribir: compositions/frames/{sid}.html · data-composition-id y clave del timeline: «{sid}» · prefijo de
-  ids: f{sid}-
+  ids: {sid}-
 
 ## Bloque asignado del storyboard
 
