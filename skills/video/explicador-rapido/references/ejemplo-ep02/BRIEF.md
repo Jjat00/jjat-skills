@@ -9,7 +9,7 @@ language: es
 audience: "público general curioso de tecnología y estudiantes de software/ingeniería en Latinoamérica"
 length: 150s
 angle: concept
-voice: "ElevenLabs 4GeB1bS2GAHAsGRM0eeU (juvenil latina) eleven_v4 (vía HF Studio; sirve ElevenLabs directo u otro TTS)"
+voice: "ElevenLabs 4GeB1bS2GAHAsGRM0eeU (juvenil latina) eleven_v4 (sirve cualquier TTS, ver § 4 de la skill)"
 ---
 
 ## Intent
@@ -32,4 +32,4 @@ Mismo sistema visual jato.run, misma voz, mismo pipeline. Narrado por una voz, s
 
 - Revisión: guion + 2 cuadros de estilo antes de construir todo. Prueba de voz de ~10 s antes de la toma.
 - Español sin raya larga; «I A» separado si se narra la sigla.
-- Entrega en D:\contenido\bases vectoriales <fecha de entrega>.
+- Entrega en entregas/bases vectoriales <fecha de entrega>.

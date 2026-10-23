@@ -1,4 +1,4 @@
-"""Deportivo genérico de 2 plazas, procedural (lo usan succion.py y kickflip.py).
+"""Deportivo genérico de 2 plazas, procedural (lo usan las tomas, p. ej. ejemplo-auto.py).
 
 La silueta lateral sale de assets/svg/auto-perfil.svg (mismo perfil que la ilustración 2D):
 capó largo y bajo, parabrisas inclinado, techo fastback, cola Kamm. La carrocería es un loft

@@ -58,11 +58,12 @@ Regla: **un clip, una idea**, sin texto de lectura dentro. Los números que el n
   - `auto.py`: deportivo procedural de carrocería suave, con ventanas, neumáticos de revolución con rines, y opacidad
     animable para mostrar lo que hay dentro.
   - `ejemplo-auto.py`: toma mínima (auto + grilla + cámara que gira) para partir.
-  - `correr.sh <toma> [--cuadros 1,90 --escala 50]`: renderiza PNG (variables `BLENDER` y `SALIDA_WIN`).
+  - `correr.sh <toma> [--cuadros 1,90 --escala 50]`: renderiza PNG (variables `BLENDER` y `SALIDA`; en WSL sirve el
+    Blender de Windows, ver la cabecera del script).
   - `codificar.sh <toma> [cuadros]`: PNG → MP4 H.264 BT.709 a 30 fps con bloom suave que no toca el fondo, más una
     hoja de contacto y el color del píxel de esquina (debe dar `0a0a0a`).
 - Prueba siempre con `--cuadros` sueltos a escala 50 antes de la toma completa. Escribe los PNG fuera del proyecto y de
-  OneDrive (p. ej. `D:\tmp\blender`).
+  carpetas sincronizadas (OneDrive, Dropbox), p. ej. en `/tmp/blender`.
 - Duración: calcula los cuadros de la toma con la `duration_s` de la escena y pon en el docstring la línea de tiempo en
   segundos de cada evento, alineada con las palabras del storyboard.
 - Las tomas 3D son ilustrativas: dilo en los créditos (`creditos-descripcion.txt`).

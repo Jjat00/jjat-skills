@@ -2,7 +2,7 @@
 version: alpha
 name: jato.run — Frame (explicadores rápidos de software e ingeniería)
 description: >
-  Estilo de la serie de explicadores de jato.run (de Jaime Aza), derivado de jaimeaza.tech. Lienzo casi
+  Estilo de la serie de explicadores de jato.run. Lienzo casi
   negro, un solo degradado cian→violeta como voltaje, red de partículas como firma, Anton para
   golpes de titular, Poppins para lectura y JetBrains Mono para la capa de datos (píxeles,
   matrices, probabilidades, etiquetas de modelo). Fotografía y video reales enmarcados como
@@ -45,7 +45,7 @@ spacing:
   slide-pad: "6cqw"      # ~65px @1080
   gap-md: "3cqw"
   radius: "0 — TODO es esquinado: sin border-radius, sin círculos, sin píldoras"
-  caption-band: "top 1470px · height 230px (zona de subtítulos; el contenido vive arriba)"
+  caption-band: "top 1445px · height 170px (la pone scripts/ensamblar.sh; el contenido vive arriba)"
 
 components:
   top-kicker:
@@ -82,7 +82,7 @@ vive en las esquinas como firma.
 
 ## The Frame
 
-- 1080×1920. Contenido en el rectángulo y 180→1440. Banda de subtítulos 1470→1700 libre de contenido.
+- 1080×1920. Contenido de cada escena en el rectángulo y 180→1440; debajo, nada salvo partículas. El ensamblado reduce y baja la escena para la zona segura del feed y los subtítulos caen debajo del contenido.
 - Margen lateral `slide-pad` (65px). El foco central ocupa 80–90% del ancho.
 - Fondo: `{colors.canvas}` plano con un viñeteado radial muy suave (centro #111 → borde #050505).
 
@@ -110,7 +110,7 @@ Hairlines de 1px y una sombra profunda solo bajo los medios. El único brillo pe
 
 ## Shapes
 
-**Cero redondeo.** Todo esquinado: medios, tarjetas, etiquetas, chips, puntos (cuadrados); la única excepción son las partículas de la red, que sí son círculos, barras (segmentadas en bloques cuadrados, como píxeles). Nunca `border-radius`, nunca círculos, nunca píldoras. Pedido explícito de Jaime (2026-10-11).
+**Cero redondeo.** Todo esquinado: medios, tarjetas, etiquetas, chips, puntos (cuadrados); la única excepción son las partículas de la red, que sí son círculos, barras (segmentadas en bloques cuadrados, como píxeles). Nunca `border-radius`, nunca círculos, nunca píldoras. Es una regla firme del estilo.
 
 ## Frame Treatments
 

@@ -1,6 +1,7 @@
 ---
 name: caja-negra
-description: Método para retos y trabajos de «caja negra»: replicar exactamente una función o un servicio sin código ni documentación a partir de consultas, con un set oculto que lo puntúa (accuracy, tests exactos, status y cuerpo byte a byte). Destilado de dos retos reales, uno perdido (20 %) y otro ganado (de 83 a 100 de 100). Úsala cuando Jaime diga «caja negra», «black box», «reto de ingeniería inversa», «replicar este servicio», «reemplazo que responda igual, errores incluidos», «inferir la función oculta», «tengo N consultas y M evaluaciones», o abra un hackathon con un oráculo y un set oculto, aunque no nombre la skill. Complementa a surface-recon (que mapea contratos); esta decide cómo gastar el presupuesto, cómo medir y cuándo gastar una evaluación oficial.
+description: >-
+  Método para retos y trabajos de «caja negra»: replicar exactamente una función o un servicio sin código ni documentación a partir de consultas, con un set oculto que lo puntúa (accuracy, tests exactos, status y cuerpo byte a byte). Destilado de dos retos reales, uno perdido (20 %) y otro ganado (de 83 a 100 de 100). Úsala cuando el usuario diga «caja negra», «black box», «reto de ingeniería inversa», «replicar este servicio», «reemplazo que responda igual, errores incluidos», «inferir la función oculta», «tengo N consultas y M evaluaciones», o abra un hackathon con un oráculo y un set oculto, aunque no nombre la skill. Complementa a surface-recon (que mapea contratos); esta decide cómo gastar el presupuesto, cómo medir y cuándo gastar una evaluación oficial.
 ---
 
 # caja-negra
@@ -58,7 +59,7 @@ Scripts listos para copiar al repo del reto: `scripts/compare.py` (comparador: J
 5. **Estructural**: comandos, tramos, umbrales, memoria. Un experimento por script (`lab/exp/eNN_tema.py`) con su hipótesis.
 6. **Reemplazo** con validación como tubería ordenada por configuración, catálogo de errores como datos, perfiles por versión.
 7. **Medir**: M1 regresión del log, M2 fuzzer diferencial con la mezcla del set, M4 canario, M6 diferencial exploratorio; M3 cobertura y M5 latencia si aplican.
-8. **Puerta para una evaluación oficial** (ver `evaluaciones-oficiales.md`) y **pedir confirmación a Jaime**: ningún envío que consuma intentos sin su sí explícito en ese momento.
+8. **Puerta para una evaluación oficial** (ver `evaluaciones-oficiales.md`) y **pedir confirmación al usuario**: ningún envío que consuma intentos sin su sí explícito en ese momento.
 9. **Después de cada evaluación**: diferencial exploratorio, logs del host, traza del set si tu reemplazo la recibe; arreglar, nueva semilla, re-medir.
 10. **Entregables**: spec con cada comportamiento, su evidencia (filas del log) y su confianza (`confirmado` / `probable` / `supuesto`); log; README; riesgos.
 

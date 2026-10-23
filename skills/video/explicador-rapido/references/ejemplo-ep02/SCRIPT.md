@@ -1,6 +1,6 @@
 # SCRIPT — bases-vectoriales-explicado
 
-**Voice:** ElevenLabs `4GeB1bS2GAHAsGRM0eeU` (juvenil latina) vía HF Studio, `eleven_v4`, `language_code: es`
+**Voice:** ElevenLabs `4GeB1bS2GAHAsGRM0eeU` (juvenil latina), `eleven_v4`, `language_code: es`
 **Voice settings:** stability 0.5 · speed 1.08 (medir la toma y ajustar con rubberband si pasa de 2:35)
 **Voice direction:** Divulgador joven y curioso, ritmo ágil de reel, sin sonar a anuncio. Remata cada idea clave con una mini pausa. Una sola toma; luego se corta por escena.
 

@@ -16,7 +16,10 @@ ep/04 (física del Tesla volador), octubre de 2026.
 
 ## Subtítulos
 - `captions.mjs` pone la banda en 1600-1920 en vertical, dentro de la interfaz de Reels y TikTok. Después de **cada**
-  regeneración reescribe en `compositions/captions.html`: `--cap-band-top: 1460px; --cap-band-height: 240px;`.
+  regeneración hay que reescribir en `compositions/captions.html` `--cap-band-top: 1445px; --cap-band-height: 170px;`.
+  `scripts/ensamblar.sh` lo hace solo; si regeneras los subtítulos a mano, repítelo.
+- El `check` de HyperFrames puede marcar como pequeño el texto mono de 22 px del HUD y de los metadatos. Es el tamaño
+  de la serie y se lee bien en el teléfono: no lo subas por el aviso. El texto de lectura sí va de 28 px para arriba.
 - Las palabras de los subtítulos salen del guion (ortografía exacta), no de la transcripción: eso hace `alinear.py`.
 
 ## Voz
@@ -32,6 +35,13 @@ ep/04 (física del Tesla volador), octubre de 2026.
   (el ep/01 usó x1,17 y el ep/02 x1,133). Pasa el mismo valor a `alinear.py --tempo`.
 - Whisper `large-v3` en CPU tarda ~15 min por 3 min de audio si compite con otro proceso pesado: no lo lances junto
   al cálculo de datos.
+- **Whisper `large-v3` puede alucinar frases enteras** (ep/11, 2026-10-22): metió «Estás en el mercado de la venta, la
+  venta es tuya…» donde la voz decía «venture capital» y corrió ~5 s los tiempos de 4 escenas (una escena quedó con
+  5 s «mudos» y las siguientes con la voz de otra). La voz estaba bien: no cortes el audio por eso. Señal: una escena
+  con un hueco largo entre palabras sin silencio real (`silencedetect` no lo ve) o `alineadas` muy por debajo de
+  `transcritas`. Arreglo: retranscribir con `-m medium` (≈8 min para 3 min de audio), comparar las duraciones por
+  escena de ambos `audio_meta.json` y rehacer solo las escenas que cambian. Revisa la hoja de capturas antes de
+  enseñar el preview.
 
 ## Datos reales
 - En CPU: YOLOv8x a 1280 sobre 660 cuadros es inviable; YOLOv8m a 960 sí funciona.

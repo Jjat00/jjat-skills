@@ -1,6 +1,6 @@
 """Utilidades comunes para las tomas 3D de Blender (estilo jato.run).
 
-Lo importan succion.py y tobera.py. Todo procedural: mallas, materiales emisivos,
+Lo importan las tomas (p. ej. ejemplo-auto.py). Todo procedural: mallas, materiales emisivos,
 tubos de flujo con UV = "tiempo de vuelo" para animar pulsos que viajan a la
 velocidad del fluido, y la configuración de render (EEVEE, Standard, fondo #0a0a0a).
 """
@@ -43,7 +43,7 @@ def argumentos():
     import argparse
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     p = argparse.ArgumentParser()
-    p.add_argument("--salida", required=True, help="carpeta Windows de salida")
+    p.add_argument("--salida", required=True, help="carpeta de los PNG")
     p.add_argument("--inicio", type=int, default=None)
     p.add_argument("--fin", type=int, default=None)
     p.add_argument("--paso", type=int, default=1)
@@ -105,10 +105,12 @@ def renderizar(esc, args, nombre):
     if args.blend:
         bpy.ops.wm.save_as_mainfile(filepath=args.blend)
     salida = args.salida.rstrip("\\/")
+    # Blender de Windows recibe rutas C:\…; en Linux y macOS, rutas con /.
+    sep = "\\" if ":\\" in salida else "/"
     if args.cuadros:
         for f in [int(x) for x in args.cuadros.split(",")]:
             esc.frame_set(f)
-            esc.render.filepath = f"{salida}\\prueba_{f:04d}"
+            esc.render.filepath = f"{salida}{sep}prueba_{f:04d}"
             t0 = time.time()
             bpy.ops.render.render(write_still=True)
             print(f"CUADRO {f} {time.time() - t0:.2f}s", flush=True)
@@ -117,7 +119,7 @@ def renderizar(esc, args, nombre):
         esc.frame_start = args.inicio
     if args.fin is not None:
         esc.frame_end = args.fin
-    esc.render.filepath = f"{salida}\\{nombre}_"
+    esc.render.filepath = f"{salida}{sep}{nombre}_"
     t0 = time.time()
     bpy.ops.render.render(animation=True)
     n = (esc.frame_end - esc.frame_start) // esc.frame_step + 1

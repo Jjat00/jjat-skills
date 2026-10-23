@@ -1,6 +1,6 @@
 ---
 name: explicador-rapido
-description: Produce un explicador vertical (1080x1920, ~2:30) en español sobre un tema de software o ingeniería, narrado por una voz y sin nadie frente a la cámara, con el estilo visual jato.run (negro, paleta pastel, todo esquinado, Anton + Poppins + JetBrains Mono, red de partículas), voz de ElevenLabs (vía HF Studio, la API directa u otro TTS), subtítulos palabra a palabra y DATOS REALES calculados con modelos de verdad (YOLO, ResNet, embeddings, benchmarks, física con CoolProp) y, si hace falta, gráficos de ManimGX y tomas 3D de Blender, como los episodios «Visión por computadora» y «Bases de datos vectoriales». Úsala cuando el usuario pida "un explicador de <tema>", "otro video como el de computer vision", "como el de bases de datos vectoriales", "explícame <tema> en un reel", "<tema> explicado rápido", o el siguiente episodio de la serie, aunque no nombre la skill. Construye sobre HyperFrames (flujo faceless-explainer) con subagentes por escena.
+description: Produce un explicador vertical (1080x1920, ~2:30) en español sobre un tema de software o ingeniería, narrado por una voz y sin nadie frente a la cámara, con el estilo visual jato.run (negro, paleta pastel, todo esquinado, Anton + Poppins + JetBrains Mono, red de partículas), voz de cualquier TTS (gratis con edge-tts, o ElevenLabs), subtítulos palabra a palabra y DATOS REALES calculados con modelos de verdad (YOLO, ResNet, embeddings, benchmarks, física con CoolProp) y, si hace falta, gráficos de ManimGX y tomas 3D de Blender, como los episodios «Visión por computadora» y «Bases de datos vectoriales». Úsala cuando el usuario pida "un explicador de <tema>", "otro video como el de computer vision", "como el de bases de datos vectoriales", "explícame <tema> en un reel", "<tema> explicado rápido", o el siguiente episodio de la serie, aunque no nombre la skill. Construye sobre HyperFrames, con los scripts de ensamblado incluidos en la skill, y subagentes por escena.
 ---
 
 # Explicador rápido (estilo jato.run)
@@ -24,11 +24,13 @@ salen de un modelo o benchmark corrido de verdad (lo ilustrativo se marca como t
 
 ## Requisitos
 
-- **HyperFrames** con su flujo `faceless-explainer` (skills `/hyperframes` y `/faceless-explainer`;
-  [hyperframes.heygen.com](https://hyperframes.heygen.com)). Node 20+ y `npx hyperframes`.
-- **ffmpeg** con `rubberband` (para acelerar la voz sin cambiar el tono) y **Python 3** (para `scripts/alinear.py` y
-  los cálculos de datos reales en un venv del proyecto).
-- **Un TTS** para la narración (ver § 4). Sugerido: [HF Studio](https://github.com/Jjat00/hf-studio); también sirve ElevenLabs directo u otro.
+- **[HyperFrames](https://hyperframes.heygen.com)** por `npx`, fijado en `hyperframes@0.8.186` (Node 20+). La skill
+  trae en `scripts/hf/` los cuatro scripts de ensamblado del antiguo flujo `faceless-explainer`, que HyperFrames
+  retiró en octubre de 2026 (licencia Apache 2.0, ver `scripts/hf/NOTICE.md`): no hace falta instalar ese flujo.
+  Si tienes la skill `/hyperframes`, cárgala para las reglas de composición; no es obligatoria.
+- **ffmpeg** con `rubberband` (para acelerar la voz sin cambiar el tono) y **Python 3** (para `scripts/alinear.py`,
+  `scripts/voz_edge.py` y los cálculos de datos reales en un venv del proyecto).
+- **Un TTS** para la narración (ver § 4). Gratis: edge-tts con `scripts/voz_edge.py`. De pago: ElevenLabs u otro.
 - **Opcional:** Codex CLI u otro generador de imágenes, para imágenes ilustrativas (ver § 3).
 - **Opcional:** [ManimGX](https://manimgx.academa.ai/) para diagramas, fórmulas y curvas animadas, y **Blender** para
   tomas 3D de objetos reales (ver § 5 y `references/manim-y-blender.md`).
@@ -41,8 +43,8 @@ Si no hay, pregunta solo lo que haga falta y usa estos valores por defecto:
 | Qué | Por defecto |
 |---|---|
 | Carpeta del proyecto | `videos/<tema>-explicado` en el directorio de trabajo |
-| Entrega | `entregas/<tema> <día> <mes> <año>` (el autor original usa `D:\contenido\<tema> 11 oct 2026`) |
-| Voz | ElevenLabs `4GeB1bS2GAHAsGRM0eeU` («juvenil latina»), `eleven_v4`, velocidad 1,08 |
+| Entrega | `entregas/<tema> <día> <mes> <año>` |
+| Voz | Gratis: edge-tts `es-CO-SalomeNeural` a +8 %. Si hay clave de ElevenLabs: `4GeB1bS2GAHAsGRM0eeU` («juvenil latina»), `eleven_v4`, velocidad 1,08 |
 | Estilo | `references/estilo-jato-run.md`. Si el usuario tiene marca propia, cambia paleta y fuentes y conserva la estructura |
 | Música | Sin música, salvo que la pida |
 
@@ -54,26 +56,33 @@ El usuario aprueba en este orden y nada avanza sin su sí:
 3. **Dos cuadros de estilo** (las escenas más representativas) antes de construir el resto.
 4. **Preview** de todo el video antes del render final.
 
-Toda generación de pago muestra su costo en USD antes y espera el OK. La toma completa del ep/02 costó US$0,33.
+Toda generación de pago muestra su costo en USD antes y espera el OK. La toma completa del ep/02 costó US$0,33 en
+ElevenLabs; con edge-tts no cuesta nada.
 
 ## 1. Proyecto
 
-Carga `/hyperframes` y entra por `/faceless-explainer` (es su flujo: brief → guion → storyboard → paquetes por escena
-→ ensamblado). Luego:
+El flujo es brief → guion → voz → storyboard → cuadros de estilo → paquetes por escena → ensamblado. Todo lo que
+necesita viene en la skill; los comandos de HyperFrames van con la versión fijada:
 
 ```bash
-npx hyperframes init "videos/<tema>-explicado" --non-interactive --example=blank --resolution=portrait --skill=faceless-explainer
-mkdir -p videos/<tema>-explicado/{assets/fonts,assets/data,assets/media,assets/audio,tools}
-cp <SKILL>/assets/fonts/* videos/<tema>-explicado/assets/fonts/
-cp <SKILL>/references/estilo-jato-run.md videos/<tema>-explicado/frame.md
+P=videos/<tema>-explicado
+npx --yes hyperframes@0.8.186 init "$P" --non-interactive --example=blank --resolution=portrait
+mkdir -p $P/{assets/fonts,assets/data,assets/media,assets/audio,tools,compositions/frames,.hyperframes}
+cp <SKILL>/assets/fonts/* $P/assets/fonts/
+cp <SKILL>/references/estilo-jato-run.md $P/frame.md
+cp <SKILL>/assets/caption-skin.html $P/.hyperframes/caption-skin.html
 ```
+
+Si el `package.json` del proyecto trae otra versión de `hyperframes` en sus scripts (`dev`, `check`, `render`),
+cámbiala por `0.8.186` para que todo use la misma.
 
 `BRIEF.md` como en el ep/02: `workflow: faceless-explainer`, `flow: automation`, `storyboard: yes`, `aspect: 1080x1920`,
 `language: es`, `length: 150s`, `angle: concept`, `destination: reels-tiktok`, el `message` en una frase y la voz.
 
 ## 2. Guion
 
-- Si hay video de referencia: transcríbelo (`npx hyperframes transcribe ref.mp4 -m large-v3 -l es`) y arma una hoja de
+- Si hay video de referencia: transcríbelo (`npx --yes hyperframes@0.8.186 transcribe ref.mp4 -m large-v3 -l es`; la
+  primera vez baja el modelo de Whisper, ~3 GB) y arma una hoja de
   contacto (`ffmpeg -i ref.mp4 -vf "fps=1/2,scale=270:-1,tile=8x5" hoja.png`). **Cubre punto por punto todo lo que
   dice la referencia**: en el ep/01 hubo que reponer 6 detalles perdidos al condensar.
 - Mira `references/ejemplo-ep02/SCRIPT.md` para el tono, el largo de cada línea y el arco.
@@ -132,17 +141,21 @@ del proyecto (p. ej. `.cv-venv` con torch CPU) y scripts en `tools/` que escriba
 
 ## 4. Voz
 
-Voz por defecto: ElevenLabs `4GeB1bS2GAHAsGRM0eeU` («juvenil latina»), `eleven_v4`, velocidad 1,08. Si el usuario
-tiene otra voz o el tema pide otra, ofrece muestras y deja elegir. Cualquier TTS sirve mientras entregue un MP3:
-`alinear.py` trabaja sobre el audio, no sobre el proveedor.
+Cualquier TTS sirve mientras entregue un MP3: `alinear.py` trabaja sobre el audio y los tiempos por palabra, no sobre
+el proveedor. Si el usuario tiene una voz preferida, úsala; si no, ofrece muestras y deja elegir.
 
-- **Sugerido: [HF Studio](https://github.com/Jjat00/hf-studio)**, estudio de IA open source (MIT) con MCP
-  (`hf-studio`, `text_to_speech`). Sin `quote_id` cotiza; con el `quote_id`, tras el OK, genera y guarda el audio en
-  la sonoteca. Pide clave de Higgsfield además de la de ElevenLabs, así que conviene si también vas a generar
-  imágenes o video; su [llms.txt](https://hf-studio.jato.run/llms.txt) explica cómo instalarlo. Para solo la voz,
-  ElevenLabs directo es más simple.
-- **ElevenLabs directo**, con `ELEVENLABS_API_KEY` propia. Cobra por carácter según el plan; estima el costo con el
-  largo del guion y avísalo antes:
+- **Gratis, sin clave: edge-tts** (voces neuronales de Microsoft Edge) con `scripts/voz_edge.py`. Entrega el tiempo de
+  cada palabra, así que **no hace falta transcribir** la toma. Voces que suenan bien: `es-CO-SalomeNeural` (por
+  defecto), `es-MX-DaliaNeural`, `es-CO-GonzaloNeural`, `es-MX-JorgeNeural`.
+
+  ```bash
+  python3 -m venv .voz-venv && .voz-venv/bin/pip install edge-tts
+  .voz-venv/bin/python <SKILL>/scripts/voz_edge.py --root . --prueba 3   # ~10 s: assets/audio/prueba-voz.mp3
+  .voz-venv/bin/python <SKILL>/scripts/voz_edge.py --root .              # narracion-completa.mp3 + transcript.json
+  ```
+
+- **ElevenLabs** (de pago, la voz de la serie), con `ELEVENLABS_API_KEY` propia. Cobra por carácter según el plan:
+  estima el costo con el largo del guion y avísalo antes.
 
   ```bash
   curl -sS "https://api.elevenlabs.io/v1/text-to-speech/<voice_id>?output_format=mp3_44100_128" \
@@ -151,32 +164,41 @@ tiene otra voz o el tema pide otra, ofrece muestras y deja elegir. Cualquier TTS
     -o assets/audio/narracion-completa.mp3
   ```
 
-- **Otras:** el TTS de OpenAI o uno local y gratis (Kokoro, Piper, edge-tts) si no hay presupuesto. Las etiquetas de
-  tono del guion (`[curious, engaging explainer]`) son de ElevenLabs v3/v4: quítalas del texto para otros TTS.
+  Un TTS de pago no da los tiempos por palabra: hay que transcribir la toma (paso de abajo). Las etiquetas de tono del
+  guion (`[curious, engaging explainer]`) son de ElevenLabs v3/v4; los demás TTS las ignoran o las leen, y
+  `voz_edge.py` ya las quita.
+- **Otros:** el TTS de OpenAI, Kokoro (`npx --yes hyperframes@0.8.186 tts`) o Piper. Si no dan tiempos por palabra, transcribe.
 
 Pasos:
 
 - Prueba de ~10 s con líneas reales del guion → aprobación → **una sola toma** del guion completo.
-- Mide la toma. Si pasa de ~2:35, acelera con rubberband (tono y formantes intactos) en vez de pagar otra:
+- Mide la toma. Si pasa de ~2:35, acelera con rubberband (tono y formantes intactos) en vez de rehacerla:
 
   ```bash
   ffmpeg -i assets/audio/narracion-completa.mp3 -af "rubberband=tempo=1.13:formant=preserved" assets/audio/narracion-completa-x1.13.mp3
   ```
 
-- Transcribe la toma ORIGINAL y corta por escena:
+- **Solo si el TTS no dio tiempos por palabra**, transcribe la toma ORIGINAL. En español solo `large-v3` separa bien
+  las palabras (baja ~3 GB la primera vez y tarda varios minutos en CPU):
 
   ```bash
-  npx hyperframes transcribe assets/audio/narracion-completa.mp3 -m large-v3 -l es
+  npx --yes hyperframes@0.8.186 transcribe assets/audio/narracion-completa.mp3 -m large-v3 -l es
+  ```
+
+- Corta por escena con los tiempos (de edge-tts o de la transcripción):
+
+  ```bash
   python3 <SKILL>/scripts/alinear.py --root . --tx assets/audio/transcript.json \
       --audio assets/audio/narracion-completa-x1.13.mp3 --tempo 1.13
   ```
 
   Escribe `assets/voice/NN.mp3` y `audio_meta.json` (el formato que leen `captions.mjs` y `assemble-index.mjs`). Las
-  palabras de los subtítulos salen del guion; los huecos (números, siglas) se interpolan.
+  palabras de los subtítulos salen del guion; los huecos (números, siglas) se interpolan. Sin aceleración, `--tempo 1`
+  y `--audio` apunta a la toma original.
 
 ## 5. Storyboard y cuadros de estilo
 
-- `STORYBOARD.md` del flujo faceless-explainer, con `words: palabra@seg` (relativo al inicio de la escena, sale de
+- `STORYBOARD.md` con un bloque por escena y `words: palabra@seg` (relativo al inicio de la escena, sale de
   `audio_meta.json`) para que cada revelación caiga en su palabra. Define la continuidad (qué elemento reaparece
   igual en varias escenas) y los colores por rol. Modelo: `references/ejemplo-ep02/STORYBOARD.md`.
 - Sistema visual en `references/estilo-jato-run.md`. Lo no negociable: cero `border-radius` (salvo las partículas),
@@ -184,7 +206,7 @@ Pasos:
 - Construye primero **dos cuadros de estilo** a mano, partiendo de los aprobados del ep/02
   (`references/cuadros-aprobados/09-cerca.html` y `13-resultado.html`). `scripts/comun.py` tiene las piezas (fuentes,
   fondo, red de partículas, esquinas de mira, HUD, plantilla) si prefieres generarlos con Python.
-- Enséñaselos al usuario en Studio (`npx hyperframes preview --background`) y espera su aprobación.
+- Enséñaselos al usuario en Studio (`npx --yes hyperframes@0.8.186 preview --background`) y espera su aprobación.
 - **Gráficos de ManimGX y tomas de Blender** (opcional): para diagramas de fuerzas, fórmulas que se transforman,
   curvas que se dibujan o un objeto real en 3D. Se renderizan como MP4 sin texto de lectura y entran a la escena como
   `<video>` con `mix-blend-mode: lighten`. Todo en `references/manim-y-blender.md`, con las utilidades en
@@ -194,7 +216,8 @@ Pasos:
 
 ## 6. El resto de escenas con subagentes
 
-- `frame-packets.mjs` (del flujo faceless-explainer) arma un paquete por escena.
+- Arma un paquete por escena: `node <SKILL>/scripts/hf/frame-packets.mjs --project .` (los deja en
+  `.hyperframes/frame-packets/`, con el rol de los subagentes en `_role.md`).
 - Copia `references/reglas-escena.md` a `.hyperframes/frame-packets/_reglas.md`, rellena lo que va entre `<…>` y pásalo
   a cada subagente con su paquete. Los dos cuadros aprobados son el esqueleto obligatorio; si la escena es de un tipo
   que tiene modelo en `references/ejemplo-ep02/frames/` (tabla, benchmark, grafo, flujo, tarjetas), pásale también ese.
@@ -204,21 +227,36 @@ Pasos:
 
 ## 7. Cierre
 
-1. `assemble-index`, regenerar subtítulos y **volver a poner la banda** en `compositions/captions.html`
-   (`--cap-band-top: 1445px; --cap-band-height: 170px;`).
-   **Zona segura del feed de Instagram:** sin abrir el reel, el feed lo recorta a 4:5 por el centro (solo se ve
-   y≈285–1635) y se pierde el kicker y la parte alta. En `index.html` reduce y baja todas las escenas
-   (`.scene { transform: translate(0px, 184px) scale(0.865); transform-origin: 540px 0px; }`), vuelve
-   transparente el fondo propio de cada escena (`.scene [id$="-bg"] { background: transparent !important; }`) y pon en
-   `#root` el degradado `radial-gradient(120% 80% at 50% 45%, #121212 0%, #0a0a0a 55%, #050505 100%)`. Así el
-   contenido (y=140–1440 en cada escena) cae en ~305–1430 y los subtítulos en ~1445–1615; en pantalla completa
-   se sigue viendo bien (se detectó al ver el ep/01 en el feed, 2026-10-14).
-2. `transitions inject` y `verify`, `npx hyperframes lint` y `npm run check` sin errores.
+1. Ensambla con un solo comando, que puedes repetir cada vez que cambies una escena:
+
+   ```bash
+   bash <SKILL>/scripts/ensamblar.sh .
+   ```
+
+   Hace, en orden: subtítulos (`captions.mjs`, con la piel de `.hyperframes/caption-skin.html`), `index.html` con todas
+   las escenas (`assemble-index.mjs`), transiciones (`transitions.mjs inject` y `verify`), la banda de subtítulos en
+   1445/170, la **zona segura del feed de Instagram**, la marca de pista de subtítulos que pide el lint y, al final,
+   `hyperframes lint`. Si el proyecto tiene `tools/despues_de_ensamblar.py`, lo corre antes del lint: ahí van capas
+   propias, como un botón SEGUIR encima del video.
+
+   La zona segura existe porque, sin abrir el reel, el feed lo recorta a 4:5 por el centro (solo se ve y≈285–1635) y
+   se pierde la parte alta. Por eso cada escena se reduce y baja
+   (`.scene { transform: translate(0px, 184px) scale(0.865); }`), sin fondo propio, sobre un degradado en `#root`.
+   El contenido (y=140–1440 en cada escena) cae en ~305–1430 y los subtítulos debajo; en pantalla completa se sigue
+   viendo bien.
+2. `npm run check` sin errores.
 3. Hoja de capturas a mitad de cada escena para revisar todo de un vistazo. Busca textos encimados (fichas sobre
    ejes, cifras sobre rótulos) y escenas vacías: el usuario los ve antes que nada.
 4. Preview en Studio → aprobación del usuario → `npm run render`.
 5. Entrega en la carpeta de entrega (ver «Preferencias del usuario»): el MP4 (H.264), `creditos-descripcion.txt` y
    el caption (en Instagram, **máximo 5 hashtags**).
+
+## Episodios cortos
+
+Para una prueba, un teaser o un anuncio de 20 a 60 s: el mismo flujo con 3 a 8 escenas (≈2,8 palabras por segundo de
+voz, antes de acelerar). Las puertas de aprobación siguen igual, pero basta un cuadro de estilo si son pocas escenas.
+Los datos reales siguen siendo obligatorios en lo que salga en pantalla; si no hay cifras, mejor una escena de
+concepto que un número inventado.
 
 Antes de construir, lee `references/trampas.md`: HDR, subagentes, contraste, símbolos en Anton, la banda de
 subtítulos y los clips de Manim y Blender ya costaron horas.

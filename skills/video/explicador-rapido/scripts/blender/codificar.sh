@@ -7,7 +7,7 @@ TOMA="$1"
 LIM=()
 [ -n "${2:-}" ] && LIM=(-frames:v "$2")
 RAIZ="${RAIZ:-$(cd "$(dirname "$0")/../.." && pwd)}"  # raíz del proyecto (copia este script a tools/blender/)
-SRC="${SRC:-/mnt/d/tmp/blender/$TOMA}"  # carpeta de los PNG (la SALIDA_WIN de correr.sh)
+SRC="${SRC:-/tmp/blender/$TOMA}"  # carpeta de los PNG (la SALIDA de correr.sh)
 OUT="$RAIZ/assets/blender"
 mkdir -p "$OUT"
 BLOOM="format=rgb24,split=3[a][b][c];\
