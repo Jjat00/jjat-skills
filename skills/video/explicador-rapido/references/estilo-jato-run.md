@@ -45,7 +45,7 @@ spacing:
   slide-pad: "6cqw"      # ~65px @1080
   gap-md: "3cqw"
   radius: "0 — TODO es esquinado: sin border-radius, sin círculos, sin píldoras"
-  caption-band: "top 1445px · height 170px (la pone scripts/ensamblar.sh; el contenido vive arriba)"
+  caption-band: "top 1445px · height 170px (la escribe scripts/armar.py; el contenido vive arriba)"
 
 components:
   top-kicker:

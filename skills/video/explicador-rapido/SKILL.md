@@ -1,6 +1,6 @@
 ---
 name: explicador-rapido
-description: Produce un explicador vertical (1080x1920, ~2:30) en español sobre un tema de software o ingeniería, narrado por una voz y sin nadie frente a la cámara, con el estilo visual jato.run (negro, paleta pastel, todo esquinado, Anton + Poppins + JetBrains Mono, red de partículas), voz de cualquier TTS (gratis con edge-tts, o ElevenLabs), subtítulos palabra a palabra y DATOS REALES calculados con modelos de verdad (YOLO, ResNet, embeddings, benchmarks, física con CoolProp) y, si hace falta, gráficos de ManimGX y tomas 3D de Blender, como los episodios «Visión por computadora» y «Bases de datos vectoriales». Úsala cuando el usuario pida "un explicador de <tema>", "otro video como el de computer vision", "como el de bases de datos vectoriales", "explícame <tema> en un reel", "<tema> explicado rápido", o el siguiente episodio de la serie, aunque no nombre la skill. Construye sobre HyperFrames, con los scripts de ensamblado incluidos en la skill, y subagentes por escena.
+description: Produce un explicador vertical (1080x1920, ~2:30) en español sobre un tema de software o ingeniería, narrado por una voz y sin nadie frente a la cámara, con el estilo visual jato.run (negro, paleta pastel, todo esquinado, Anton + Poppins + JetBrains Mono, red de partículas), voz de cualquier TTS (gratis con edge-tts, o ElevenLabs), subtítulos palabra a palabra y DATOS REALES calculados con modelos de verdad (YOLO, ResNet, embeddings, benchmarks, física con CoolProp) y, si hace falta, gráficos de ManimGX y tomas 3D de Blender, como los episodios «Visión por computadora» y «Bases de datos vectoriales». Úsala cuando el usuario pida "un explicador de <tema>", "otro video como el de computer vision", "como el de bases de datos vectoriales", "explícame <tema> en un reel", "<tema> explicado rápido", o el siguiente episodio de la serie, aunque no nombre la skill. Construye sobre HyperFrames (la versión actual, con su skill /hyperframes) y subagentes por escena; la skill trae su propio armado del video y de los subtítulos.
 ---
 
 # Explicador rápido (estilo jato.run)
@@ -24,12 +24,13 @@ salen de un modelo o benchmark corrido de verdad (lo ilustrativo se marca como t
 
 ## Requisitos
 
-- **[HyperFrames](https://hyperframes.heygen.com)** por `npx`, fijado en `hyperframes@0.8.186` (Node 20+). La skill
-  trae en `scripts/hf/` los cuatro scripts de ensamblado del antiguo flujo `faceless-explainer`, que HyperFrames
-  retiró en octubre de 2026 (licencia Apache 2.0, ver `scripts/hf/NOTICE.md`): no hace falta instalar ese flujo.
-  Si tienes la skill `/hyperframes`, cárgala para las reglas de composición; no es obligatoria.
-- **ffmpeg** con `rubberband` (para acelerar la voz sin cambiar el tono) y **Python 3** (para `scripts/alinear.py`,
-  `scripts/voz_edge.py` y los cálculos de datos reales en un venv del proyecto).
+- **[HyperFrames](https://hyperframes.heygen.com)**, la versión más reciente por `npx` (Node 20+), y su skill
+  **`/hyperframes`** (`npx hyperframes skills`), que tiene el contrato de composición, el ciclo de trabajo y la guía de
+  explainers y de video vertical: cárgala al empezar. Cada proyecto fija su versión en `package.json` al crearse.
+  La skill trae lo que HyperFrames ya no hace por ti: `scripts/armar.py` escribe `index.html` y los subtítulos de la
+  serie, y `scripts/paquetes.py` arma el encargo de cada subagente.
+- **ffmpeg** con `rubberband` (para acelerar la voz sin cambiar el tono) y **Python 3** (para los scripts de la skill y
+  los cálculos de datos reales en un venv del proyecto).
 - **Un TTS** para la narración (ver § 4). Gratis: edge-tts con `scripts/voz_edge.py`. De pago: ElevenLabs u otro.
 - **Opcional:** Codex CLI u otro generador de imágenes, para imágenes ilustrativas (ver § 3).
 - **Opcional:** [ManimGX](https://manimgx.academa.ai/) para diagramas, fórmulas y curvas animadas, y **Blender** para
@@ -61,28 +62,28 @@ ElevenLabs; con edge-tts no cuesta nada.
 
 ## 1. Proyecto
 
-El flujo es brief → guion → voz → storyboard → cuadros de estilo → paquetes por escena → ensamblado. Todo lo que
-necesita viene en la skill; los comandos de HyperFrames van con la versión fijada:
+El flujo es brief → guion → voz → storyboard → cuadros de estilo → escenas → armado → revisión → render.
 
 ```bash
 P=videos/<tema>-explicado
-npx --yes hyperframes@0.8.186 init "$P" --non-interactive --example=blank --resolution=portrait
-mkdir -p $P/{assets/fonts,assets/data,assets/media,assets/audio,tools,compositions/frames,.hyperframes}
+npx --yes hyperframes@latest init "$P" --non-interactive --example blank --resolution portrait
+mkdir -p $P/{assets/fonts,assets/data,assets/media,assets/audio,tools,compositions/frames}
 cp <SKILL>/assets/fonts/* $P/assets/fonts/
 cp <SKILL>/references/estilo-jato-run.md $P/frame.md
-cp <SKILL>/assets/caption-skin.html $P/.hyperframes/caption-skin.html
 ```
 
-Si el `package.json` del proyecto trae otra versión de `hyperframes` en sus scripts (`dev`, `check`, `render`),
-cámbiala por `0.8.186` para que todo use la misma.
+`init` fija la versión de HyperFrames en los scripts de `package.json` (`npm run dev`, `check`, `render`); usa esos
+scripts, o `npx hyperframes@<esa versión>`, durante todo el episodio. Al retomar un proyecto viejo, mira si hay una
+versión nueva con `npx hyperframes@latest upgrade --project . --check`; si actualizas, corre `npm run check` antes de
+seguir y di de qué versión a qué versión pasaste.
 
-`BRIEF.md` como en el ep/02: `workflow: faceless-explainer`, `flow: automation`, `storyboard: yes`, `aspect: 1080x1920`,
+`BRIEF.md` como en el ep/02: `storyboard: yes`, `aspect: 1080x1920`,
 `language: es`, `length: 150s`, `angle: concept`, `destination: reels-tiktok`, el `message` en una frase y la voz.
 
 ## 2. Guion
 
-- Si hay video de referencia: transcríbelo (`npx --yes hyperframes@0.8.186 transcribe ref.mp4 -m large-v3 -l es`; la
-  primera vez baja el modelo de Whisper, ~3 GB) y arma una hoja de
+- Si hay video de referencia: transcríbelo (`npx hyperframes transcribe ref.mp4 --language es --json`, ver § 4) y arma
+  una hoja de
   contacto (`ffmpeg -i ref.mp4 -vf "fps=1/2,scale=270:-1,tile=8x5" hoja.png`). **Cubre punto por punto todo lo que
   dice la referencia**: en el ep/01 hubo que reponer 6 detalles perdidos al condensar.
 - Mira `references/ejemplo-ep02/SCRIPT.md` para el tono, el largo de cada línea y el arco.
@@ -167,7 +168,8 @@ el proveedor. Si el usuario tiene una voz preferida, úsala; si no, ofrece muest
   Un TTS de pago no da los tiempos por palabra: hay que transcribir la toma (paso de abajo). Las etiquetas de tono del
   guion (`[curious, engaging explainer]`) son de ElevenLabs v3/v4; los demás TTS las ignoran o las leen, y
   `voz_edge.py` ya las quita.
-- **Otros:** el TTS de OpenAI, Kokoro (`npx --yes hyperframes@0.8.186 tts`) o Piper. Si no dan tiempos por palabra, transcribe.
+- **Otros:** el TTS de OpenAI, Kokoro (`npx hyperframes tts`, voces en español `ef_dora` y `em_alex`) o Piper. Si no
+  dan tiempos por palabra, transcribe.
 
 Pasos:
 
@@ -178,12 +180,16 @@ Pasos:
   ffmpeg -i assets/audio/narracion-completa.mp3 -af "rubberband=tempo=1.13:formant=preserved" assets/audio/narracion-completa-x1.13.mp3
   ```
 
-- **Solo si el TTS no dio tiempos por palabra**, transcribe la toma ORIGINAL. En español solo `large-v3` separa bien
-  las palabras (baja ~3 GB la primera vez y tarda varios minutos en CPU):
+- **Solo si el TTS no dio tiempos por palabra**, transcribe la toma ORIGINAL. Con Parakeet instalado, HyperFrames lo
+  usa solo (es más preciso y rápido que Whisper y cubre el español); sin él, pasa `--model large-v3`: los modelos
+  chicos de Whisper separan mal las palabras en español (y `small.en`, el de por defecto, traduce al inglés).
 
   ```bash
-  npx --yes hyperframes@0.8.186 transcribe assets/audio/narracion-completa.mp3 -m large-v3 -l es
+  npx hyperframes models install parakeet          # una vez
+  npx hyperframes transcribe assets/audio/narracion-completa.mp3 --language es --json
   ```
+
+  Escribe `assets/transcript.json`, que es lo que lee `alinear.py` con `--tx assets/transcript.json`.
 
 - Corta por escena con los tiempos (de edge-tts o de la transcripción):
 
@@ -192,21 +198,24 @@ Pasos:
       --audio assets/audio/narracion-completa-x1.13.mp3 --tempo 1.13
   ```
 
-  Escribe `assets/voice/NN.mp3` y `audio_meta.json` (el formato que leen `captions.mjs` y `assemble-index.mjs`). Las
+  Escribe `assets/voice/NN.mp3` y `audio_meta.json` (lo que lee `armar.py`). Las
   palabras de los subtítulos salen del guion; los huecos (números, siglas) se interpolan. Sin aceleración, `--tempo 1`
   y `--audio` apunta a la toma original.
 
 ## 5. Storyboard y cuadros de estilo
 
-- `STORYBOARD.md` con un bloque por escena y `words: palabra@seg` (relativo al inicio de la escena, sale de
-  `audio_meta.json`) para que cada revelación caiga en su palabra. Define la continuidad (qué elemento reaparece
+- `STORYBOARD.md` con un bloque `## Frame N — Título` por escena (formato del ejemplo) que lleva `- src:
+  compositions/frames/<id>.html`, `- transition_in: crossfade` (o `cut`) y `- words: palabra@seg` (relativo al inicio
+  de la escena, sale de `audio_meta.json`) para que cada revelación caiga en su palabra. **El id de cada escena
+  empieza con letra** (`e01-gancho`, no `01-gancho`): el id es también un selector CSS y uno que empieza con número
+  no es válido. Define la continuidad (qué elemento reaparece
   igual en varias escenas) y los colores por rol. Modelo: `references/ejemplo-ep02/STORYBOARD.md`.
 - Sistema visual en `references/estilo-jato-run.md`. Lo no negociable: cero `border-radius` (salvo las partículas),
   HUD con la izquierda vacía, nada debajo de y=1440, un solo degradado cian→violeta por escena.
 - Construye primero **dos cuadros de estilo** a mano, partiendo de los aprobados del ep/02
   (`references/cuadros-aprobados/09-cerca.html` y `13-resultado.html`). `scripts/comun.py` tiene las piezas (fuentes,
   fondo, red de partículas, esquinas de mira, HUD, plantilla) si prefieres generarlos con Python.
-- Enséñaselos al usuario en Studio (`npx --yes hyperframes@0.8.186 preview --background`) y espera su aprobación.
+- Enséñaselos al usuario en Studio (`npm run dev`) y espera su aprobación.
 - **Gráficos de ManimGX y tomas de Blender** (opcional): para diagramas de fuerzas, fórmulas que se transforman,
   curvas que se dibujan o un objeto real en 3D. Se renderizan como MP4 sin texto de lectura y entran a la escena como
   `<video>` con `mix-blend-mode: lighten`. Todo en `references/manim-y-blender.md`, con las utilidades en
@@ -216,38 +225,46 @@ Pasos:
 
 ## 6. El resto de escenas con subagentes
 
-- Arma un paquete por escena: `node <SKILL>/scripts/hf/frame-packets.mjs --project .` (los deja en
-  `.hyperframes/frame-packets/`, con el rol de los subagentes en `_role.md`).
-- Copia `references/reglas-escena.md` a `.hyperframes/frame-packets/_reglas.md`, rellena lo que va entre `<…>` y pásalo
-  a cada subagente con su paquete. Los dos cuadros aprobados son el esqueleto obligatorio; si la escena es de un tipo
-  que tiene modelo en `references/ejemplo-ep02/frames/` (tabla, benchmark, grafo, flujo, tarjetas), pásale también ese.
+- Arma un paquete por escena:
+
+  ```bash
+  python3 <SKILL>/scripts/paquetes.py --root . --refs compositions/frames/<cuadro-a>.html compositions/frames/<cuadro-b>.html
+  ```
+
+  Los deja en `.hyperframes/paquetes/<id>.md` y copia `references/reglas-escena.md` a `.hyperframes/paquetes/_reglas.md`:
+  rellena ahí lo que va entre `<…>` antes de lanzar a nadie. Cada subagente recibe su paquete, las reglas y la orden de
+  cargar `/hyperframes` (el contrato de composición). Los dos cuadros aprobados son el esqueleto obligatorio; si la
+  escena es de un tipo que tiene modelo en `references/ejemplo-ep02/frames/` (tabla, benchmark, grafo, flujo,
+  tarjetas), pásale también ese.
 - **Máximo 20 subagentes a la vez**; el exceso falla sin reintentarse. Lanza en tandas y lleva la cuenta.
 - **Un solo `<script>` de timeline por escena.** Un bloque sobrante copiado de otra escena dejó 7 escenas en negro en
   el ep/04 sin que lint ni check dijeran nada (ver `references/trampas.md`).
 
 ## 7. Cierre
 
-1. Ensambla con un solo comando, que puedes repetir cada vez que cambies una escena:
+1. Arma el video con un solo comando, que puedes repetir cada vez que cambies una escena:
 
    ```bash
-   bash <SKILL>/scripts/ensamblar.sh .
+   python3 <SKILL>/scripts/armar.py --root .
    ```
 
-   Hace, en orden: subtítulos (`captions.mjs`, con la piel de `.hyperframes/caption-skin.html`), `index.html` con todas
-   las escenas (`assemble-index.mjs`), transiciones (`transitions.mjs inject` y `verify`), la banda de subtítulos en
-   1445/170, la **zona segura del feed de Instagram**, la marca de pista de subtítulos que pide el lint y, al final,
-   `hyperframes lint`. Si el proyecto tiene `tools/despues_de_ensamblar.py`, lo corre antes del lint: ahí van capas
-   propias, como un botón SEGUIR encima del video.
+   Escribe `index.html` (cada escena en su host, con el mismo id que su `data-composition-id` y que la clave de su
+   timeline; la voz de cada escena; el fundido cruzado de 0,5 s, o corte si la escena pide `transition_in: cut`) y
+   `compositions/captions.html` (los subtítulos de la serie: grupos de 2 a 3 palabras, tenue lo que viene, cian lo que
+   suena, en la banda 1445–1615), y corre el lint con la versión del proyecto. Si el proyecto tiene
+   `tools/despues_de_armar.py`, lo corre antes del lint: ahí van capas propias, como un botón SEGUIR encima del video.
 
-   La zona segura existe porque, sin abrir el reel, el feed lo recorta a 4:5 por el centro (solo se ve y≈285–1635) y
-   se pierde la parte alta. Por eso cada escena se reduce y baja
-   (`.scene { transform: translate(0px, 184px) scale(0.865); }`), sin fondo propio, sobre un degradado en `#root`.
-   El contenido (y=140–1440 en cada escena) cae en ~305–1430 y los subtítulos debajo; en pantalla completa se sigue
-   viendo bien.
-2. `npm run check` sin errores.
-3. Hoja de capturas a mitad de cada escena para revisar todo de un vistazo. Busca textos encimados (fichas sobre
-   ejes, cifras sobre rótulos) y escenas vacías: el usuario los ve antes que nada.
-4. Preview en Studio → aprobación del usuario → `npm run render`.
+   También aplica la **zona segura del feed de Instagram**: sin abrir el reel, el feed lo recorta a 4:5 por el centro
+   (solo se ve y≈285–1635) y se pierde la parte alta. Por eso escenas y subtítulos se reducen y bajan
+   (`translate(0px, 184px) scale(0.865)`) sobre un degradado de fondo: el contenido (y=140–1440 en cada escena) cae en
+   ~305–1430 y los subtítulos debajo; en pantalla completa se sigue viendo bien. `--sin-zona-segura` lo quita (p. ej.
+   para TikTok o YouTube Shorts).
+2. `npm run check` (o `npx hyperframes check --json`): corrige cada error y pesa cada aviso. Los avisos de texto
+   pequeño en el HUD y los metadatos (22 px) son el estilo de la serie; el texto de lectura va de 28 px para arriba.
+3. Revisión visual: `npx hyperframes snapshot --review` y su hoja de capturas. Busca textos encimados (fichas sobre
+   ejes, cifras sobre rótulos), escenas vacías o en negro y subtítulos fuera de la banda: el usuario los ve antes que
+   nada.
+4. Preview en Studio (`npm run dev`) → aprobación del usuario → `npm run render`.
 5. Entrega en la carpeta de entrega (ver «Preferencias del usuario»): el MP4 (H.264), `creditos-descripcion.txt` y
    el caption (en Instagram, **máximo 5 hashtags**).
 

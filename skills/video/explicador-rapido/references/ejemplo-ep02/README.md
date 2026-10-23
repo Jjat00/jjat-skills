@@ -6,7 +6,7 @@ cual: se usa de referencia para el tema nuevo.
 
 | Archivo | Qué muestra |
 |---|---|
-| `BRIEF.md` | El brief del flujo faceless-explainer con mensaje, público, duración y voz. |
+| `BRIEF.md` | El brief con mensaje, público, duración y voz. |
 | `SCRIPT.md` | El guion aprobado: 26 líneas en el formato exacto que lee `scripts/alinear.py`. |
 | `STORYBOARD.md` | Una ficha por escena: `kind`, qué se ve, `voiceover`, `words: palabra@seg` y la continuidad. |
 | `capturas-1.jpg` a `capturas-3.jpg` | Hoja de capturas a mitad de cada escena del video final. Mírala antes de diseñar. |

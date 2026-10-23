@@ -1,5 +1,4 @@
 ---
-workflow: faceless-explainer
 flow: automation
 storyboard: yes
 message: "Una base de datos vectorial no busca palabras iguales: busca significados cercanos, porque convierte todo en puntos de un mapa y encuentra a los vecinos"

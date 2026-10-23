@@ -1,5 +1,5 @@
 """Alinea la transcripción (palabras con tiempo) con las líneas del guion, corta el audio acelerado por escena
-y escribe audio_meta.json (forma frame-keyed que consumen captions.mjs y assemble-index.mjs).
+y escribe audio_meta.json (por escena: voz, duración, inicio y palabras con tiempo), que lee armar.py.
 
   python3 <SKILL>/scripts/alinear.py --root . --tx assets/audio/transcript.json \
       --audio assets/audio/narracion-completa-x1.13.mp3 --tempo 1.13

@@ -1,7 +1,8 @@
 # Reglas de escena para los subagentes (plantilla)
 
-Copia este archivo a `.hyperframes/frame-packets/_reglas.md` del proyecto, cambia lo que va entre `<…>` y pásalo
-a cada subagente junto con su packet de `frame-packets.mjs`. Así salió el ep/02 (26 escenas, 24 con subagentes).
+`scripts/paquetes.py` copia este archivo a `.hyperframes/paquetes/_reglas.md` del proyecto: cambia lo que va entre
+`<…>` y pásalo a cada subagente junto con su paquete. Así salió el ep/02 (26 escenas, 24 con subagentes). Cada
+subagente carga además la skill `/hyperframes`, que tiene el contrato de composición vigente.
 
 ---
 
